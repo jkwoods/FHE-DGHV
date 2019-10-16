@@ -7,12 +7,10 @@
 //
 
 #include "Pk.hpp"
-#include <math.h>
-#include <cmath>
-#include <numeric>
+#include "Deltas.hpp"
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_n(n), p_p(make_p()), p_pi(make_pi()), p_q0(make_q0()), p_x0(p_pi*p_q0), p_x(make_x()), p_xi(make_xi()), p_ii(make_ii()), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(make_u()), p_o(make_o()){}
+: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_n(n), p_p(make_p()), p_pi(make_pi()), p_q0(make_q0()), p_x0(p_pi*p_q0), p_x(make_x()), p_xi(make_xi()), p_ii(make_ii()), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(make_u()), p_y(make_y()), p_o(make_o()){}
 
 int Pk::encode(std::vector<int> m){
     //m*xi
@@ -54,49 +52,115 @@ std::vector<int> Pk::decode(int c){
 
 //int Pk::recode(int c){}
 
-//int Pk::H_add(int c1, int c2){}
+int Pk::H_add(int c1, int c2){
+    int c = mod(c1+c2,p_x0);
+    return c;
+}
 
-//int Pk::H_mult(int c1, int c2){}
+int Pk::H_mult(int c1, int c2){
+    int c = mod(c1*c2,p_x0);
+    return c;
+}
+
+
 
 //private helper
-//std::vector<int> Pk::make_p(){
-    
-//}
+std::vector<int> Pk::make_p(){
+    std::vector<int> p;
+    for (int i = 0; i < p_l; i++){
+        p.push_back(random_prime(pow(2,p_eta-1), pow(2,p_eta)));
+    }
+    return p;
+}
 
-//int Pk::make_pi(){
-    
-//}
+int Pk::make_pi(){ //prod of all p[i]
+    int pi = 1;
+    for (int i = 0; i < p_l; i++){
+        pi = pi*p_p[i];
+    }
+    return pi;
+}
 
-//int Pk::make_q0(){
-    
-//}
+int Pk::make_q0(){
+    int q0 = pow(2,p_gam);
+    while (q0 > (pow(2,p_gam)/p_pi)){
+        int q0_prime1 = random_prime(0, pow(2,pow(p_lam,2)));
+        int q0_prime2 = random_prime(0, pow(2,pow(p_lam,2)));
+        q0 = q0_prime1*q0_prime2;
+    }
+    return q0;
+}
 
-//std::vector<int> Pk::make_x(){
-    
-//}
+std::vector<int> Pk::make_x(){
+    Deltas x_D = Deltas(*this, p_tau, p_rhoi-1, 0);
+    std::vector<int> x = x_D.getDeltaList();
+    return x;
+}
 
-//std::vector<int> Pk::make_xi(){
-    
-//}
+std::vector<int> Pk::make_xi(){
+    Deltas xi_D = Deltas(*this, p_l, p_rho, 1);
+    std::vector<int> xi = xi_D.getDeltaList();
+    return xi;
+}
 
-//std::vector<int> Pk::make_ii(){
-    
-//}
+std::vector<int> Pk::make_ii(){
+    Deltas ii_D = Deltas(*this, p_l, p_rho, 2);
+    std::vector<int> ii = ii_D.getDeltaList();
+    return ii;
+}
 
-//std::vector<std::vector<int>> Pk::make_s(){
+std::vector<std::vector<int>> Pk::make_s(){
+    std::vector<std::vector<int>> s;
+    for(int i = 0; i < p_l; i++){
+        std::vector<int> sj;
+        for (int j = 0; j < p_theta; j++){
+            std::vector<int> fill;
+            for (int b = 0; b < p_B; b++){
+                fill.push_back(0);
+            }
+            if (j==0){
+                fill[j] = 1;
+                sj.insert(std::end(sj), std::begin(fill), std::end(fill));
+            } else {
+                sj.insert(std::end(sj), std::begin(fill), std::end(fill));
+            }
+        }
+        s.push_back(sj);
+    }
     
-//}
+    for(int i = 0; i < p_theta; i++){ //TODO??
+        std::vector<int> sri = random_sample(p_B, p_l);
+        for(int j = 0; i < p_l; i++){
+            int k = (p_B*i)+sri[j];
+            s[j][k] = 1;
+        }
+    }
+    return s;
+}
 
-//std::vector<std::vector<int>> Pk::make_vert_s(){
-    
-//}
+std::vector<std::vector<int>> Pk::make_vert_s(){
+    std::vector<std::vector<int>> vert_s;
+    for(int i = 0; i < p_Theta; i++){
+        std::vector<int> vsi;
+        for(int j = 0; j < p_l; j++){
+            vsi.push_back(p_s[j][i]);
+        }
+        vert_s.push_back(vsi);
+    }
+    return vert_s;
+}
 
 //std::vector<int> Pk::make_u(){
     
 //}
 
-//std::vector<int> Pk::make_o(){
-    
-//}
+//std::vector<int> make_y();
+
+std::vector<int> Pk::make_o(){
+    Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
+    std::vector<int> o = o_D.getDeltaList();
+    return o;
+}
+
 
 

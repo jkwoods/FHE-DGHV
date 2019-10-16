@@ -12,18 +12,26 @@
 #include "Pk.hpp"
 #include "Encoding.hpp"
 #include "utils.hpp"
+#include "RandomPrimeGenerator.hpp"
+#include <ctime>
 
 Encoding encode(std::vector<int> m, Pk pk);
 
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
+    
+    // make pk
+    std::cout << "Making Keys\n";
     
     
-    
-    
-    
+    // timing tests
     std::cout << "Tests\n";
+    std::cout << time(0);
+    
+    
+    
+    
+    std::cout << "End\n";
     
     return 0;
 }

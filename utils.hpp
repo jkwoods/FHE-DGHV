@@ -17,11 +17,12 @@ int mod(int a,int b);
 int random_prime(int l, int u);
 int random_element(int l, int u);
 int set_random_seed(int seed);
+std::vector<int> random_sample(int cap, int len);
 std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b);
 std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
 std::vector<int> toBinary(int x, int l);
 int mul_inv(int a, int b);
-int CRT(int n, int a);
+int CRT(std::vector<int> n, std::vector<int> a);
 int kd(int i, int j);
 std::vector<int> vec_mult(int c, std::vector<int> v);
 

@@ -23,13 +23,78 @@ int mod(int a, int b){
 }
 
 int random_prime(int l, int u);
-int random_element(int l, int u);
-int set_random_seed(int seed);
-std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b);
+
+int random_element(int l, int u){
+    int r = 1;
+    if (l >= 0){
+        r = (rand() % u) + l;
+    } else {
+        r = (rand() % ((-1*l)+u)) - l;
+    }
+    return r;
+}
+
+int set_random_seed(int seed){ //if seed = 0, randomize and return it, else use seed
+    int s = seed;
+    if (seed == 0){
+        srand(time(0));
+        s = rand();
+        srand(s);
+    } else {
+        srand(s);
+    }
+    return s;
+}
+
+std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
+    std::vector<int> c;
+    c.push_back(a[0]+b[0]);
+    int carry = a[0]*b[0];
+    for (int i = 1; i < a.size()-1; i++){
+        int carry2 = (a[i]+b[i])*carry+a[i]*b[i];
+        c.push_back(a[i]+b[i]+carry);
+        carry = carry2;
+    }
+    c.push_back(a[-1]+b[-1]+carry);
+    return c;
+}
+
 std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
 std::vector<int> toBinary(int x, int l);
-int mul_inv(int a, int b);
-int CRT(int n, int a);
+
+int mul_inv(int a, int b){
+    int b0 = b;
+    int x0 = 0;
+    int x1 = 1;
+    if (b==1){
+        return 1;
+    }
+    while (a>1){
+        int q = a / b;
+        a = b;
+        b = a % b;
+        int temp = x0;
+        x0 = x1 - q*x0;
+        x1 = temp;
+    }
+    if (x1 < 0){
+        x1 += b0;
+    }
+    return x1;
+}
+
+int CRT(std::vector<int> n, std::vector<int> a){ //chinese remainder thm
+    int sum = 0;
+    int prod = 1;
+    for (int i = 0; i < n.size(); i++){
+        prod = prod*n[i];
+    }
+    for (int i = 0; i < n.size(); i++){
+        int p = prod / n[i];
+        sum += a[i] * mul_inv(p, n[i]) * p;
+    }
+    return (sum % prod);
+}
 
 int kd(int i, int j){
   if (i == j){

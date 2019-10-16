@@ -13,8 +13,26 @@
 #include <vector>
 #include "utils.hpp"
 
+#include <math.h>
+#include <cmath>
+#include <numeric>
+
 class Pk{
 private:
+    //helper
+    std::vector<int> make_p();
+    int make_pi();
+    int make_q0();
+    std::vector<int> make_x();
+    std::vector<int> make_xi();
+    std::vector<int> make_ii();
+    std::vector<std::vector<int>> make_s();
+    std::vector<std::vector<int>> make_vert_s();
+    std::vector<int> make_u();
+    std::vector<int> make_y();
+    std::vector<int> make_o();
+    
+public:
     int p_lam;
     int p_rho;
     int p_rhoi;
@@ -40,21 +58,9 @@ private:
     std::vector<std::vector<int>> p_s;
     std::vector<std::vector<int>> p_vert_s;
     std::vector<int> p_u;
+    std::vector<int> p_y;
     std::vector<int> p_o;
     
-    //helper
-    std::vector<int> make_p();
-    int make_pi();
-    int make_q0();
-    std::vector<int> make_x();
-    std::vector<int> make_xi();
-    std::vector<int> make_ii();
-    std::vector<std::vector<int>> make_s();
-    std::vector<std::vector<int>> make_vert_s();
-    std::vector<int> make_u();
-    std::vector<int> make_o();
-    
-public:
     Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n=4);
     int encode(std::vector<int> m);
     std::vector<int> decode(int c);
@@ -62,6 +68,7 @@ public:
     int recode(int c);
     int H_add(int c1, int c2);
     int H_mult(int c1, int c2);
+    
 
 };
 
