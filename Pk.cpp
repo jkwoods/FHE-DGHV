@@ -8,6 +8,7 @@
 
 #include "Pk.hpp"
 #include "Deltas.hpp"
+#include "Pri_U.hpp"
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
 : p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_n(n), p_p(make_p()), p_pi(make_pi()), p_q0(make_q0()), p_x0(p_pi*p_q0), p_x(make_x()), p_xi(make_xi()), p_ii(make_ii()), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(make_u()), p_y(make_y()), p_o(make_o()){}
@@ -48,9 +49,14 @@ std::vector<int> Pk::decode(int c){
     return m;
 }
 
-//std::vector<int> Pk::decode_squashed(int c){}
+std::vector<int> Pk::decode_squashed(int c){ //TODO
+    std::vector<int> temp;
+    return temp;
+}
 
-//int Pk::recode(int c){}
+int Pk::recode(int c){ //TODO
+    return c;
+}
 
 int Pk::H_add(int c1, int c2){
     int c = mod(c1+c2,p_x0);
@@ -150,11 +156,19 @@ std::vector<std::vector<int>> Pk::make_vert_s(){
     return vert_s;
 }
 
-//std::vector<int> Pk::make_u(){
-    
-//}
+std::vector<int> Pk::make_u(){
+    Pri_U priu = Pri_U(*this);
+    std::vector<int> u = priu.getUList();
+    return u;
+}
 
-//std::vector<int> make_y();
+std::vector<int> Pk::make_y(){
+    std::vector<int> y;
+    for (int i = 0; i < p_u.size(); i++){
+        y.push_back(p_u[i] / pow(2, p_kap));
+    }
+    return y;
+}
 
 std::vector<int> Pk::make_o(){
     Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
@@ -162,5 +176,15 @@ std::vector<int> Pk::make_o(){
     return o;
 }
 
-
-
+std::vector<int> Pk::random_sample(int range, int l){
+    std::vector<int> sample;
+    for(int i = 0; i < range; i++){
+        sample.push_back(i);
+    }
+    std::random_shuffle(sample.begin(), sample.end());
+    std::vector<int> cut_sample;
+    for(int i = 0; i < l; i++){
+        cut_sample.push_back(sample[i]);
+    }
+    return cut_sample;
+}

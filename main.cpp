@@ -12,7 +12,6 @@
 #include "Pk.hpp"
 #include "Encoding.hpp"
 #include "utils.hpp"
-#include "RandomPrimeGenerator.hpp"
 #include <ctime>
 
 Encoding encode(std::vector<int> m, Pk pk);
@@ -22,7 +21,19 @@ int main(int argc, const char * argv[]) {
     
     // make pk
     std::cout << "Making Keys\n";
-    
+    int lam=12;
+    int rho=26;
+    int rhoi=26;
+    int eta=1988;
+    int gam=147456;
+    int Theta=150;
+    int theta=15;
+    int kap=149446;
+    int alpha=936;
+    int alphai=936;
+    int tau=188;
+    int l=10;
+    Pk pk_a = Pk(lam, rho, rhoi, eta, gam, Theta, theta, kap, alpha, alphai, tau, l);
     
     // timing tests
     std::cout << "Tests\n";

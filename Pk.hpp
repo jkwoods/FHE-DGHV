@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <vector>
 #include "utils.hpp"
-
 #include <math.h>
 #include <cmath>
 #include <numeric>
@@ -31,6 +30,7 @@ private:
     std::vector<int> make_u();
     std::vector<int> make_y();
     std::vector<int> make_o();
+    std::vector<int> random_sample(int range, int l);
     
 public:
     int p_lam;

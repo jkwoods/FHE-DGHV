@@ -7,27 +7,23 @@
 //
 
 #include "RandomPrimeGenerator.hpp"
+#include "math.h"
 
-RandomPrimeGenerator::RandomPrimeGenerator(int limit): p_list(makeList()), p_limit(limit), p_index(0){}
+RandomPrimeGenerator::RandomPrimeGenerator(int lower, int upper): p_upper(upper), p_lower(lower){}
 
 int RandomPrimeGenerator::getPrime(){
-    int r = p_list[p_index];
-    p_index++;
-    
-    return r;
+    int r = rand();
+    while (!isPrime(r)){
+        r = rand();
+    }
 }
 
-std::vector<int> RandomPrimeGenerator::makeList(){
-    std::vector<int> fake;
-    for(int i = 0; i < 20; i++){
-        srand(time(0));
-        int r = rand();
-    //    while(){
-            //TODO FUCK
-    //    }
-        
-        
+bool isPrime(int t){
+    for(int i = 2; i < sqrt(t); i++){
+        if (t % i == 0){
+            return false;
+        }
     }
-    
-    return fake;
+    return true;
 }
+

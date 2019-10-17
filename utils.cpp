@@ -7,6 +7,7 @@
 //
 
 #include "utils.hpp"
+#include <math.h>
 
 int modNear(int a, int b){
   int quotientNear = (2*a+b) / (2*b);
@@ -21,8 +22,6 @@ int mod(int a, int b){
     return (a % b);
   }
 }
-
-int random_prime(int l, int u);
 
 int random_element(int l, int u){
     int r = 1;
@@ -111,5 +110,28 @@ std::vector<int> vec_mult(int c, std::vector<int> v){
   }
   return r;
 }
+
+int random_prime(int l, int u){
+    int r = random_element(l, u);
+    while (!isPrime(r)){
+        r = random_element(l, u);
+    }
+    return r;
+}
+
+bool isPrime(int t){
+    for(int i = 2; i < sqrt(t); i++){
+        if (t % i == 0){
+            return false;
+        }
+    }
+    return true;
+}
+
+int random_choice(std::vector<int> sample){
+    int r = random_element(0, sample.size()-1); //TODO need -1??
+    return sample[r];
+}
+
 
 
