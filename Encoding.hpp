@@ -15,7 +15,7 @@
 
 class Encoding{
 public:
-    Encoding(int val, Pk pk);
+    Encoding(mpz_t val, Pk pk);
     
     std::vector<int> decode();
     std::vector<int> decode_squashed();
@@ -23,7 +23,7 @@ public:
     Encoding H_add(Encoding x);
     Encoding H_mult(Encoding x);
 private:
-    int e_val;
+    mpz_t e_val;
     Pk e_pk;
 
 };

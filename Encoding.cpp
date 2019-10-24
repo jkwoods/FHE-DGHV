@@ -9,7 +9,9 @@
 #include "Encoding.hpp"
 
 //constructor
-Encoding::Encoding(int val, Pk pk): e_val(val), e_pk(pk) {}
+Encoding::Encoding(mpz_t val, Pk pk): e_pk(pk) {
+    mpz_init(val);
+}
 
 std::vector<int> Encoding::decode(){
     std::vector<int> m = e_pk.decode(e_val);
@@ -22,16 +24,25 @@ std::vector<int> Encoding::decode_squashed(){
 }
 
 Encoding Encoding::recode(){
-    int r = e_pk.recode(e_val);
+    mpz_t r;
+    mpz_init(r);
+    
+    e_pk.recode(r, e_val);
     return Encoding(r,e_pk);
 }
 
 Encoding Encoding::H_add(Encoding x){
-    int c = e_pk.H_add(e_val, x.e_val);
+    mpz_t c;
+    mpz_init(c);
+    
+    e_pk.H_add(c, e_val, x.e_val);
     return Encoding(c,e_pk);
 }
 
 Encoding Encoding::H_mult(Encoding x){
-    int c = e_pk.H_mult(e_val, x.e_val);
+    mpz_t c;
+    mpz_init(c);
+    
+    e_pk.H_mult(c, e_val, x.e_val);
     return Encoding(c,e_pk);
 }

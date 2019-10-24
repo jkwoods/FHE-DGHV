@@ -8,6 +8,8 @@
 
 #include "utils.hpp"
 #include <math.h>
+#include <stdio.h>
+#include <gmp.h>
 
 int modNear(int a, int b){
   int quotientNear = (2*a+b) / (2*b);

@@ -15,21 +15,23 @@
 #include <math.h>
 #include <cmath>
 #include <numeric>
+#include <gmp.h>
 
 class Pk{
 private:
     //helper
-    std::vector<int> make_p();
-    int make_pi();
-    int make_q0();
-    std::vector<int> make_x();
-    std::vector<int> make_xi();
-    std::vector<int> make_ii();
+    void make_p();
+    void make_pi();
+    void make_q0();
+    void make_x0();
+    std::vector<mpz_t> make_x();
+    std::vector<mpz_t> make_xi();
+    std::vector<mpz_t> make_ii();
     std::vector<std::vector<int>> make_s();
     std::vector<std::vector<int>> make_vert_s();
-    std::vector<int> make_u();
-    std::vector<int> make_y();
-    std::vector<int> make_o();
+    std::vector<mpz_t> make_u();
+    std::vector<mpz_t> make_y();
+    std::vector<mpz_t> make_o();
     std::vector<int> random_sample(int range, int l);
     
 public:
@@ -47,27 +49,31 @@ public:
     int p_tau;
     int p_l;
     int p_logl;
-    std::vector<int> p_p;
-    int p_pi;
-    int p_q0;
-    int p_x0;
-    std::vector<int> p_x;
-    std::vector<int> p_xi;
-    std::vector<int> p_ii;
+    std::vector<mpz_t> p_p;
+    mpz_t p_pi;
+    mpz_t p_q0;
+    mpz_t p_x0;
+    std::vector<mpz_t> p_x;
+    std::vector<mpz_t> p_xi;
+    std::vector<mpz_t> p_ii;
     int p_B;
     std::vector<std::vector<int>> p_s;
     std::vector<std::vector<int>> p_vert_s;
-    std::vector<int> p_u;
-    std::vector<int> p_y;
-    std::vector<int> p_o;
+    std::vector<mpz_t> p_u;
+    std::vector<mpz_t> p_y;
+    std::vector<mpz_t> p_o;
+    
     
     Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n=4);
+    
+    //TODO - DEINITIALIZE ALL THIS CRAP
+    
     int encode(std::vector<int> m);
-    std::vector<int> decode(int c);
-    std::vector<int> decode_squashed(int c);
-    int recode(int c);
-    int H_add(int c1, int c2);
-    int H_mult(int c1, int c2);
+    std::vector<int> decode(mpz_t c);
+    std::vector<int> decode_squashed(mpz_t c);
+    int recode(mpz_t r, mpz_t c);
+    void H_add(mpz_t added, mpz_t c1, mpz_t c2);
+    void H_mult(mpz_t multed, mpz_t c1, mpz_t c2);
     
 
 };
