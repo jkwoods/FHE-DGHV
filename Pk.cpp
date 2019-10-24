@@ -9,52 +9,103 @@
 #include "Pk.hpp"
 #include "Deltas.hpp"
 #include "Pri_U.hpp"
+#include "Encoding.hpp"
 #include <gmp.h>
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_n(n), p_q0(make_q0()), p_x(make_x()), p_xi(make_xi()), p_ii(make_ii()), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(make_u()), p_y(make_y()), p_o(make_o()){
+: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_n(n), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()) {
     
     make_p();
     make_pi();
     make_q0();
     make_x0();
+    make_x();
+    make_xi();
+    make_ii();
+    make_u();
+    make_y();
+    make_o();
     
 }
 
-int Pk::encode(std::vector<int> m){
+void Pk::encode(mpz_t c, std::vector<int> m){
     //m*xi
-    std::vector<mpz_t> m_xi;
+    mpz_t m_xi;
+    mpz_init(m_xi);
     for (int i = 0; i < p_l; i++){
-        mpz_init(m_xi[i]);
-        mpz_mul_si(m_xi[i], p_xi[i], m[i]);
+        mpz_t m_xi_temp;
+        mpz_init(m_xi_temp);
+        mpz_mul_ui(m_xi_temp, p_xi[i], m[i]);
+        
         //m_xi.push_back(m[i]*p_xi[i]);
+        
+        mpz_add(m_xi, m_xi, m_xi_temp);
+        mpz_clear(m_xi_temp);
+        
     }
     
     //bi*ii
-    std::vector<int> bi_ii;
+    mpz_t bi_ii;
+    mpz_init(bi_ii);
     for (int i = 0; i < p_l; i++){
-        int bi = (random_element(pow(-2,p_alphai),pow(2,p_alphai)));
-        bi_ii.push_back(bi*p_ii[i]);
+        mpz_t bi_ii_temp;
+        mpz_init(bi_ii_temp);
+        
+        mpz_t bi;
+        mpz_init(bi);
+        random_element(bi, p_alphai, p_alphai); //needs to raise these to -2 and 2
+        
+        mpz_mul(bi_ii_temp, p_ii[i], bi);
+        
+        mpz_add(bi_ii, bi_ii, bi_ii_temp);
+        
+        mpz_clear(bi);
+        mpz_clear(bi_ii_temp);
+        
+        //int bi = (random_element(pow(-2,p_alphai),pow(2,p_alphai)));
+        //bi_ii.push_back(bi*p_ii[i]);
     }
     
     //b*x
-    std::vector<int> b_x;
+    mpz_t b_x;
+    mpz_init(b_x);
     for (int i = 0; i < p_tau; i++){
-        int b = (random_element(pow(-2,p_alpha),pow(2,p_alpha)));
-        b_x.push_back(b*p_x[i]);
+        mpz_t b_x_temp;
+        mpz_init(b_x_temp);
+        
+        mpz_t b;
+        mpz_init(b);
+        random_element(b, p_alpha, p_alpha); //needs to raise these to -2 and 2
+        
+        mpz_mul(b_x, p_x[i], b);
+        mpz_add(b_x, b_x, b_x_temp);
+        
+        mpz_clear(b);
+        mpz_clear(b_x_temp);
+        
+        //int b = (random_element(pow(-2,p_alpha),pow(2,p_alpha)));
+        //b_x.push_back(b*p_x[i]);
     }
     
-    int e_sum = accumulate(m_xi.begin(), m_xi.end(), 0) + accumulate(bi_ii.begin(), bi_ii.end(), 0) + accumulate(b_x.begin(), b_x.end(), 0);
+    //summation
+    mpz_t bigsum;
+    mpz_init(bigsum);
+    mpz_add(bigsum, m_xi, bi_ii);
+    mpz_add(bigsum, bigsum, b_x);
     
-    int c = modNear(e_sum,p_x0);
-    
-    return c;
+    modNear(c, bigsum, p_x0); //TODO
+
 }
 
-std::vector<int> Pk::decode(mpz_t c){ //TODO - mpz
+std::vector<int> Pk::decode(mpz_t c){
     std::vector<int> m;
+    
     for (int i = 0; i < p_l; i++){
-        m.push_back(mod(modNear(c,p_p[i]),2));
+        modNear(c,p_p[i]);
+        int b = mod(c,2);
+        m.push_back(b);
+        
+        //m.push_back(mod(modNear(c,p_p[i]),2));
     }
     return m;
 }
@@ -64,8 +115,7 @@ std::vector<int> Pk::decode_squashed(mpz_t c){ //TODO gen
     return temp;
 }
 
-int Pk::recode(mpz_t r, mpz_t c){ //TODO gen
-    return c;
+void Pk::recode(mpz_t r, mpz_t c){ //TODO gen
 }
 
 void Pk::H_add(mpz_t added, mpz_t c1, mpz_t c2){ //TODO - mpz
@@ -90,8 +140,6 @@ void Pk::H_mult(mpz_t multed, mpz_t c1, mpz_t c2){ //TODO - mpz
     
     //int c = mod(c1*c2,p_x0);
 }
-
-
 
 //private helper
 void Pk::make_p(){
@@ -167,7 +215,7 @@ void Pk::make_x0(){
     mpz_mul(p_x0, p_pi, p_q0);
 }
 
-std::vector<mpz_t> Pk::make_x(){
+std::vector<mpz_t> Pk::make_x(){ //TODO DELTAS - TODO initialize list
     Deltas x_D = Deltas(*this, p_tau, p_rhoi-1, 0);
     std::vector<mpz_t> x = x_D.getDeltaList();
     return x;

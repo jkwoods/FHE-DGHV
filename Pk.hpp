@@ -16,6 +16,7 @@
 #include <cmath>
 #include <numeric>
 #include <gmp.h>
+#include "Encoding.hpp"
 
 class Pk{
 private:
@@ -68,10 +69,10 @@ public:
     
     //TODO - DEINITIALIZE ALL THIS CRAP
     
-    int encode(std::vector<int> m);
+    void encode(mpz_t c, std::vector<int> m);
     std::vector<int> decode(mpz_t c);
     std::vector<int> decode_squashed(mpz_t c);
-    int recode(mpz_t r, mpz_t c);
+    void recode(mpz_t r, mpz_t c);
     void H_add(mpz_t added, mpz_t c1, mpz_t c2);
     void H_mult(mpz_t multed, mpz_t c1, mpz_t c2);
     

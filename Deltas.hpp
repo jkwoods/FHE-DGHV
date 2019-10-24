@@ -17,13 +17,13 @@ class Deltas{
 public:
     Deltas(Pk pk, int lenv, int rho, int cr);
     
-    std::vector<int> getDeltaList();
+    std::vector<mpz_t> getDeltaList();
     PseudoRandomInts r_pri;
     
 private:
     
-    std::vector<int> r_deltas;
-    std::vector<int> r_Chi;
+    std::vector<mpz_t> r_deltas;
+    std::vector<mpz_t> r_Chi;
     Pk r_pk;
     int r_lenv;
     int r_rho;

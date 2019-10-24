@@ -8,6 +8,8 @@
 
 #include "Encoding.hpp"
 
+//TODO - deconstructor - make sure you clear the e_val
+
 //constructor
 Encoding::Encoding(mpz_t val, Pk pk): e_pk(pk) {
     mpz_init(val);
