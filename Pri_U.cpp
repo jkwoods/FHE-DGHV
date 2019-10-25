@@ -17,6 +17,10 @@ Pri_U::Pri_U(Pk pk)
         makeU();
     }
 
+Pri_U::~Pri_U(){
+    for(int i = 0; i < u_u.size(); i++) { mpz_clear(u_u[i]); }
+}
+
 PseudoRandomInts Pri_U::makePri(){
     mpz_t f_term;
     mpz_init(f_term);

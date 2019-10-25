@@ -17,6 +17,7 @@
 class Pri_U{
 public:
     Pri_U(Pk pk);
+    ~Pri_U();
     
     PseudoRandomInts u_pri;
     std::vector<mpz_t> u_u;

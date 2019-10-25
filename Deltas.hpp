@@ -16,7 +16,8 @@
 class Deltas{
 public:
     Deltas(Pk pk, int lenv, int rho, int cr);
-
+    ~Deltas();
+    
     PseudoRandomInts r_pri;
     std::vector<mpz_t> r_x;
     

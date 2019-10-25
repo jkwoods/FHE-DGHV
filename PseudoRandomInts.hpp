@@ -16,6 +16,8 @@
 class PseudoRandomInts{
 public:
     PseudoRandomInts(mpz_t x0, int len);
+    ~PseudoRandomInts();
+    
     int r_len;
     std::vector<mpz_t> r_list;
     

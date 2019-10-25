@@ -15,7 +15,8 @@
 
 class Encoding{
 public:
-    Encoding(mpz_t val, Pk pk);
+    Encoding(Pk pk, std::vector<int> m);
+    ~Encoding();
     
     std::vector<int> decode();
     std::vector<int> decode_squashed();

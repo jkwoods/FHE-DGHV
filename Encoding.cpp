@@ -11,8 +11,14 @@
 //TODO - deconstructor - make sure you clear the e_val
 
 //constructor
-Encoding::Encoding(mpz_t val, Pk pk): e_pk(pk) {
-    mpz_init(val);
+Encoding::Encoding(Pk pk, std::vector<int> m): e_pk(pk) {
+    mpz_init(e_val);
+    e_pk.encode(e_val, m);
+}
+
+//destructor
+Encoding::~Encoding(){
+    mpz_clear(e_val);
 }
 
 std::vector<int> Encoding::decode(){

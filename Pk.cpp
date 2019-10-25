@@ -29,6 +29,10 @@ Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int k
     
 }
 
+Pk::~Pk(){
+    // TODO
+}
+
 void Pk::encode(mpz_t c, std::vector<int> m){
     //m*xi
     mpz_t m_xi;

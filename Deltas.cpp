@@ -18,6 +18,13 @@ Deltas::Deltas(Pk pk, int lenv, int rho, int cr)
         makeDeltaList();
     }
 
+Deltas::~Deltas(){ //TODO -vectors??
+    for(int i = 0; i < r_x.size(); i++) { mpz_clear(r_x[i]); }
+    for(int i = 0; i < r_deltas.size(); i++) { mpz_clear(r_deltas[i]); }
+    for(int i = 0; i < r_Chi.size(); i++) { mpz_clear(r_Chi[i]); }
+
+}
+
 void Deltas::makeDeltaList(){
     
     for(int i = 0; i < r_pri.r_len; i++){

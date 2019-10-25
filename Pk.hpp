@@ -66,6 +66,7 @@ public:
     
     
     Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n=4);
+    ~Pk();
     
     //TODO - DEINITIALIZE ALL THIS CRAP
     

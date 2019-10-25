@@ -16,6 +16,11 @@ PseudoRandomInts::PseudoRandomInts(mpz_t x0, int len): r_len(len), r_seed(set_ra
     
 }
 
+PseudoRandomInts::~PseudoRandomInts(){ //TODO - delete vectors??
+    mpz_clear(r_x0);
+    for(int i = 0; i < r_list.size(); i++) { mpz_clear(r_list[i]); }
+}
+
 int PseudoRandomInts::getSeed(){
     return r_seed;
 }
