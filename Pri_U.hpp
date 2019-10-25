@@ -3,7 +3,7 @@
 //  FHE
 //
 //  Created by Woods, Jess on 10/17/19.
-//  Copyright © 2019 Woods, Jess. All rights reserved.
+//  work done at Oak Ridge National Lab
 //
 
 #ifndef Pri_U_hpp

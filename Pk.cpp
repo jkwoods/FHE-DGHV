@@ -3,7 +3,7 @@
 //  FHE
 //
 //  Created by Woods, Jess on 10/15/19.
-//  Copyright © 2019 Woods, Jess. All rights reserved.
+//  work done at Oak Ridge National Lab
 //
 
 // Important note to those trying to read code: gmp library (all the mpz_... stuff) is call by reference

@@ -3,7 +3,7 @@
 //  FHE
 //
 //  Created by Woods, Jess on 10/16/19.
-//  Copyright © 2019 Woods, Jess. All rights reserved.
+//  work done at Oak Ridge National Lab
 //
 
 #include "PseudoRandomInts.hpp"
