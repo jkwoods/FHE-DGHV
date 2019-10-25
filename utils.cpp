@@ -37,14 +37,24 @@ void modNear(mpz_t result, mpz_t a, mpz_t b){ //convert to long/int?
 //    mpz_mod(result, a, b);
 //}
 
-int random_element(int l, int u){
-    int r = 1;
-    if (l >= 0){
-        r = (rand() % u) + l;
-    } else {
-        r = (rand() % ((-1*l)+u)) - l;
-    }
-    return r;
+//int random_element(int l, int u){ //not power of two, lower bound assumed zero
+//   int r = 1;
+//    if (l >= 0){
+//        r = (rand() % u) + l;
+//    } else {
+//        r = (rand() % ((-1*l)+u)) - l;
+//   }
+//    return r;
+//}
+
+void random_element_pow2(mpz_t elt, int l, int u, gmp_randstate_t state){
+    mpz_urandomb(elt, state, l+u);
+    
+    mpz_t two_l;
+    mpz_init(two_l);
+    mpz_ui_pow_ui(two_l, 2, l);
+    
+    mpz_sub(elt, elt, two_l);
 }
 
 int set_random_seed(int seed){ //if seed = 0, randomize and return it, else use seed
@@ -72,8 +82,8 @@ std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
     return c;
 }
 
-std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
-std::vector<int> toBinary(int x, int l);
+//std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
+//std::vector<int> toBinary(int x, int l);
 
 void mul_inv(mpz_t result, mpz_t a, mpz_t b){ //TODO - finish
     mpz_t b0;
@@ -165,35 +175,46 @@ int kd(int i, int j){
   }
 }
 
-std::vector<int> vec_mult(int c, std::vector<int> v){
-  std::vector<int> r;
-  for (int i = 0; i < v.size(); i++) {
-    r.push_back(c*v.at(i));
-  }
-  return r;
-}
+//std::vector<int> vec_mult(int c, std::vector<int> v){
+//  std::vector<int> r;
+//  for (int i = 0; i < v.size(); i++) {
+//    r.push_back(c*v.at(i));
+//  }
+//  return r;
+//}
 
-int random_prime(int l, int u){
-    int r = random_element(l, u);
-    while (!isPrime(r)){
-        r = random_element(l, u);
-    }
-    return r;
-}
+//int random_prime(int l, int u){
+//    int r = random_element(l, u);
+//    while (!isPrime(r)){
+//        r = random_element(l, u);
+//    }
+//    return r;
+//}
 
-bool isPrime(int t){
-    for(int i = 2; i < sqrt(t); i++){
-        if (t % i == 0){
-            return false;
-        }
-    }
-    return true;
-}
+//bool isPrime(int t){
+//    for(int i = 2; i < sqrt(t); i++){
+//       if (t % i == 0){
+//            return false;
+//        }
+//    }
+//    return true;
+//}
 
 int random_choice(std::vector<int> sample){
     int r = random_element(0, sample.size()-1); //TODO need -1??
     return sample[r];
 }
 
-
+std::vector<int> random_sample(int range, int l){
+    std::vector<int> sample;
+    for(int i = 0; i < range; i++){
+        sample.push_back(i);
+    }
+    std::random_shuffle(sample.begin(), sample.end());
+    std::vector<int> cut_sample;
+    for(int i = 0; i < l; i++){
+        cut_sample.push_back(sample[i]);
+    }
+    return cut_sample;
+}
 

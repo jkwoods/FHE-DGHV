@@ -26,6 +26,7 @@ public:
 private:
     mpz_t r_x0;
     int r_seed;
+    gmp_randstate_t r_state;
     
     void makeList();
     void make_r_x0(mpz_t x0);

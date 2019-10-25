@@ -14,6 +14,7 @@ PseudoRandomInts::PseudoRandomInts(mpz_t x0, int len): r_len(len), r_seed(set_ra
     make_r_x0(x0);
     makeList();
     
+    //TODO MAKE r_state
 }
 
 PseudoRandomInts::~PseudoRandomInts(){ //TODO - delete vectors??
@@ -31,7 +32,7 @@ void PseudoRandomInts::makeList(){
     for(int i = 0; i < r_len; i++){
         mpz_init(r_list[i]);
         
-        random_element(r_list[i], 0, r_x0); //not power of 2
+        mpz_urandomm(r_list[i], r_state, r_x0); //random_element(r_list[i], 0, r_x0);
     }
 }
 

@@ -30,6 +30,7 @@ private:
     int r_lenv;
     int r_rho;
     int r_cr;
+    gmp_randstate_t r_state; //for random crap - not psuedorandom PRI
     
     void makeDeltas();
     PseudoRandomInts makePri();

@@ -57,12 +57,13 @@ void Deltas::makeDeltas(){
         for(int j = 0; j < r_pk.p_l; j++){
             mpz_init(r[i][j]);
             
-            random_element(r[i][j], r_rho+1, r_rho); //-2 and 2
+            random_element_pow2(r[i][j], r_rho+1, r_rho, d_state); //-2 and 2
             //int rand = random_element(pow(-2,r_rho+1), pow(2,r_rho));
         }
         mpz_init(E[i]);
 
-        random_element(E[i], 0, e_help); //needs to be to 2^e_help
+        mpz_urandomb(E[i], state, e_help); //2^e_help
+        
         //E.push_back(Ei / r_pk.p_pi);
         mpz_fdiv_q(E[i], E[i], r_pk.p_pi);
     }

@@ -16,6 +16,7 @@
 void modNear(mpz_t result, mpz_t a, mpz_t b);
 //int mod(int a,int b);
 int random_element(int l, int u);
+void random_element_pow2(mpz_t elt, int l, int u);
 int set_random_seed(int seed);
 std::vector<int> random_sample(int cap, int len);
 std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b);
@@ -28,6 +29,7 @@ std::vector<int> vec_mult(int c, std::vector<int> v);
 int random_prime(int l, int u);
 bool isPrime(int t);
 int random_choice(std::vector<int> sample);
+std::vector<int> random_sample(int range, int l);
 
 
 #endif /* utils_hpp */

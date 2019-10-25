@@ -33,7 +33,6 @@ private:
     void make_u();
     void make_y();
     void make_o();
-    std::vector<int> random_sample(int range, int l);
     
 public:
     int p_lam;

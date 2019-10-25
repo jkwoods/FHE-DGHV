@@ -16,6 +16,10 @@ Encoding::Encoding(Pk pk, std::vector<int> m): e_pk(pk) {
     e_pk.encode(e_val, m);
 }
 
+Encoding::Encoding(mpz_t c, Pk pk): e_pk(pk) {
+    mpz_init_set(e_val, c);
+}
+
 //destructor
 Encoding::~Encoding(){
     mpz_clear(e_val);

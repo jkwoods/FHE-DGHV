@@ -58,7 +58,8 @@ void Pk::encode(mpz_t c, std::vector<int> m){
         
         mpz_t bi;
         mpz_init(bi);
-        random_element(bi, p_alphai, p_alphai); //needs to raise these to -2 and 2
+        
+        random_element_pow2(bi, p_alphai, p_alphai, p_state); //needs to raise these to -2 and 2 //TODO - call state before all rand numbers
         
         mpz_mul(bi_ii_temp, p_ii[i], bi);
         
@@ -80,7 +81,7 @@ void Pk::encode(mpz_t c, std::vector<int> m){
         
         mpz_t b;
         mpz_init(b);
-        random_element(b, p_alpha, p_alpha); //needs to raise these to -2 and 2
+        random_element_pow2(b, p_alpha, p_alpha, p_state); //needs to raise these to -2 and 2
         
         mpz_mul(b_x, p_x[i], b);
         mpz_add(b_x, b_x, b_x_temp);
@@ -162,7 +163,19 @@ void Pk::make_p(){
     //std::vector<int> p;
     for (int i = 0; i < p_l; i++){
         mpz_init(p_p[i]);
-        mpz_ui_pow_ui(p_p[i], 2, p_eta-1);
+        
+        mpz_t two_eta;
+        mpz_init(two_eta);
+        mpz_ui_pow_ui(two_eta, 2, p_eta-1);
+        
+        mpz_urandomb(p_p[i], rstate, p_eta-1); // prime in 0, nn - 1
+        mpz_add(p_p[i], p_p[i], two_eta); //is this right? TODO
+        while (mpz_probab_prime_p(p_p[i], 50) == 0){ //isnt prime
+            mpz_urandomb(p_p[i], rstate, p_eta-1);
+            mpz_add(p_p[i], p_p[i], two_eta);
+        }
+        
+        mpz_clear(two_eta);
         //p.push_back(random_prime(pow(2,p_eta-1), pow(2,p_eta)));
     }
 }
@@ -333,15 +346,4 @@ void Pk::make_o(){
     //return o;
 }
 
-std::vector<int> Pk::random_sample(int range, int l){
-    std::vector<int> sample;
-    for(int i = 0; i < range; i++){
-        sample.push_back(i);
-    }
-    std::random_shuffle(sample.begin(), sample.end());
-    std::vector<int> cut_sample;
-    for(int i = 0; i < l; i++){
-        cut_sample.push_back(sample[i]);
-    }
-    return cut_sample;
-}
+
