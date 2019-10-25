@@ -25,14 +25,14 @@ private:
     void make_pi();
     void make_q0();
     void make_x0();
-    std::vector<mpz_t> make_x();
-    std::vector<mpz_t> make_xi();
-    std::vector<mpz_t> make_ii();
+    void make_x();
+    void make_xi();
+    void make_ii();
     std::vector<std::vector<int>> make_s();
     std::vector<std::vector<int>> make_vert_s();
-    std::vector<mpz_t> make_u();
-    std::vector<mpz_t> make_y();
-    std::vector<mpz_t> make_o();
+    void make_u();
+    void make_y();
+    void make_o();
     std::vector<int> random_sample(int range, int l);
     
 public:

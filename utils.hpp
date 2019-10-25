@@ -11,17 +11,18 @@
 
 #include <stdio.h>
 #include <vector>
+#include <gmp.h>
 
-int modNear(int a, int b);
-int mod(int a,int b);
+void modNear(mpz_t result, mpz_t a, mpz_t b);
+//int mod(int a,int b);
 int random_element(int l, int u);
 int set_random_seed(int seed);
 std::vector<int> random_sample(int cap, int len);
 std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b);
 std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
 std::vector<int> toBinary(int x, int l);
-int mul_inv(int a, int b);
-int CRT(std::vector<int> n, std::vector<int> a);
+int mul_inv(mpz_t result, mpz_t a, mpz_t b);
+int CRT(mpz_t result, std::vector<mpz_t> n, std::vector<mpz_t> a);
 int kd(int i, int j);
 std::vector<int> vec_mult(int c, std::vector<int> v);
 int random_prime(int l, int u);

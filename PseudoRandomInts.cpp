@@ -9,23 +9,28 @@
 #include "PseudoRandomInts.hpp"
 #include "utils.hpp"
 
-PseudoRandomInts::PseudoRandomInts(int x0, int len): r_x0(x0), r_len(len), r_seed(set_random_seed(0)), r_list(makeList()){}
+PseudoRandomInts::PseudoRandomInts(mpz_t x0, int len): r_len(len), r_seed(set_random_seed(0)){
+    
+    make_r_x0(x0);
+    makeList();
+    
+}
 
 int PseudoRandomInts::getSeed(){
     return r_seed;
 }
 
-std::vector<int> PseudoRandomInts::getList(){
-    return r_list;
+void PseudoRandomInts::makeList(){
+    
+    set_random_seed(r_seed);
+    for(int i = 0; i < r_len; i++){
+        mpz_init(r_list[i]);
+        
+        random_element(r_list[i], 0, r_x0); //not power of 2
+    }
 }
 
-std::vector<int> PseudoRandomInts::makeList(){
-    set_random_seed(r_seed);
-    std::vector<int> prl;
-    for(int i = 0; i < r_len; i++){
-        int a = random_element(0, r_x0);
-        prl.push_back(a);
-    }
-    return prl;
+void PseudoRandomInts::make_r_x0(mpz_t x0){
+    mpz_init_set(r_x0, x0);
 }
 

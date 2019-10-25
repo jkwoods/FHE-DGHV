@@ -6,11 +6,12 @@
 //  Copyright © 2019 Woods, Jess. All rights reserved.
 //
 
+// Important note to those trying to read code: gmp library (all the mpz_... stuff) is call by reference
+
 #include "Pk.hpp"
 #include "Deltas.hpp"
 #include "Pri_U.hpp"
 #include "Encoding.hpp"
-#include <gmp.h>
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
 : p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_n(n), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()) {
@@ -100,13 +101,24 @@ void Pk::encode(mpz_t c, std::vector<int> m){
 std::vector<int> Pk::decode(mpz_t c){
     std::vector<int> m;
     
+    mpz_t b;
+    mpz_init(b);
+    
+    mpz_t one;
+    mpz_init_set_ui(one, 1);
     for (int i = 0; i < p_l; i++){
-        modNear(c,p_p[i]);
-        int b = mod(c,2);
-        m.push_back(b);
+        modNear(b,c,p_p[i]);
+        mpz_and(b, b, one);
+        
+        int last_bit = int (mpz_get_d(b));
+        m.push_back(last_bit);
         
         //m.push_back(mod(modNear(c,p_p[i]),2));
     }
+    
+    mpz_clear(b);
+    mpz_clear(one);
+    
     return m;
 }
 
@@ -215,22 +227,31 @@ void Pk::make_x0(){
     mpz_mul(p_x0, p_pi, p_q0);
 }
 
-std::vector<mpz_t> Pk::make_x(){ //TODO DELTAS - TODO initialize list
+void Pk::make_x(){ //TODO DELTAS - TODO initialize list
     Deltas x_D = Deltas(*this, p_tau, p_rhoi-1, 0);
-    std::vector<mpz_t> x = x_D.getDeltaList();
-    return x;
+    for (int i = 0; i < p_x.size(); i++){
+        mpz_init_set(p_x[i], x_D.r_x[i]);
+    }
+    //std::vector<mpz_t> x = x_D.getDeltaList();
+    //return x;
 }
 
-std::vector<mpz_t> Pk::make_xi(){
+void Pk::make_xi(){
     Deltas xi_D = Deltas(*this, p_l, p_rho, 1);
-    std::vector<mpz_t> xi = xi_D.getDeltaList();
-    return xi;
+    for (int i = 0; i < p_xi.size(); i++){
+        mpz_init_set(p_xi[i], xi_D.r_x[i]);
+    }
+    //std::vector<mpz_t> xi = xi_D.getDeltaList();
+    //return xi;
 }
 
-std::vector<mpz_t> Pk::make_ii(){
+void Pk::make_ii(){
     Deltas ii_D = Deltas(*this, p_l, p_rho, 2);
-    std::vector<mpz_t> ii = ii_D.getDeltaList();
-    return ii;
+    for (int i = 0; i < p_ii.size(); i++){
+        mpz_init_set(p_ii[i], ii_D.r_x[i]);
+    }
+    //std::vector<mpz_t> ii = ii_D.getDeltaList();
+    //return ii;
 }
 
 std::vector<std::vector<int>> Pk::make_s(){
@@ -274,24 +295,38 @@ std::vector<std::vector<int>> Pk::make_vert_s(){
     return vert_s;
 }
 
-std::vector<mpz_t> Pk::make_u(){
+void Pk::make_u(){
     Pri_U priu = Pri_U(*this);
-    std::vector<mpz_t> u = priu.getUList();
-    return u;
-}
-
-std::vector<mpz_t> Pk::make_y(){
-    std::vector<mpz_t> y;
-    for (int i = 0; i < p_u.size(); i++){
-        y.push_back(p_u[i] / pow(2, p_kap));
+    for (int i = 0; i < priu.u_u.size(); i++){
+         mpz_init_set(p_u[i], priu.u_u[i]);
     }
-    return y;
+    //std::vector<mpz_t> u = priu.getUList();
+    //return u;
 }
 
-std::vector<mpz_t> Pk::make_o(){
+void Pk::make_y(){
+    //std::vector<mpz_t> y;
+    mpz_t two_kap;
+    mpz_init(two_kap);
+    mpz_ui_pow_ui(two_kap, 2, p_kap);
+    
+    for (int i = 0; i < p_u.size(); i++){
+        mpz_init(p_y[i]);
+        mpz_fdiv_q(p_y[i], p_u[i], two_kap);
+        //y.push_back(p_u[i] / pow(2, p_kap));
+    }
+    
+    mpz_clear(two_kap);
+    //return y;
+}
+
+void Pk::make_o(){
     Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
-    std::vector<mpz_t> o = o_D.getDeltaList();
-    return o;
+    for (int i = 0; i < p_o.size(); i++){
+        mpz_init_set(p_o[i], o_D.r_x[i]);
+    }
+    //std::vector<mpz_t> o = o_D.getDeltaList();
+    //return o;
 }
 
 std::vector<int> Pk::random_sample(int range, int l){

@@ -16,21 +16,23 @@
 class Deltas{
 public:
     Deltas(Pk pk, int lenv, int rho, int cr);
-    
-    std::vector<mpz_t> getDeltaList();
+
     PseudoRandomInts r_pri;
+    std::vector<mpz_t> r_x;
     
 private:
     
     std::vector<mpz_t> r_deltas;
     std::vector<mpz_t> r_Chi;
+    
     Pk r_pk;
     int r_lenv;
     int r_rho;
     int r_cr;
     
-    std::vector<int> makeDeltas();
+    void makeDeltas();
     PseudoRandomInts makePri();
+    void makeDeltaList();
 };
 
 #endif /* Deltas_hpp */

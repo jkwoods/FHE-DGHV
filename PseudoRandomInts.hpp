@@ -17,16 +17,16 @@ class PseudoRandomInts{
 public:
     PseudoRandomInts(mpz_t x0, int len);
     int r_len;
+    std::vector<mpz_t> r_list;
     
     int getSeed();
-    std::vector<mpz_t> getList();
 
 private:
     mpz_t r_x0;
     int r_seed;
-    std::vector<mpz_t> r_list;
     
-    std::vector<mpz_t> makeList();
+    void makeList();
+    void make_r_x0(mpz_t x0);
     
 };
 

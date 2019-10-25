@@ -18,14 +18,14 @@ class Pri_U{
 public:
     Pri_U(Pk pk);
     
-    std::vector<int> getUList();
     PseudoRandomInts u_pri;
+    std::vector<mpz_t> u_u;
     
 private:
-    std::vector<int> u_u;
+    
     Pk u_pk;
     
-    std::vector<int> makeU();
+    void makeU();
     PseudoRandomInts makePri();
 };
 
