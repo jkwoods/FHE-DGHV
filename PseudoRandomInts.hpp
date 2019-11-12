@@ -19,13 +19,14 @@ public:
     ~PseudoRandomInts();
     
     int r_len;
+    int r_zero_temp;
     std::vector<mpz_t> r_list;
     
-    int getSeed();
+    long getSeed();
 
 private:
     mpz_t r_x0;
-    int r_seed;
+    long r_seed;
     gmp_randstate_t r_state;
     
     void makeList();

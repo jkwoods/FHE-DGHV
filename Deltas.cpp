@@ -16,6 +16,7 @@ Deltas::Deltas(Pk pk, int lenv, int rho, int cr)
         
         makeDeltas();
         makeDeltaList();
+        makeState();
     }
 
 Deltas::~Deltas(){ //TODO -vectors??
@@ -150,4 +151,9 @@ void Deltas::makeDeltas(){
         mpz_clear(E[i]);
     }
     mpz_clear(e_help);
+}
+
+void Deltas::makeState(){
+    gmp_randinit_mt(d_state);
+    gmp_randseed_ui(d_state, time(0)); //time as seed TODO - check this shit
 }

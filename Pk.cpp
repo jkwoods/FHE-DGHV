@@ -26,80 +26,46 @@ Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int k
     make_u();
     make_y();
     make_o();
-    
+    make_state();
 }
 
 Pk::~Pk(){
     // TODO
 }
 
-void Pk::encode(mpz_t c, std::vector<int> m){
+mpz_class Pk::encode(std::vector<int> m){
     //m*xi
-    mpz_t m_xi;
-    mpz_init(m_xi);
+    std::vector<mpz_class> m_xi;
     for (int i = 0; i < p_l; i++){
-        mpz_t m_xi_temp;
-        mpz_init(m_xi_temp);
-        mpz_mul_ui(m_xi_temp, p_xi[i], m[i]);
-        
-        //m_xi.push_back(m[i]*p_xi[i]);
-        
-        mpz_add(m_xi, m_xi, m_xi_temp);
-        mpz_clear(m_xi_temp);
-        
+        m_xi.push_back(m[i]*p_xi[i]);
     }
     
     //bi*ii
-    mpz_t bi_ii;
-    mpz_init(bi_ii);
+   
+    std::vector<mpz_class> bi_ii;
     for (int i = 0; i < p_l; i++){
-        mpz_t bi_ii_temp;
-        mpz_init(bi_ii_temp);
-        
-        mpz_t bi;
-        mpz_init(bi);
         
         random_element_pow2(bi, p_alphai, p_alphai, p_state); //needs to raise these to -2 and 2 //TODO - call state before all rand numbers
         
-        mpz_mul(bi_ii_temp, p_ii[i], bi);
-        
-        mpz_add(bi_ii, bi_ii, bi_ii_temp);
-        
-        mpz_clear(bi);
-        mpz_clear(bi_ii_temp);
-        
-        //int bi = (random_element(pow(-2,p_alphai),pow(2,p_alphai)));
-        //bi_ii.push_back(bi*p_ii[i]);
+        mpz_class bi = (random_element(pow(-2,p_alphai),pow(2,p_alphai)));
+        bi_ii.push_back(bi*p_ii[i]);
     }
     
     //b*x
-    mpz_t b_x;
-    mpz_init(b_x);
+    std::vector<mpz_class> b_x;
     for (int i = 0; i < p_tau; i++){
-        mpz_t b_x_temp;
-        mpz_init(b_x_temp);
-        
-        mpz_t b;
-        mpz_init(b);
         random_element_pow2(b, p_alpha, p_alpha, p_state); //needs to raise these to -2 and 2
         
-        mpz_mul(b_x, p_x[i], b);
-        mpz_add(b_x, b_x, b_x_temp);
-        
-        mpz_clear(b);
-        mpz_clear(b_x_temp);
-        
-        //int b = (random_element(pow(-2,p_alpha),pow(2,p_alpha)));
-        //b_x.push_back(b*p_x[i]);
+        mpz_class b = (random_element(pow(-2,p_alpha),pow(2,p_alpha)));
+        b_x.push_back(b*p_x[i]);
     }
     
     //summation
-    mpz_t bigsum;
-    mpz_init(bigsum);
-    mpz_add(bigsum, m_xi, bi_ii);
-    mpz_add(bigsum, bigsum, b_x);
+    mpz_class bigsum = accumulate(m_xi.begin(), m_xi.end(), 0) + accumulate(bi_ii.begin(), bi_ii.end(), 0) + accumulate(b_x.begin(), b_x.end(), 0);
     
-    modNear(c, bigsum, p_x0); //TODO
+    mpz_class c = modNear(bigsum, p_x0);
+    
+    return c;
 
 }
 
@@ -168,10 +134,10 @@ void Pk::make_p(){
         mpz_init(two_eta);
         mpz_ui_pow_ui(two_eta, 2, p_eta-1);
         
-        mpz_urandomb(p_p[i], rstate, p_eta-1); // prime in 0, nn - 1
+        mpz_urandomb(p_p[i], p_state, p_eta-1); // prime in 0, nn - 1
         mpz_add(p_p[i], p_p[i], two_eta); //is this right? TODO
         while (mpz_probab_prime_p(p_p[i], 50) == 0){ //isnt prime
-            mpz_urandomb(p_p[i], rstate, p_eta-1);
+            mpz_urandomb(p_p[i], p_state, p_eta-1);
             mpz_add(p_p[i], p_p[i], two_eta);
         }
         
@@ -206,10 +172,6 @@ void Pk::make_q0(){
     mpz_t q0_prime2;
     mpz_init(q0_prime2);
     
-    gmp_randstate_t rstate;
-    gmp_randinit_mt(rstate);
-    gmp_randseed_ui(rstate, time(0)); //time as seed TODO - check this shit
-    
     long lam2 = pow(p_lam,2);
     
     mpz_t nn;
@@ -219,14 +181,14 @@ void Pk::make_q0(){
     while (mpz_cmp(p_q0, comp)){     //while (q0 > (pow(2,p_gam)/p_pi)){
         
         //int q0_prime1 = random_prime(0, pow(2,pow(p_lam,2)));
-        mpz_urandomm(q0_prime1, rstate, nn); // prime in 0, nn - 1
+        mpz_urandomm(q0_prime1, p_state, nn); // prime in 0, nn - 1
         while (mpz_probab_prime_p(q0_prime1, 50) == 0){ //isnt prime
-            mpz_urandomm(q0_prime1, rstate, nn);
+            mpz_urandomm(q0_prime1, p_state, nn);
         }
         //int q0_prime2 = random_prime(0, pow(2,pow(p_lam,2)));
-        mpz_urandomm(q0_prime2, rstate, nn);
+        mpz_urandomm(q0_prime2, p_state, nn);
         while (mpz_probab_prime_p(q0_prime2, 50) == 0){ //isnt prime
-            mpz_urandomm(q0_prime2, rstate, nn);
+            mpz_urandomm(q0_prime2, p_state, nn);
         }
         
         mpz_mul(p_q0, q0_prime1, q0_prime2);
@@ -346,4 +308,8 @@ void Pk::make_o(){
     //return o;
 }
 
+void Pk::make_State(){
+    gmp_randinit_mt(p_state);
+    gmp_randseed_ui(p_state, time(0)); //time as seed TODO - check this shit
+}
 

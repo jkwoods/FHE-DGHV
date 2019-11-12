@@ -15,12 +15,14 @@
 #include <math.h>
 #include <cmath>
 #include <numeric>
-#include <gmp.h>
+#include <gmpxx.h>
 #include "Encoding.hpp"
 
 class Pk{
 private:
     //helper
+    gmp_randstate_t p_state;
+
     void make_p();
     void make_pi();
     void make_q0();
@@ -33,6 +35,7 @@ private:
     void make_u();
     void make_y();
     void make_o();
+    void make_state();
     
 public:
     int p_lam;
@@ -50,18 +53,18 @@ public:
     int p_l;
     int p_logl;
     std::vector<mpz_t> p_p;
-    mpz_t p_pi;
-    mpz_t p_q0;
-    mpz_t p_x0;
-    std::vector<mpz_t> p_x;
-    std::vector<mpz_t> p_xi;
-    std::vector<mpz_t> p_ii;
+    mpz_class p_pi;
+    mpz_class p_q0;
+    mpz_class p_x0;
+    std::vector<mpz_class> p_x;
+    std::vector<mpz_class> p_xi;
+    std::vector<mpz_class> p_ii;
     int p_B;
     std::vector<std::vector<int>> p_s;
     std::vector<std::vector<int>> p_vert_s;
-    std::vector<mpz_t> p_u;
-    std::vector<mpz_t> p_y;
-    std::vector<mpz_t> p_o;
+    std::vector<mpz_class> p_u;
+    std::vector<mpz_class> p_y;
+    std::vector<mpz_class> p_o;
     
     
     Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n=4);
@@ -69,12 +72,12 @@ public:
     
     //TODO - DEINITIALIZE ALL THIS CRAP
     
-    void encode(mpz_t c, std::vector<int> m);
-    std::vector<int> decode(mpz_t c);
-    std::vector<int> decode_squashed(mpz_t c);
-    void recode(mpz_t r, mpz_t c);
-    void H_add(mpz_t added, mpz_t c1, mpz_t c2);
-    void H_mult(mpz_t multed, mpz_t c1, mpz_t c2);
+    mpz_class encode(std::vector<int> m);
+    std::vector<int> decode(mpz_class c);
+    std::vector<int> decode_squashed(mpz_class c);
+    mpz_class recode(mpz_class c);
+    mpz_class H_add(mpz_class c1, mpz_class c2);
+    mpz_class H_mult(mpz_class c1, mpz_class c2);
     
 
 };

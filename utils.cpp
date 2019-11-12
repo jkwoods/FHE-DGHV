@@ -57,6 +57,7 @@ void random_element_pow2(mpz_t elt, int l, int u, gmp_randstate_t state){
     mpz_sub(elt, elt, two_l);
 }
 
+/*
 int set_random_seed(int seed){ //if seed = 0, randomize and return it, else use seed
     int s = seed;
     if (seed == 0){
@@ -67,7 +68,7 @@ int set_random_seed(int seed){ //if seed = 0, randomize and return it, else use 
         srand(s);
     }
     return s;
-}
+} */
 
 std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
     std::vector<int> c;
