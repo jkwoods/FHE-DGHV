@@ -7,7 +7,7 @@
 //
 
 
-// TODO - change rand (now only pri), change accumulate
+// TODO
 // put the y/u/z etc stuff in the correct places
 // make longs??
 
@@ -82,7 +82,7 @@ mpz_class Pk::encode(std::vector<int> m){
     }
     
     //summation
-    mpz_class bigsum = accumulate(m_xi.begin(), m_xi.end(), 0) + accumulate(bi_ii.begin(), bi_ii.end(), 0) + accumulate(b_x.begin(), b_x.end(), 0);
+    mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
     mpz_class c = modNear(bigsum, p_x0);
     
@@ -106,6 +106,8 @@ std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
 }
 
 mpz_class Pk::recode(mpz_class c){ //TODO gen
+    mpz_class temp = 0;
+    return temp;
 }
 
 mpz_class Pk::H_add(mpz_class c1, mpz_class c2){

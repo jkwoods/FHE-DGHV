@@ -88,13 +88,6 @@ mpz_class power(int base, int exp){
 
 }
 
-/*
-mpz_class random_element_f0(mpz_class ub, gmp_randclass rand_state){ //goes to ub - 1 TODO - correct within main code
-    mpz_class random = rand_state.get_z_range(ub);
-    return random;
-}
- */
-
 mpz_class random_prime_w(int ub, gmp_randstate_t rand_state){ //wierd range
     //generate mpz_t rand
     mpz_t p;
@@ -141,19 +134,6 @@ mpz_class random_prime_f0(int ub, gmp_randstate_t rand_state){ //2^entry (only u
 
 
 /*
-int set_random_seed(int seed){ //if seed = 0, randomize and return it, else use seed
-    int s = seed;
-    if (seed == 0){
-        srand(time(0));
-        s = rand();
-        srand(s);
-    } else {
-        srand(s);
-    }
-    return s;
-} */
-
-/*
 std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
     std::vector<int> c;
     c.push_back(a[0]+b[0]);
@@ -168,22 +148,6 @@ std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
 }
  */
 
-//int random_prime(int l, int u){
-//    int r = random_element(l, u);
-//    while (!isPrime(r)){
-//        r = random_element(l, u);
-//    }
-//    return r;
-//}
-
-//bool isPrime(int t){
-//    for(int i = 2; i < sqrt(t); i++){
-//       if (t % i == 0){
-//            return false;
-//        }
-//    }
-//    return true;
-//}
 
 int random_choice(std::vector<int> sample){ //TODO test
     srand(time(0));
@@ -204,3 +168,12 @@ std::vector<int> random_sample(int range, int l){
     return cut_sample;
 }
 
+mpz_class sum_array(std::vector<mpz_class> a){
+    mpz_class suma = 0;
+    for(int i = 0; i < a.size(); i++){
+        suma = suma+a[i];
+    }
+    return suma;
+    
+    
+}

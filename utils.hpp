@@ -25,15 +25,14 @@ mpz_class random_prime_w(int ub, gmp_randstate_t rand_state); //weird range entr
 mpz_class random_prime_f0(int ub, gmp_randstate_t rand_state); //lb == 0 //2^entry
 int random_choice(std::vector<int> sample);
 std::vector<int> random_sample(int range, int l);
+mpz_class sum_array(std::vector<mpz_class> a);
 
 //int set_random_seed(int seed);
-std::vector<int> random_sample(int cap, int len);
 //std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b);
 //std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
 //std::vector<int> toBinary(int x, int l);
-
 //std::vector<int> vec_mult(int c, std::vector<int> v);
-//bool isPrime(int t);
+
 
 
 

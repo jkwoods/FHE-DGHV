@@ -9,6 +9,11 @@
 #include "PseudoRandomInts.hpp"
 
 
+PseudoRandomInts::PseudoRandomInts(mpz_class x0, int len, long seed): r_x0(x0), r_len(len), r_seed(seed), r_list(len){
+    
+    make_list();
+}
+
 PseudoRandomInts::PseudoRandomInts(mpz_class x0, int len): r_x0(x0), r_len(len), r_seed(time(0)), r_list(len){
     
     make_list();

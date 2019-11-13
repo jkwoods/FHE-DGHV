@@ -42,7 +42,7 @@ void Pri_U::makeU(){
             }
         }
         
-        mpz_class sumt = accumulate(su.begin(), su.end(), 0); //replace all accumulates
+        mpz_class sumt = sum_array(su);
         sumt = sumt % power(2, u_pk.p_kap+1);
         
         while(sumt != xpj){
@@ -51,7 +51,7 @@ void Pri_U::makeU(){
             
             //change corresponding u
             su[v] = 0;
-            mpz_class sumv = accumulate(su.begin(), su.end(), 0);
+            mpz_class sumv = sum_array(su);
             
             mpz_class k1 = power(2, u_pk.p_kap+1);
             mpz_class nu = k1 - sumv + xpj;
@@ -71,7 +71,7 @@ void Pri_U::makeU(){
                 su[i] = u_u[i]*u_pk.p_s[j][i];
             }
             
-            sumt = accumulate(su.begin(), su.end(), 0); //replace all accumulates
+            sumt = sum_array(su);
             sumt = sumt % power(2, u_pk.p_kap+1);
             
         }

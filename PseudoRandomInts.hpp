@@ -16,6 +16,7 @@
 
 class PseudoRandomInts{
 public:
+    PseudoRandomInts(mpz_class x0, int len, long seed);
     PseudoRandomInts(mpz_class x0, int len);
     ~PseudoRandomInts();
     

@@ -14,9 +14,7 @@
 #include "utils.hpp"
 #include <math.h>
 #include <cmath>
-#include <numeric>
 #include <gmpxx.h>
-#include "Encoding.hpp"
 
 class Pk{
 private:
@@ -66,7 +64,7 @@ public:
     
     
     Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n=4);
-    ~Pk();
+    //~Pk();
     
     //TODO - DEINITIALIZE ALL THIS CRAP
     
