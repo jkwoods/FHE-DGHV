@@ -22,14 +22,10 @@ public:
     int r_len;
     int r_zero_temp;
     std::vector<mpz_class> r_list;
-    
-    long getSeed();
 
 private:
     mpz_class r_x0;
     long r_seed;
-    gmp_randstate_t r_state;
-    
     void make_list();
     
 };

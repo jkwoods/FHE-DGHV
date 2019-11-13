@@ -18,16 +18,12 @@ PseudoRandomInts::~PseudoRandomInts(){
     //TODO
 }
 
-long PseudoRandomInts::getSeed(){
-    return r_seed;
-}
-
 void PseudoRandomInts::make_list(){
-    
-    gmp_randinit_mt(r_state);
-    gmp_randseed_ui(r_state, r_seed);  //makeState - now always the same (hopefully ... :) //TODO
+    //make class state
+    gmp_randclass p_class_state (gmp_randinit_mt);
+    p_class_state.seed(r_seed); // - now always the same (hopefully ... :)
 
     for(int i = 0; i < r_len; i++){
-        r_list[i] = random_element(0, r_x0); //TODO
+        r_list[i] = p_class_state.get_z_range(r_x0); // 0 - (r_x0-1)
     }
 }
