@@ -16,7 +16,7 @@
 #include "Pri_U.hpp"
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(), p_q0(), p_x0(), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(), p_y(), p_o(Theta) {
+: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(), p_q0(), p_x0(), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(p_l, std::vector<int> (p_Theta)), p_vert_s(p_Theta, std::vector<int> (p_l)), p_u(), p_y(), p_o(Theta) {
     
     make_p();
     make_pi();
@@ -25,6 +25,8 @@ Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int k
     make_x();
     make_xi();
     make_ii();
+    make_s();
+    make_vert_s();
     make_u();
     make_y();
     make_o();
@@ -38,14 +40,14 @@ Pk::~Pk(){
 
 mpz_class Pk::encode(std::vector<int> m){
     //m*xi
-    std::vector<mpz_class> m_xi;
+    std::vector<mpz_class> m_xi(p_l);
     for (int i = 0; i < p_l; i++){
         m_xi.push_back(m[i]*p_xi[i]);
     }
     
     //bi*ii
    
-    std::vector<mpz_class> bi_ii;
+    std::vector<mpz_class> bi_ii(p_l);
     for (int i = 0; i < p_l; i++){
         
         random_element_pow2(bi, p_alphai, p_alphai, p_state); //needs to raise these to -2 and 2 //TODO - call state before all rand numbers
@@ -55,7 +57,7 @@ mpz_class Pk::encode(std::vector<int> m){
     }
     
     //b*x
-    std::vector<mpz_class> b_x;
+    std::vector<mpz_class> b_x(p_tau);
     for (int i = 0; i < p_tau; i++){
         random_element_pow2(b, p_alpha, p_alpha, p_state); //needs to raise these to -2 and 2
         
@@ -145,45 +147,34 @@ void Pk::make_ii(){
     p_ii = ii_D.r_x; //getDeltaList();
 }
 
-std::vector<std::vector<int>> Pk::make_s(){
-    std::vector<std::vector<int>> s;
+void Pk::make_s(){
     for(int i = 0; i < p_l; i++){
-        std::vector<int> sj;
-        for (int j = 0; j < p_theta; j++){
-            std::vector<int> fill;
-            for (int b = 0; b < p_B; b++){
-                fill.push_back(0);
-            }
+        for (int j = 0; j < p_Theta; j++){
+            std::vector<int> fill(p_B, 0); //initialize all to 0
             if (j==0){
                 fill[j] = 1;
-                sj.insert(std::end(sj), std::begin(fill), std::end(fill));
+                p_s[i].insert(std::end(s[i]), std::begin(fill), std::end(fill));
             } else {
-                sj.insert(std::end(sj), std::begin(fill), std::end(fill));
+                p_s[i].insert(std::end(s[i]), std::begin(fill), std::end(fill));
             }
         }
-        s.push_back(sj);
     }
     
     for(int i = 0; i < p_theta; i++){ //TODO??
         std::vector<int> sri = random_sample(p_B, p_l);
         for(int j = 0; i < p_l; i++){
             int k = (p_B*i)+sri[j];
-            s[j][k] = 1;
+            p_s[j][k] = 1;
         }
     }
-    return s;
 }
 
-std::vector<std::vector<int>> Pk::make_vert_s(){
-    std::vector<std::vector<int>> vert_s;
+void Pk::make_vert_s(){
     for(int i = 0; i < p_Theta; i++){
-        std::vector<int> vsi;
         for(int j = 0; j < p_l; j++){
-            vsi.push_back(p_s[j][i]);
+            p_vert_s[i][j] = p_s[j][i];
         }
-        vert_s.push_back(vsi);
     }
-    return vert_s;
 }
 
 void Pk::make_u(){

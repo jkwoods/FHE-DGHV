@@ -62,7 +62,7 @@ void Deltas::makeDeltas(){
         }
     } else if (r_cr==2){ //ii
         for(int i = 0; i < r_lenv; i++){
-            std::vector<mpz_class> crt_term;
+            std::vector<mpz_class> crt_term(r_pk.p_l);
             for (int j = 0; j < r_pk.p_l; j++){
                 crt_term[i] = (2*r[i][j]+(kd(j,i)*(pow(2,r_pk.p_rhoi+1))));
             }
@@ -70,7 +70,7 @@ void Deltas::makeDeltas(){
         }
     } else { //o
         for(int i = 0; i < r_lenv; i++){
-            std::vector<mpz_class> crt_term;
+            std::vector<mpz_class> crt_term(r_pk.p_l);
             for (int j = 0; j < r_pk.p_l; j++){
                 crt_term[i] = (2*r[i][j]+r_pk.p_vert_s[i][j]);
             }

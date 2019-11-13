@@ -30,8 +30,8 @@ private:
     void make_x();
     void make_xi();
     void make_ii();
-    std::vector<std::vector<int>> make_s();
-    std::vector<std::vector<int>> make_vert_s();
+    void make_s();
+    void make_vert_s();
     void make_u();
     void make_y();
     void make_o();
