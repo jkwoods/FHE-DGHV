@@ -189,8 +189,8 @@ std::vector<mpz_class> Pk::make_u(){
     return u;
 }
 
-std::vector<mpz_t> Pk::make_y(){
-    std::vector<mpz_t> y;
+std::vector<mpz_class> Pk::make_y(){
+    std::vector<mpz_class> y;
     mpz_class div = pow(2, p_kap); //TODO
     for (int i = 0; i < p_u.size(); i++){
         y.push_back(p_u[i] / div);
@@ -198,7 +198,7 @@ std::vector<mpz_t> Pk::make_y(){
     return y;
 }
 
-std::vector<mpz_t> Pk::make_o(){
+std::vector<mpz_class> Pk::make_o(){
     Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
     std::vector<mpz_class> o = o_D.getDeltaList();
     return o;

@@ -7,37 +7,28 @@
 //
 
 #include "PseudoRandomInts.hpp"
-#include "utils.hpp"
 
-PseudoRandomInts::PseudoRandomInts(mpz_t x0, int len): r_len(len), r_seed(time(0)){
-    
-    make_r_x0(x0);
-    makeList(); //state madestd::vector<mpz_t> r_list;
 
+PseudoRandomInts::PseudoRandomInts(mpz_class x0, int len): r_x0(x0), r_len(len), r_seed(time(0)), r_list(make_list()){
 }
 
-PseudoRandomInts::~PseudoRandomInts(){ //TODO - delete vectors??
-    mpz_clear(r_x0);
-    for(int i = 0; i < r_list.size(); i++) { mpz_clear(r_list[i]); }
+PseudoRandomInts::~PseudoRandomInts(){
+    //TODO
 }
-
 
 long PseudoRandomInts::getSeed(){
     return r_seed;
 }
 
-void PseudoRandomInts::makeList(){
+std::vector<mpz_class> PseudoRandomInts::make_list(){
     
     gmp_randinit_mt(r_state);
     gmp_randseed_ui(r_state, r_seed);  //makeState - now always the same (hopefully ... :)
     
+    std::vector<mpz_class> list(r_len);
     for(int i = 0; i < r_len; i++){
-        mpz_init(r_list[i]);
-        mpz_urandomm(r_list[i], r_state, r_x0); //random_element(r_list[i], 0, r_x0);
+        list[i] = random_element(0, r_x0);
     }
+    
+    return list;
 }
-
-void PseudoRandomInts::make_r_x0(mpz_t x0){
-    mpz_init_set(r_x0, x0);
-}
-

@@ -20,13 +20,13 @@ public:
     ~Pri_U();
     
     PseudoRandomInts u_pri;
-    std::vector<mpz_t> u_u;
+    std::vector<mpz_class> u_u;
     
 private:
     
     Pk u_pk;
     
-    void makeU();
+    std::vector<mpz_class> makeU();
     PseudoRandomInts makePri();
 };
 

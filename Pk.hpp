@@ -52,7 +52,7 @@ public:
     int p_tau;
     int p_l;
     int p_logl;
-    std::vector<mpz_t> p_p;
+    std::vector<mpz_class> p_p;
     mpz_class p_pi;
     mpz_class p_q0;
     mpz_class p_x0;

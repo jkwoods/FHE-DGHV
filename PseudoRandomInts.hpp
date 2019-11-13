@@ -11,26 +11,26 @@
 
 #include <stdio.h>
 #include <vector>
-#include <gmp.h>
+#include <gmpxx.h>
+#include "utils.hpp"
 
 class PseudoRandomInts{
 public:
-    PseudoRandomInts(mpz_t x0, int len);
+    PseudoRandomInts(mpz_class x0, int len);
     ~PseudoRandomInts();
     
     int r_len;
     int r_zero_temp;
-    std::vector<mpz_t> r_list;
+    std::vector<mpz_class> r_list;
     
     long getSeed();
 
 private:
-    mpz_t r_x0;
+    mpz_class r_x0;
     long r_seed;
     gmp_randstate_t r_state;
     
-    void makeList();
-    void make_r_x0(mpz_t x0);
+    std::vector<mpz_class> make_list();
     
 };
 
