@@ -8,29 +8,11 @@
 
 #include "utils.hpp"
 #include <math.h>
-#include <stdio.h>
-#include <gmp.h>
 
-void modNear(mpz_t result, mpz_t a, mpz_t b){ //convert to long/int?
-    
-    //(2*a+b) / (2*b);
-    mpz_t twoa;
-    mpz_init_set(twoa, b);
-    mpz_addmul_ui(twoa, a, 2);
-    
-    mpz_t twob;
-    mpz_init(twob);
-    mpz_mul_ui(twob, b, 2);
-    
-    //quotientNear
-    mpz_fdiv_q(twoa, twoa, twob);
-    
-    //mpz_class mn = a - b*quotientNear;
-    mpz_set(result, a);
-    mpz_submul(result, b, twoa);
-    
-    mpz_clear(twoa);
-    mpz_clear(twob);
+mpz_class modNear(mpz_class a, mpz_class b){ //convert to long/int?
+    mpz_class quotientNear = (2*a+b) / (2*b); // autmatically rounds towards floor (check?)
+    mpz_class mn = a - b*quotientNear;
+    return mn;
 }
 
 //void mod(mpz_t result, mpz_t a, mpz_t b){
@@ -47,7 +29,7 @@ void modNear(mpz_t result, mpz_t a, mpz_t b){ //convert to long/int?
 //    return r;
 //}
 
-void random_element_pow2(mpz_t elt, int l, int u, gmp_randstate_t state){
+/*void random_element_pow2(mpz_t elt, int l, int u, gmp_randstate_t state){
     mpz_urandomb(elt, state, l+u);
     
     mpz_t two_l;
@@ -55,7 +37,7 @@ void random_element_pow2(mpz_t elt, int l, int u, gmp_randstate_t state){
     mpz_ui_pow_ui(two_l, 2, l);
     
     mpz_sub(elt, elt, two_l);
-}
+} */
 
 /*
 int set_random_seed(int seed){ //if seed = 0, randomize and return it, else use seed
@@ -86,86 +68,42 @@ std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
 //std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
 //std::vector<int> toBinary(int x, int l);
 
-void mul_inv(mpz_t result, mpz_t a, mpz_t b){ //TODO - finish
-    mpz_t b0;
-    mpz_init_set(b0, b);
-    
-    mpz_t x0;
-    mpz_init_set_ui(x0, 0);
-
-    mpz_t x1;
-    mpz_init_set_ui(x1, 1);
-    
-    if (mpz_cmp_ui(b,1)==0){ //b==1
-        mpz_set_ui(result, 1);
-        //return 1;
+mpz_class mul_inv(mpz_class a, mpz_class b){ //TODO - finish
+    mpz_class b0 = b;
+    mpz_class x0 = 0;
+    mpz_class x1 = 1;
+    if (b == 1){
+        return 1;
     }
-    mpz_t q;
-    mpz_init(q);
-    
-    mpz_t temp_a;
-    mpz_t temp_b;
-    mpz_t temp_x0;
-    mpz_init_set(temp_a, a);
-    mpz_init_set(temp_b, b);
-    
-    while (mpz_cmp_ui(temp_a,1)>0){ //a>1
-        mpz_fdiv_q(q, temp_a, temp_b);   //int q = a / b;
+    while (a>1){
+        mpz_class q = a / b; //floor
+        mpz_class temp = b;
+        b = a % b;
+        a = temp;
         
-        mpz_set(temp_a, temp_b); //a = b;
-        mpz_mod(temp_b, temp_a, temp_b); //b = a % b;
-        
-        mpz_set(temp_x0, x0);//int temp = x0;
-        mpz_mul(x0, x0, q); //x0 = x1 - q*x0;
-        mpz_sub(x0, x1, x0);
-        mpz_set(x1, temp_x0); //x1 = temp;
+        temp = x0;
+        x0 = x1 - q * x0;
+        x1 = temp;
     }
-    if (mpz_cmp_ui(x1,0)<0){ //x1 < 0
-        mpz_add(x1, x1, b0);
-        //x1 += b0;
+    if (x1 < 0){
+        x1 += b0;
     }
-    mpz_set(result, x1); //return x1;
-    
-    
-    mpz_clear(b0);
-    mpz_clear(x0);
-    mpz_clear(x1);
-    mpz_clear(q);
-    mpz_clear(temp_a);
-    mpz_clear(temp_b);
-    mpz_clear(temp_x0);
+    return x1;
 }
 
-void CRT(mpz_t result, std::vector<mpz_t> n, std::vector<mpz_t> a){ //chinese remainder thm
-    mpz_t sum;
-    mpz_init_set_ui(sum, 0);
-    
-    mpz_t prod;
-    mpz_init_set_ui(prod, 1);
-    
+mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese remainder thm
+    mpz_class prod = 1;
     for (int i = 0; i < n.size(); i++){
-        mpz_mul(prod, prod, n[i]); //prod = prod*n[i];
+        prod = prod*n[i];
     }
     
-    mpz_t p;
-    mpz_init(p);
-    
-    mpz_t inv;
-    mpz_init(inv);
+    mpz_class sum = 0;
     for (int i = 0; i < n.size(); i++){
-        mpz_fdiv_q(p, prod, n[i]); //mpz_class p = prod / n[i];
-        
-        mul_inv(inv, p, n[i]); //sum += a[i] * mul_inv(p, n[i]) * p;
-        mpz_mul(inv, inv, a[i]);
-        mpz_addmul(sum, inv, p);
+        mpz_class p = prod / n[i]; //floor
+        sum += a[i] * mul_inv(p, n[i]) * p;
     }
-    
-    mpz_mod(result, sum, prod); //return (sum % prod);
-    
-    mpz_clear(sum);
-    mpz_clear(prod);
-    mpz_clear(p);
-    mpz_clear(inv);
+
+    return (sum % prod);
 }
 
 int kd(int i, int j){

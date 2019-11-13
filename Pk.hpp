@@ -22,19 +22,19 @@ class Pk{
 private:
     //helper
     gmp_randstate_t p_state;
-
-    void make_p();
-    void make_pi();
-    void make_q0();
-    void make_x0();
-    void make_x();
-    void make_xi();
-    void make_ii();
+    
+    std::vector<mpz_class> make_p();
+    mpz_class make_pi();
+    mpz_class make_q0();
+    mpz_class make_x0();
+    std::vector<mpz_class> make_x();
+    std::vector<mpz_class> make_xi();
+    std::vector<mpz_class> make_ii();
     std::vector<std::vector<int>> make_s();
     std::vector<std::vector<int>> make_vert_s();
-    void make_u();
-    void make_y();
-    void make_o();
+    std::vector<mpz_class> make_u();
+    std::vector<mpz_class> make_y();
+    std::vector<mpz_class> make_o();
     void make_state();
     
 public:

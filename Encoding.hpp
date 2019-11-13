@@ -20,13 +20,13 @@ public:
     
     std::vector<int> decode();
     std::vector<int> decode_squashed();
-    Encoding recode();
+    void recode();
     Encoding H_add(Encoding x);
     Encoding H_mult(Encoding x);
     
 private:
-    Encoding(mpz_t c, Pk pk); //class handling
-    mpz_t e_val;
+    Encoding(Pk pk, mpz_class c); // class handling
+    mpz_class e_val;
     Pk e_pk;
 
 };

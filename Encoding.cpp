@@ -10,19 +10,14 @@
 
 //TODO - deconstructor - make sure you clear the e_val
 
-//constructor
-Encoding::Encoding(Pk pk, std::vector<int> m): e_pk(pk) {
-    mpz_init(e_val);
-    e_pk.encode(e_val, m);
-}
+//constructors
+Encoding::Encoding(Pk pk, std::vector<int> m): e_pk(pk), e_val(pk.encode(m)) {}
 
-Encoding::Encoding(mpz_t c, Pk pk): e_pk(pk) {
-    mpz_init_set(e_val, c);
-}
+Encoding::Encoding(Pk pk, mpz_class c): e_pk(pk), e_val(c) {}
 
 //destructor
 Encoding::~Encoding(){
-    mpz_clear(e_val);
+    //TODO
 }
 
 std::vector<int> Encoding::decode(){
@@ -35,26 +30,16 @@ std::vector<int> Encoding::decode_squashed(){
     return m;
 }
 
-Encoding Encoding::recode(){
-    mpz_t r;
-    mpz_init(r);
-    
-    e_pk.recode(r, e_val);
-    return Encoding(r,e_pk);
+void Encoding::recode(){
+    e_val = e_pk.recode(e_val);
 }
 
 Encoding Encoding::H_add(Encoding x){
-    mpz_t c;
-    mpz_init(c);
-    
-    e_pk.H_add(c, e_val, x.e_val);
-    return Encoding(c,e_pk);
+    mpz_class c = e_pk.H_add(e_val, x.e_val);
+    return Encoding(e_pk, c);
 }
 
 Encoding Encoding::H_mult(Encoding x){
-    mpz_t c;
-    mpz_init(c);
-    
-    e_pk.H_mult(c, e_val, x.e_val);
-    return Encoding(c,e_pk);
+    mpz_class c = e_pk.H_mult(e_val, x.e_val);
+    return Encoding(e_pk, c);
 }
