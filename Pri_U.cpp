@@ -31,7 +31,7 @@ void Pri_U::makeU(){
     
     for(int j = 0; j < u_pk.p_l; j++){
         std::vector<int> s1indices;
-        mpz_class xpj = pow(2, u_pk.p_kap) / u_pk.p_p[j]; // i think its an int (??) pow TODO
+        mpz_class xpj = power(2, u_pk.p_kap) / u_pk.p_p[j]; // i think its an int (??) pow TODO
         
         std::vector<mpz_class> su(u_pk.p_Theta);
         for(int i = 0; i < u_pk.p_Theta; i++){
@@ -43,7 +43,7 @@ void Pri_U::makeU(){
         }
         
         mpz_class sumt = accumulate(su.begin(), su.end(), 0); //replace all accumulates
-        sumt = mod(sumt, pow(2, u_pk.p_kap+1));
+        sumt = sumt % power(2, u_pk.p_kap+1);
         
         while(sumt != xpj){
             //pick rand 1 in s
@@ -53,7 +53,7 @@ void Pri_U::makeU(){
             su[v] = 0;
             mpz_class sumv = accumulate(su.begin(), su.end(), 0);
             
-            mpz_class k1 = pow(2, u_pk.p_kap+1);
+            mpz_class k1 = power(2, u_pk.p_kap+1);
             mpz_class nu = k1 - sumv + xpj;
             
             while ((nu < 0) || (nu >= k1)){
@@ -72,7 +72,7 @@ void Pri_U::makeU(){
             }
             
             sumt = accumulate(su.begin(), su.end(), 0); //replace all accumulates
-            sumt = mod(sumt, pow(2, u_pk.p_kap+1));
+            sumt = sumt % power(2, u_pk.p_kap+1);
             
         }
     }

@@ -29,17 +29,26 @@ void Deltas::makeDeltaList(){
 }
 
 void Deltas::makeDeltas(){
+    //make class state
+    gmp_randclass p_class_state (gmp_randinit_mt);
+    p_class_state.seed(time(0)); //TODO
+    
+    
     //make deltas
     std::vector<std::vector<mpz_class>> r(r_lenv, std::vector<mpz_class> (r_pk.p_l)); //correct dim?
     std::vector<mpz_class> E(r_lenv);
     
-    mpz_class e_help = pow(2,(r_pk.p_lam+r_pk.p_logl+(r_pk.p_l*r_pk.p_eta)));
+    mpz_class e_help = power(2,(r_pk.p_lam+r_pk.p_logl+(r_pk.p_l*r_pk.p_eta))); //is this contained by int? TODO
     
     for(int i = 0; i < r_lenv; i++){
         for(int j = 0; j < r_pk.p_l; j++){
-            r[i][j] = random_element(pow(-2,r_rho+1), pow(2,r_rho));
+            mpz_class lb = power(-2,r_rho+1);
+            mpz_class ub = power(2,r_rho);
+            r[i][j] = p_class_state.get_z_range(ub-lb);
+            r[i][j] = r[i][j] + lb;
         }
-        E[i] = e_help / r_pk.p_pi; //floor
+        mpz_class rand = p_class_state.get_z_range(e_help);
+        E[i] = rand / r_pk.p_pi; //floor
     }
     
     std::vector<mpz_class> crts(r_lenv);
@@ -64,7 +73,7 @@ void Deltas::makeDeltas(){
         for(int i = 0; i < r_lenv; i++){
             std::vector<mpz_class> crt_term(r_pk.p_l);
             for (int j = 0; j < r_pk.p_l; j++){
-                crt_term[i] = (2*r[i][j]+(kd(j,i)*(pow(2,r_pk.p_rhoi+1))));
+                crt_term[i] = (2*r[i][j]+(kd(j,i)*(power(2,r_pk.p_rhoi+1))));
             }
             crts[i] = CRT(r_pk.p_p, crt_term);
         }
@@ -79,7 +88,7 @@ void Deltas::makeDeltas(){
     }
     
     for (int i = 0; i < r_lenv; i++){
-        mpz_class chi_temp = mod(r_Chi[i],r_pk.p_pi);
+        mpz_class chi_temp = r_Chi[i] % r_pk.p_pi;
         
         r_deltas[i] = chi_temp+(E[i]*r_pk.p_pi)-crts[i];
     }

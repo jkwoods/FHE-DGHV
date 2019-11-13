@@ -7,8 +7,9 @@
 //
 
 
-// TODO - declare vector size at beginning, change rand (make state, etc), change accumulate, change pow
+// TODO - change rand (now only pri), change accumulate
 // put the y/u/z etc stuff in the correct places
+// make longs??
 
 
 #include "Pk.hpp"
@@ -16,11 +17,16 @@
 #include "Pri_U.hpp"
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(), p_q0(), p_x0(), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(p_l, std::vector<int> (p_Theta)), p_vert_s(p_Theta, std::vector<int> (p_l)), p_u(), p_y(), p_o(Theta) {
+: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(l, std::vector<int> (Theta)), p_vert_s(Theta, std::vector<int> (l)), p_u(Theta), p_y(Theta), p_o(Theta) {
     
-    make_p();
+    //make t state
+    gmp_randstate_t p_t_state;
+    gmp_randinit_mt(p_t_state);
+    gmp_randseed_ui(p_t_state, time(0)); //time is not great - better TODO
+    
+    make_p(p_t_state);
     make_pi();
-    make_q0();
+    make_q0(p_t_state);
     make_x0();
     make_x();
     make_xi();
@@ -30,39 +36,49 @@ Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int k
     make_u();
     make_y();
     make_o();
-    
-    make_state();
 }
 
-Pk::~Pk(){
+//Pk::~Pk(){
     // TODO
-}
+    
+    //state clear
+//    gmp_randclear(p_t_state);
+//}
 
 mpz_class Pk::encode(std::vector<int> m){
+    //make class state
+    gmp_randclass p_class_state (gmp_randinit_mt);
+    p_class_state.seed(time(0)); //TODO
+    
     //m*xi
     std::vector<mpz_class> m_xi(p_l);
     for (int i = 0; i < p_l; i++){
-        m_xi.push_back(m[i]*p_xi[i]);
+        m_xi[i] = m[i]*p_xi[i];
     }
     
     //bi*ii
    
     std::vector<mpz_class> bi_ii(p_l);
     for (int i = 0; i < p_l; i++){
+        //TODO - call state before all rand numbers
         
-        random_element_pow2(bi, p_alphai, p_alphai, p_state); //needs to raise these to -2 and 2 //TODO - call state before all rand numbers
-        
-        mpz_class bi = (random_element(pow(-2,p_alphai),pow(2,p_alphai)));
-        bi_ii.push_back(bi*p_ii[i]);
+        mpz_class lb = power(-2,p_alphai);
+        mpz_class ub = power(2,p_alphai);
+        mpz_class bi = p_class_state.get_z_range(ub-lb);
+        bi = bi + lb;
+        bi_ii[i] = bi*p_ii[i];
     }
     
     //b*x
     std::vector<mpz_class> b_x(p_tau);
     for (int i = 0; i < p_tau; i++){
-        random_element_pow2(b, p_alpha, p_alpha, p_state); //needs to raise these to -2 and 2
+
+        mpz_class lb = power(-2,p_alpha);
+        mpz_class ub = power(2,p_alpha);
+        mpz_class b = p_class_state.get_z_range(ub-lb);
+        b = b + lb;
         
-        mpz_class b = (random_element(pow(-2,p_alpha),pow(2,p_alpha)));
-        b_x.push_back(b*p_x[i]);
+        b_x[i] = b*p_x[i];
     }
     
     //summation
@@ -77,7 +93,7 @@ mpz_class Pk::encode(std::vector<int> m){
 std::vector<int> Pk::decode(mpz_class c){
     std::vector<int> m(p_l);
     for (int i = 0; i < p_l; i++){
-        mpz_class conv = mod(modNear(c,p_p[i]),2);
+        mpz_class conv = modNear(c,p_p[i]) % 2;
         int i_conv = (int) conv.get_si(); //hopefully right
         m[i] = (i_conv);
     }
@@ -93,19 +109,19 @@ mpz_class Pk::recode(mpz_class c){ //TODO gen
 }
 
 mpz_class Pk::H_add(mpz_class c1, mpz_class c2){
-    mpz_class c = mod(c1+c2,p_x0);
+    mpz_class c = (c1+c2) % p_x0;
     return c;
 }
 
 mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
-    mpz_class c = mod(c1*c2,p_x0);
+    mpz_class c = (c1*c2) % p_x0;
     return c;
 }
 
 //private helper
-void Pk::make_p(){
+void Pk::make_p(gmp_randstate_t p_t_state){
     for (int i = 0; i < p_l; i++){
-       p_p[i] = (random_prime(pow(2,p_eta-1), pow(2,p_eta)));
+       p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
     }
 }
 
@@ -116,13 +132,13 @@ void Pk::make_pi(){ //prod of all p[i]
     }
 }
 
-void Pk::make_q0(){
-    p_q0 = pow(2,p_gam); //TODO
+void Pk::make_q0(gmp_randstate_t p_t_state){
+    p_q0 = power(2,p_gam);
     mpz_class comp = p_q0 / p_pi;
     
-    while (p_q0 > comp){     //while (q0 > (pow(2,p_gam)/p_pi)){
-        int q0_prime1 = random_prime(0, pow(2,pow(p_lam,2)));
-        int q0_prime2 = random_prime(0, pow(2,pow(p_lam,2)));
+    while (p_q0 > comp){  
+        mpz_class q0_prime1 = random_prime_f0(pow(p_lam,2), p_t_state); //2^entry //need to be long?TODO
+        mpz_class q0_prime2 = random_prime_f0(pow(p_lam,2), p_t_state); //2^entry
         
         p_q0 = q0_prime1*q0_prime2;
     }
@@ -153,9 +169,9 @@ void Pk::make_s(){
             std::vector<int> fill(p_B, 0); //initialize all to 0
             if (j==0){
                 fill[j] = 1;
-                p_s[i].insert(std::end(s[i]), std::begin(fill), std::end(fill));
+                p_s[i].insert(std::end(p_s[i]), std::begin(fill), std::end(fill));
             } else {
-                p_s[i].insert(std::end(s[i]), std::begin(fill), std::end(fill));
+                p_s[i].insert(std::end(p_s[i]), std::begin(fill), std::end(fill));
             }
         }
     }
@@ -183,7 +199,7 @@ void Pk::make_u(){
 }
 
 void Pk::make_y(){
-    mpz_class div = pow(2, p_kap); //TODO
+    mpz_class div = power(2,p_kap);
     for (int i = 0; i < p_u.size(); i++){
         p_y[i] = (p_u[i] / div);
     }
@@ -194,8 +210,4 @@ void Pk::make_o(){
     p_o = o_D.r_x; //getDeltaList();
 }
 
-void Pk::make_state(){ //TODO
-    gmp_randinit_mt(p_state);
-    gmp_randseed_ui(p_state, time(0)); //time as seed TODO - check this shit
-}
 

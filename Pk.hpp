@@ -21,11 +21,10 @@
 class Pk{
 private:
     //helper
-    gmp_randstate_t p_state;
     
-    void make_p();
+    void make_p(gmp_randstate_t p_t_state);
     void make_pi();
-    void make_q0();
+    void make_q0(gmp_randstate_t p_t_state);
     void make_x0();
     void make_x();
     void make_xi();
@@ -35,7 +34,6 @@ private:
     void make_u();
     void make_y();
     void make_o();
-    void make_state();
     
 public:
     int p_lam;
