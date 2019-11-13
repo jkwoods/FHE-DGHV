@@ -12,7 +12,9 @@
 #include "utils.hpp"
 
 Pri_U::Pri_U(Pk pk)
-    : u_pk(pk), u_pri(makePri()), u_u(makeU()){}
+    : u_pk(pk), u_pri(makePri()), u_u(pk.p_Theta){
+        makeU();
+    }
 
 Pri_U::~Pri_U(){
     //TODO
@@ -24,17 +26,16 @@ PseudoRandomInts Pri_U::makePri(){
     return pri;
 }
 
-std::vector<mpz_class> Pri_U::makeU(){
-    std::vector<mpz_class> u = u_pri.r_list; //u draft
+void Pri_U::makeU(){
+    u_u = u_pri.r_list; //u draft
     
-
     for(int j = 0; j < u_pk.p_l; j++){
         std::vector<int> s1indices;
         mpz_class xpj = pow(2, u_pk.p_kap) / u_pk.p_p[j]; // i think its an int (??) pow TODO
         
         std::vector<mpz_class> su(u_pk.p_Theta);
         for(int i = 0; i < u_pk.p_Theta; i++){
-            su[i] = (u_pk.p_s[j][i] * u[i]);
+            su[i] = (u_pk.p_s[j][i] * u_u[i]);
             
             if (u_pk.p_s[j][i] == 1){
                 s1indices.push_back(i);
@@ -63,7 +64,7 @@ std::vector<mpz_class> Pri_U::makeU(){
                 }
             }
             
-            u[v] = nu;
+            u_u[v] = nu;
             
             //su redo
             for(int i = 0; i < u_pk.p_Theta; i++){
@@ -75,7 +76,5 @@ std::vector<mpz_class> Pri_U::makeU(){
             
         }
     }
-    
-    return u;
 }
 

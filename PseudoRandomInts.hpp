@@ -30,7 +30,7 @@ private:
     long r_seed;
     gmp_randstate_t r_state;
     
-    std::vector<mpz_class> make_list();
+    void make_list();
     
 };
 

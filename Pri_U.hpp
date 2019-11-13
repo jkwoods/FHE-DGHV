@@ -26,7 +26,7 @@ private:
     
     Pk u_pk;
     
-    std::vector<mpz_class> makeU();
+    void makeU();
     PseudoRandomInts makePri();
 };
 

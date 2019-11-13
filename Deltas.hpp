@@ -22,6 +22,7 @@ public:
     
     PseudoRandomInts r_pri;
     std::vector<mpz_class> r_x;
+    int r_lenv;
     
 private:
     
@@ -29,14 +30,12 @@ private:
     std::vector<mpz_class> r_Chi;
     
     Pk r_pk;
-    int r_lenv;
     int r_rho;
     int r_cr;
     gmp_randstate_t d_state; //for random crap - not psuedorandom PRI
     
-    std::vector<mpz_class> makeDeltas();
-    PseudoRandomInts makePri();
-    std::vector<mpz_class> makeDeltaList();
+    void makeDeltas();
+    void makeDeltaList();
     void makeState();
 };
 

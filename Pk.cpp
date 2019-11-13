@@ -7,7 +7,7 @@
 //
 
 
-// TODO - declare vector size at beginning, change rand (make state, etc), change accumulate
+// TODO - declare vector size at beginning, change rand (make state, etc), change accumulate, change pow
 // put the y/u/z etc stuff in the correct places
 
 
@@ -16,9 +16,19 @@
 #include "Pri_U.hpp"
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(make_p()), p_pi(make_pi()), p_q0(make_q0()), p_x0(make_x0()), p_x(make_x()), p_xi(make_xi()), p_ii(make_ii()), p_n(n), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(make_u()), p_y(make_y()), p_o(make_o()) {
+: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(), p_q0(), p_x0(), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(make_s()), p_vert_s(make_vert_s()), p_u(), p_y(), p_o(Theta) {
     
-
+    make_p();
+    make_pi();
+    make_q0();
+    make_x0();
+    make_x();
+    make_xi();
+    make_ii();
+    make_u();
+    make_y();
+    make_o();
+    
     make_state();
 }
 
@@ -91,57 +101,48 @@ mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
 }
 
 //private helper
-std::vector<mpz_class> Pk::make_p(){
-    std::vector<mpz_class> p;
+void Pk::make_p(){
     for (int i = 0; i < p_l; i++){
-       p.push_back(random_prime(pow(2,p_eta-1), pow(2,p_eta)));
+       p_p[i] = (random_prime(pow(2,p_eta-1), pow(2,p_eta)));
     }
-    return p;
 }
 
-mpz_class Pk::make_pi(){ //prod of all p[i]
-    mpz_class pi = 1;
+void Pk::make_pi(){ //prod of all p[i]
+    p_pi = 1;
     for (int i = 0; i < p_l; i++){
-        pi = pi*p_p[i];
+        p_pi = p_pi*p_p[i];
     }
-    return pi;
 }
 
-mpz_class Pk::make_q0(){
-    mpz_class q0 = pow(2,p_gam); //TODO
-    mpz_class comp = q0 / p_pi;
+void Pk::make_q0(){
+    p_q0 = pow(2,p_gam); //TODO
+    mpz_class comp = p_q0 / p_pi;
     
-    while (q0 > comp){     //while (q0 > (pow(2,p_gam)/p_pi)){
+    while (p_q0 > comp){     //while (q0 > (pow(2,p_gam)/p_pi)){
         int q0_prime1 = random_prime(0, pow(2,pow(p_lam,2)));
         int q0_prime2 = random_prime(0, pow(2,pow(p_lam,2)));
         
-        q0 = q0_prime1*q0_prime2;
+        p_q0 = q0_prime1*q0_prime2;
     }
-    
-    return q0;
 }
 
-mpz_class Pk::make_x0(){
-    mpz_class x0 = p_pi * p_q0;
-    return x0;
+void Pk::make_x0(){
+    p_x0 = p_pi * p_q0;
 }
 
-std::vector<mpz_class> Pk::make_x(){ //TODO DELTAS - TODO initialize list
+void Pk::make_x(){ //TODO DELTAS - TODO initialize list
     Deltas x_D = Deltas(*this, p_tau, p_rhoi-1, 0);
-    std::vector<mpz_class> x = x_D.r_x; //getDeltaList();
-    return x;
+    p_x = x_D.r_x; //getDeltaList();
 }
 
-std::vector<mpz_class> Pk::make_xi(){
+void Pk::make_xi(){
     Deltas xi_D = Deltas(*this, p_l, p_rho, 1);
-    std::vector<mpz_class> xi = xi_D.r_x; //getDeltaList();
-    return xi;
+    p_xi = xi_D.r_x; //getDeltaList();
 }
 
-std::vector<mpz_class> Pk::make_ii(){
+void Pk::make_ii(){
     Deltas ii_D = Deltas(*this, p_l, p_rho, 2);
-    std::vector<mpz_class> ii = ii_D.r_x; //getDeltaList();
-    return ii;
+    p_ii = ii_D.r_x; //getDeltaList();
 }
 
 std::vector<std::vector<int>> Pk::make_s(){
@@ -185,25 +186,21 @@ std::vector<std::vector<int>> Pk::make_vert_s(){
     return vert_s;
 }
 
-std::vector<mpz_class> Pk::make_u(){
+void Pk::make_u(){
     Pri_U priu = Pri_U(*this);
-    std::vector<mpz_class> u = priu.u_u; //.getUList();
-    return u;
+    p_u = priu.u_u; //.getUList();
 }
 
-std::vector<mpz_class> Pk::make_y(){
-    std::vector<mpz_class> y;
+void Pk::make_y(){
     mpz_class div = pow(2, p_kap); //TODO
     for (int i = 0; i < p_u.size(); i++){
-        y.push_back(p_u[i] / div);
+        p_y[i] = (p_u[i] / div);
     }
-    return y;
 }
 
-std::vector<mpz_class> Pk::make_o(){
+void Pk::make_o(){
     Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
-    std::vector<mpz_class> o = o_D.r_x; //getDeltaList();
-    return o;
+    p_o = o_D.r_x; //getDeltaList();
 }
 
 void Pk::make_state(){ //TODO

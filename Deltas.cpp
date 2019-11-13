@@ -10,7 +10,10 @@
 
 
 Deltas::Deltas(Pk pk, int lenv, int rho, int cr)
-    : r_pk(pk), r_lenv(lenv), r_rho(rho), r_cr(cr), r_pri(makePri()), r_deltas(makeDeltas()), r_Chi(r_pri.r_list), r_x(makeDeltaList()) {
+    : r_pk(pk), r_lenv(lenv), r_rho(rho), r_cr(cr), r_pri(PseudoRandomInts(pk.p_x0, lenv)), r_deltas(lenv), r_Chi(lenv), r_x(lenv) {
+        
+        makeDeltas();
+        makeDeltaList(); //'x'
         
         makeState(); //TODO?
     }
@@ -18,25 +21,15 @@ Deltas::Deltas(Pk pk, int lenv, int rho, int cr)
 Deltas::~Deltas(){
     //TODO -vectors?
 }
-
-std::vector<mpz_class> Deltas::makeDeltaList(){
-    std::vector<mpz_class> x(r_pri.r_len);
+    
+void Deltas::makeDeltaList(){
     for(int i = 0; i < r_pri.r_len; i++){
-        x.push_back(r_Chi[i]-r_deltas[i]);
+        r_x[i] = r_Chi[i]-r_deltas[i];
     }
-    
-    return x;
 }
 
-PseudoRandomInts Deltas::makePri(){
-    PseudoRandomInts pri = PseudoRandomInts(r_pk.p_x0, r_lenv);
-    return pri;
-}
-
-std::vector<mpz_class> Deltas::makeDeltas(){
+void Deltas::makeDeltas(){
     //make deltas
-    std::vector<mpz_class> delta(r_lenv);
-    
     std::vector<std::vector<mpz_class>> r(r_lenv, std::vector<mpz_class> (r_pk.p_l)); //correct dim?
     std::vector<mpz_class> E(r_lenv);
     
@@ -88,10 +81,8 @@ std::vector<mpz_class> Deltas::makeDeltas(){
     for (int i = 0; i < r_lenv; i++){
         mpz_class chi_temp = mod(r_Chi[i],r_pk.p_pi);
         
-        delta[i] = chi_temp+(E[i]*r_pk.p_pi)-crts[i];
+        r_deltas[i] = chi_temp+(E[i]*r_pk.p_pi)-crts[i];
     }
-    
-    return delta;
 }
 
 void Deltas::makeState(){
