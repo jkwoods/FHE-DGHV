@@ -21,5 +21,6 @@ GMP Library (https://gmplib.org/) used to handle big integers. <br />
 
 This work was done at Oak Ridge National Lab. This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internship program.	
 
+Contact: jesskwoods (at) gmail.com
 
 
