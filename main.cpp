@@ -39,17 +39,8 @@ int main(int argc, const char * argv[]) {
     std::cout << "Tests\n";
     std::cout << time(0);
     
-    
-    
-    
     std::cout << "End\n";
     
     return 0;
-}
-
-Encoding encode(std::vector<int> m, Pk pk){
-    int c = pk.encode(m);
-    Encoding ec = Encoding(c,pk);
-    return ec;
 }
 

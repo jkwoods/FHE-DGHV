@@ -14,7 +14,8 @@
 #include <gmpxx.h>
 
 mpz_class modNear(mpz_class a, mpz_class b);
-//mpz_class mod(mpz_class a,int b);
+mpz_class mod(mpz_class a, int b);
+mpz_class mod(mpz_class a, mpz_class b);
 mpz_class random_element(int l, int u);
 
 //int set_random_seed(int seed);

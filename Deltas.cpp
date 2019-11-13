@@ -24,6 +24,8 @@ std::vector<mpz_class> Deltas::makeDeltaList(){
     for(int i = 0; i < r_pri.r_len; i++){
         x.push_back(r_Chi[i]-r_deltas[i]);
     }
+    
+    return x;
 }
 
 PseudoRandomInts Deltas::makePri(){

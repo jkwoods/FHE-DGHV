@@ -15,9 +15,13 @@ mpz_class modNear(mpz_class a, mpz_class b){ //convert to long/int?
     return mn;
 }
 
-//void mod(mpz_t result, mpz_t a, mpz_t b){
-//    mpz_mod(result, a, b);
-//}
+mpz_class mod(mpz_class a, int b){
+    return (a % b);
+}
+
+mpz_class mod(mpz_class a, mpz_class b){
+    return (a % b);
+}
 
 //int random_element(int l, int u){ //not power of two, lower bound assumed zero
 //   int r = 1;

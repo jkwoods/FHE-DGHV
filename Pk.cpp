@@ -7,7 +7,8 @@
 //
 
 
-// TODO - declare vector size at beginning
+// TODO - declare vector size at beginning, change rand (make state, etc), change accumulate
+// put the y/u/z etc stuff in the correct places
 
 
 #include "Pk.hpp"
@@ -62,11 +63,12 @@ mpz_class Pk::encode(std::vector<int> m){
 }
 
 std::vector<int> Pk::decode(mpz_class c){
-    std::vector<int> m;
+    std::vector<int> m(p_l);
     for (int i = 0; i < p_l; i++){
-        m.push_back(mod(modNear(c,p_p[i]),2)); //will m convert to ints automatically?
+        mpz_class conv = mod(modNear(c,p_p[i]),2);
+        int i_conv = (int) conv.get_si(); //hopefully right
+        m[i] = (i_conv);
     }
-    
     return m;
 }
 
@@ -109,7 +111,7 @@ mpz_class Pk::make_q0(){
     mpz_class q0 = pow(2,p_gam); //TODO
     mpz_class comp = q0 / p_pi;
     
-    while (q0 > comp)){     //while (q0 > (pow(2,p_gam)/p_pi)){
+    while (q0 > comp){     //while (q0 > (pow(2,p_gam)/p_pi)){
         int q0_prime1 = random_prime(0, pow(2,pow(p_lam,2)));
         int q0_prime2 = random_prime(0, pow(2,pow(p_lam,2)));
         
@@ -126,19 +128,19 @@ mpz_class Pk::make_x0(){
 
 std::vector<mpz_class> Pk::make_x(){ //TODO DELTAS - TODO initialize list
     Deltas x_D = Deltas(*this, p_tau, p_rhoi-1, 0);
-    std::vector<mpz_class> x = x_D.getDeltaList();
+    std::vector<mpz_class> x = x_D.r_x; //getDeltaList();
     return x;
 }
 
 std::vector<mpz_class> Pk::make_xi(){
     Deltas xi_D = Deltas(*this, p_l, p_rho, 1);
-    std::vector<mpz_class> xi = xi_D.getDeltaList();
+    std::vector<mpz_class> xi = xi_D.r_x; //getDeltaList();
     return xi;
 }
 
 std::vector<mpz_class> Pk::make_ii(){
     Deltas ii_D = Deltas(*this, p_l, p_rho, 2);
-    std::vector<mpz_class> ii = ii_D.getDeltaList();
+    std::vector<mpz_class> ii = ii_D.r_x; //getDeltaList();
     return ii;
 }
 
@@ -185,7 +187,7 @@ std::vector<std::vector<int>> Pk::make_vert_s(){
 
 std::vector<mpz_class> Pk::make_u(){
     Pri_U priu = Pri_U(*this);
-    std::vector<mpz_class> u = priu.getUList();
+    std::vector<mpz_class> u = priu.u_u; //.getUList();
     return u;
 }
 
@@ -200,11 +202,11 @@ std::vector<mpz_class> Pk::make_y(){
 
 std::vector<mpz_class> Pk::make_o(){
     Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
-    std::vector<mpz_class> o = o_D.getDeltaList();
+    std::vector<mpz_class> o = o_D.r_x; //getDeltaList();
     return o;
 }
 
-void Pk::make_State(){
+void Pk::make_state(){ //TODO
     gmp_randinit_mt(p_state);
     gmp_randseed_ui(p_state, time(0)); //time as seed TODO - check this shit
 }
