@@ -33,7 +33,22 @@ int main(int argc, const char * argv[]) {
     int alphai=936;
     int tau=188;
     int l=10;
+    
     Pk pk_a = Pk(lam, rho, rhoi, eta, gam, Theta, theta, kap, alpha, alphai, tau, l);
+    
+    //TODO first - check all utils, go from there
+    
+    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0};
+    Encoding zero = Encoding(pk_a, z_vec);
+    
+    std::vector<int> z_dec = zero.decode();
+    
+    //print
+    for (int i = 0; i < l; i++)
+    {
+        std::cout << z_dec[i] << "\n";
+    }
+    
     
     // timing tests
     std::cout << "Tests\n";

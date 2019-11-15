@@ -30,7 +30,7 @@ mpz_class mul_inv(mpz_class a, mpz_class b){ //TODO - finish
         b = a % b;
         a = temp;
         
-        temp = x0;
+        mpz_class temp2 = x0;
         x0 = x1 - q * x0;
         x1 = temp;
     }

@@ -15,12 +15,7 @@
 #include "PseudoRandomInts.hpp"
 
 class Pri_U{
-public:
-    Pri_U(Pk pk);
-    ~Pri_U();
-    
-    PseudoRandomInts u_pri;
-    std::vector<mpz_class> u_u;
+
     
 private:
     
@@ -28,6 +23,13 @@ private:
     
     void makeU();
     PseudoRandomInts makePri();
+    
+public:
+    Pri_U(Pk& pk, int Theta);
+    ~Pri_U();
+    
+    PseudoRandomInts u_pri;
+    std::vector<mpz_class> u_u;
 };
 
 

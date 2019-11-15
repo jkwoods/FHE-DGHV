@@ -26,9 +26,9 @@ public:
     
 private:
     Encoding(Pk pk, mpz_class c); // class handling
-    mpz_class e_val;
+    
     Pk e_pk;
-
+    mpz_class e_val;
 };
 
 #endif /* Encoding_hpp */

@@ -11,23 +11,26 @@
 #include <cmath>
 #include "utils.hpp"
 
-Pri_U::Pri_U(Pk pk)
-    : u_pk(pk), u_pri(makePri()), u_u(pk.p_Theta){
-        makeU();
-    }
+Pri_U::Pri_U(Pk& pk, int Theta)
+: u_pk(pk), u_pri(makePri()), u_u(Theta)
+{
+    makeU();
+}
 
 Pri_U::~Pri_U(){
     //TODO
 }
 
 PseudoRandomInts Pri_U::makePri(){
-    mpz_class power = pow(2,u_pk.p_kap+1); //TODO pow
-    PseudoRandomInts pri = PseudoRandomInts(power, u_pk.p_Theta);
+    mpz_class pwr = power(2,u_pk.p_kap+1);
+    PseudoRandomInts pri = PseudoRandomInts(pwr, u_pk.p_Theta);
     return pri;
 }
 
 void Pri_U::makeU(){
-    u_u = u_pri.r_list; //u draft
+    for (int i = 0; i < u_pri.r_len; i++){
+        u_u[i] = u_pri.r_list[i];
+    } //u draft
     
     for(int j = 0; j < u_pk.p_l; j++){
         std::vector<int> s1indices;
@@ -68,7 +71,8 @@ void Pri_U::makeU(){
             
             //su redo
             for(int i = 0; i < u_pk.p_Theta; i++){
-                su[i] = u_u[i]*u_pk.p_s[j][i];
+                mpz_class temp = u_pk.p_s[j][i] * u_u[i];;
+                su[i] = temp;
             }
             
             sumt = sum_array(su);

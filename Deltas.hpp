@@ -16,27 +16,27 @@
 #include <cmath>
 
 class Deltas{
-public:
-    Deltas(Pk pk, int lenv, int rho, int cr);
-    ~Deltas();
-    
-    PseudoRandomInts r_pri;
-    std::vector<mpz_class> r_x;
-    int r_lenv;
     
 private:
+    Pk r_pk;
+    int r_rho;
+    int r_cr;
     
     std::vector<mpz_class> r_deltas;
     std::vector<mpz_class> r_Chi;
     
-    Pk r_pk;
-    int r_rho;
-    int r_cr;
-    gmp_randstate_t d_state; //for random crap - not psuedorandom PRI
-    
     void makeDeltas();
     void makeDeltaList();
-    void makeState();
+
+public:
+    Deltas(Pk& pk, int lenv, int rho, int cr);
+    ~Deltas();
+    
+    
+    int r_lenv;
+    PseudoRandomInts r_pri;
+    std::vector<mpz_class> r_x;
+    
 };
 
 #endif /* Deltas_hpp */

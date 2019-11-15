@@ -9,15 +9,18 @@
 
 // TODO
 // put the y/u/z etc stuff in the correct places
+// pre-generate a bunch of random ## for encoding process
 // make longs??
 
 
 #include "Pk.hpp"
 #include "Deltas.hpp"
 #include "Pri_U.hpp"
+#include <iostream>
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(l, std::vector<int> (Theta)), p_vert_s(Theta, std::vector<int> (l)), p_u(Theta), p_y(Theta), p_o(Theta) {
+: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(l,std::vector<int>(Theta)), p_vert_s(Theta,std::vector<int>(l)), p_u(Theta), p_y(Theta), p_o(Theta)
+{
     
     //make t state
     gmp_randstate_t p_t_state;
@@ -166,25 +169,29 @@ void Pk::make_ii(){
 }
 
 void Pk::make_s(){
-    for(int i = 0; i < p_l; i++){
-        for (int j = 0; j < p_Theta; j++){
-            std::vector<int> fill(p_B, 0); //initialize all to 0
-            if (j==0){
-                fill[j] = 1;
-                p_s[i].insert(std::end(p_s[i]), std::begin(fill), std::end(fill));
-            } else {
-                p_s[i].insert(std::end(p_s[i]), std::begin(fill), std::end(fill));
-            }
-        }
+    for(int j = 0; j < p_l; j++){
+        //all initialized to 0 originally
+            p_s[j][j] = 1;
     }
     
-    for(int i = 0; i < p_theta; i++){ //TODO??
+    for(int t = 1; t < p_theta; t++){
         std::vector<int> sri = random_sample(p_B, p_l);
-        for(int j = 0; i < p_l; i++){
-            int k = (p_B*i)+sri[j];
+        for(int j = 0; j < p_l; j++){
+            int k = (p_B*t)+sri[j];
             p_s[j][k] = 1;
         }
     }
+    
+    //print
+    /*
+    for (int i = 0; i < p_l; i++)
+    {
+        for (int j = 0; j < p_Theta; j++)
+        {
+            std::cout << i << ", " << j << ": " << p_s[i][j] << "\n";
+        }
+    }
+     */
 }
 
 void Pk::make_vert_s(){
@@ -196,7 +203,7 @@ void Pk::make_vert_s(){
 }
 
 void Pk::make_u(){
-    Pri_U priu = Pri_U(*this);
+    Pri_U priu = Pri_U(*this, p_Theta);
     p_u = priu.u_u; //.getUList();
 }
 
