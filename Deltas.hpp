@@ -25,13 +25,13 @@ private:
     std::vector<mpz_class> r_deltas;
     std::vector<mpz_class> r_Chi;
     
+    void makeChi();
     void makeDeltas();
     void makeDeltaList();
 
 public:
     Deltas(Pk& pk, int lenv, int rho, int cr);
     ~Deltas();
-    
     
     int r_lenv;
     PseudoRandomInts r_pri;

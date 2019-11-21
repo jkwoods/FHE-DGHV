@@ -13,6 +13,7 @@
 #include <vector>
 #include <gmpxx.h>
 
+mpz_class floor_div(mpz_class a, mpz_class b);
 mpz_class modNear(mpz_class a, mpz_class b);
 mpz_class random_element(int l, int u);
 mpz_class mul_inv(mpz_class a, mpz_class b);

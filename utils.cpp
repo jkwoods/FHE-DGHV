@@ -10,9 +10,27 @@
 #include <math.h>
 #include <gmp.h>
 #include <iostream>
+#include <random>
+
+mpz_class floor_mod(){
+    
+}
+
+mpz_class floor_div(mpz_class a, mpz_class b){
+    mpz_t q;
+    mpz_init(q);
+    mpz_fdiv_q(q, a.get_mpz_t(), b.get_mpz_t());
+    
+    mpz_class result = mpz_class(q);
+    
+    mpz_clear(q);
+    return result;
+}
 
 mpz_class modNear(mpz_class a, mpz_class b){ //convert to long/int?
-    mpz_class quotientNear = (2*a+b) / (2*b); // autmatically rounds towards floor (check?)
+    mpz_class q1 = (2*a+b);
+    mpz_class q2 = (2*b);
+    mpz_class quotientNear = floor_div(q1,q2); //q1 / q2;
     mpz_class mn = a - b*quotientNear;
     return mn;
 }
@@ -25,14 +43,14 @@ mpz_class mul_inv(mpz_class a, mpz_class b){ //TODO - finish
         return 1;
     }
     while (a>1){
-        mpz_class q = a / b; //floor
+        mpz_class q = floor_div(a,b); //floor
         mpz_class temp = b;
         b = a % b;
         a = temp;
         
         mpz_class temp2 = x0;
-        x0 = x1 - q * x0;
-        x1 = temp;
+        x0 = x1 - (q * x0);
+        x1 = temp2;
     }
     if (x1 < 0){
         x1 += b0;
@@ -48,7 +66,7 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
     
     mpz_class sum = 0;
     for (int i = 0; i < n.size(); i++){
-        mpz_class p = prod / n[i]; //floor
+        mpz_class p = floor_div(prod,n[i]); //floor
         sum += a[i] * mul_inv(p, n[i]) * p;
     }
 
@@ -160,7 +178,9 @@ std::vector<int> random_sample(int range, int l){
     for(int i = 0; i < range; i++){
         sample[i] = i;
     }
-    std::random_shuffle(sample.begin(), sample.end());
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(sample.begin(), sample.end(), g);
     std::vector<int> cut_sample(l);
     for(int i = 0; i < l; i++){
         cut_sample[i] = sample[i];

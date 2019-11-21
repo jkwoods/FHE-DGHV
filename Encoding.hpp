@@ -23,12 +23,14 @@ public:
     void recode();
     Encoding H_add(Encoding x);
     Encoding H_mult(Encoding x);
+    mpz_class e_val;
+    
     
 private:
     Encoding(Pk pk, mpz_class c); // class handling
     
     Pk e_pk;
-    mpz_class e_val;
+    
 };
 
 #endif /* Encoding_hpp */

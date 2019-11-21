@@ -63,7 +63,6 @@ mpz_class Pk::encode(std::vector<int> m){
    
     std::vector<mpz_class> bi_ii(p_l);
     for (int i = 0; i < p_l; i++){
-        //TODO - call state before all rand numbers
         
         mpz_class lb = power(-2,p_alphai);
         mpz_class ub = power(2,p_alphai);
@@ -96,7 +95,15 @@ mpz_class Pk::encode(std::vector<int> m){
 std::vector<int> Pk::decode(mpz_class c){
     std::vector<int> m(p_l);
     for (int i = 0; i < p_l; i++){
-        mpz_class conv = modNear(c,p_p[i]) % 2;
+        std::cout << "slot " << i << "\n";
+        std::cout << "pi= " << p_p[i] << "\n";
+        
+        mpz_class mn = modNear(c,p_p[i]);
+        std::cout << "modNear " << mn << "\n";
+        
+        mpz_class conv = mn % 2;
+        std::cout << "mod2 " << conv << "\n";
+        
         int i_conv = (int) conv.get_si(); //hopefully right
         m[i] = (i_conv);
     }
@@ -123,7 +130,8 @@ mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
     return c;
 }
 
-//private helper
+
+//PRIVATE HELPER
 void Pk::make_p(gmp_randstate_t p_t_state){
     for (int i = 0; i < p_l; i++){
        p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
@@ -139,7 +147,7 @@ void Pk::make_pi(){ //prod of all p[i]
 
 void Pk::make_q0(gmp_randstate_t p_t_state){
     p_q0 = power(2,p_gam);
-    mpz_class comp = p_q0 / p_pi;
+    mpz_class comp = floor_div(p_q0,p_pi);
     
     while (p_q0 > comp){  
         mpz_class q0_prime1 = random_prime_f0(pow(p_lam,2), p_t_state); //2^entry //need to be long?TODO
@@ -210,7 +218,7 @@ void Pk::make_u(){
 void Pk::make_y(){
     mpz_class div = power(2,p_kap);
     for (int i = 0; i < p_u.size(); i++){
-        p_y[i] = (p_u[i] / div);
+        p_y[i] = (p_u[i] / div); //TODO either floor div it or more likely - need to convert to rational
     }
 }
 

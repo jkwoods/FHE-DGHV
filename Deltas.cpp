@@ -7,12 +7,13 @@
 //
 
 #include "Deltas.hpp"
+#include <iostream>
 
 
 Deltas::Deltas(Pk& pk, int lenv, int rho, int cr)
 : r_pk(pk), r_rho(rho), r_cr(cr), r_deltas(lenv), r_Chi(lenv), r_lenv(lenv), r_pri(PseudoRandomInts(r_pk.p_x0, lenv)), r_x(lenv)
 {
-        
+        makeChi();
         makeDeltas();
         makeDeltaList(); //'x'
 }
@@ -21,9 +22,14 @@ Deltas::~Deltas(){
     //TODO -vectors?
 }
     
+void Deltas::makeChi(){
+    r_Chi = r_pri.r_list;
+}
+
 void Deltas::makeDeltaList(){
     for(int i = 0; i < r_pri.r_len; i++){
         r_x[i] = r_Chi[i]-r_deltas[i];
+        
     }
 }
 
@@ -47,7 +53,7 @@ void Deltas::makeDeltas(){
             r[i][j] = r[i][j] + lb;
         }
         mpz_class rand = p_class_state.get_z_range(e_help);
-        E[i] = rand / r_pk.p_pi; //floor
+        E[i] = floor_div(rand,r_pk.p_pi); //floor
     }
     
     std::vector<mpz_class> crts(r_lenv);

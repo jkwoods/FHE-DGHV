@@ -34,7 +34,7 @@ void Pri_U::makeU(){
     
     for(int j = 0; j < u_pk.p_l; j++){
         std::vector<int> s1indices;
-        mpz_class xpj = power(2, u_pk.p_kap) / u_pk.p_p[j]; // i think its an int (??) pow TODO
+        mpz_class xpj = floor_div(power(2, u_pk.p_kap),u_pk.p_p[j]); // i think its an int
         
         std::vector<mpz_class> su(u_pk.p_Theta);
         for(int i = 0; i < u_pk.p_Theta; i++){
