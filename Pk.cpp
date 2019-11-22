@@ -95,14 +95,14 @@ mpz_class Pk::encode(std::vector<int> m){
 std::vector<int> Pk::decode(mpz_class c){
     std::vector<int> m(p_l);
     for (int i = 0; i < p_l; i++){
-        std::cout << "slot " << i << "\n";
-        std::cout << "pi= " << p_p[i] << "\n";
+        //std::cout << "slot " << i << "\n";
+        //std::cout << "pi= " << p_p[i] << "\n";
         
         mpz_class mn = modNear(c,p_p[i]);
-        std::cout << "modNear " << mn << "\n";
+        //std::cout << "modNear " << mn << "\n";
         
-        mpz_class conv = mn % 2;
-        std::cout << "mod2 " << conv << "\n";
+        mpz_class conv = floor_mod(mn,2);
+        //std::cout << "mod2 " << conv << "\n";
         
         int i_conv = (int) conv.get_si(); //hopefully right
         m[i] = (i_conv);
@@ -121,12 +121,12 @@ mpz_class Pk::recode(mpz_class c){ //TODO gen
 }
 
 mpz_class Pk::H_add(mpz_class c1, mpz_class c2){
-    mpz_class c = (c1+c2) % p_x0;
+    mpz_class c = floor_mod((c1+c2),p_x0);
     return c;
 }
 
 mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
-    mpz_class c = (c1*c2) % p_x0;
+    mpz_class c = floor_mod((c1*c2),p_x0);
     return c;
 }
 

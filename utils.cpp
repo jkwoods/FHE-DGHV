@@ -12,8 +12,30 @@
 #include <iostream>
 #include <random>
 
-mpz_class floor_mod(){
+mpz_class floor_mod(mpz_class a, int b){
+    mpz_t r;
+    mpz_init(r);
+
+    mpz_t mb;
+    mpz_init_set_ui(mb, 2);
     
+    mpz_fdiv_r(r, a.get_mpz_t(), mb);
+    
+    mpz_class result = mpz_class(r);
+    
+    mpz_clear(r);
+    return result;
+}
+
+mpz_class floor_mod(mpz_class a, mpz_class b){
+    mpz_t r;
+    mpz_init(r);
+    mpz_fdiv_r(r, a.get_mpz_t(), b.get_mpz_t());
+    
+    mpz_class result = mpz_class(r);
+    
+    mpz_clear(r);
+    return result;
 }
 
 mpz_class floor_div(mpz_class a, mpz_class b){
@@ -45,7 +67,7 @@ mpz_class mul_inv(mpz_class a, mpz_class b){ //TODO - finish
     while (a>1){
         mpz_class q = floor_div(a,b); //floor
         mpz_class temp = b;
-        b = a % b;
+        b = floor_mod(a,b);
         a = temp;
         
         mpz_class temp2 = x0;
@@ -70,7 +92,9 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
         sum += a[i] * mul_inv(p, n[i]) * p;
     }
 
-    return (sum % prod);
+    mpz_class result = floor_mod(sum,prod);
+    
+    return result;
 }
 
 int kd(int i, int j){

@@ -46,7 +46,7 @@ void Pri_U::makeU(){
         }
         
         mpz_class sumt = sum_array(su);
-        sumt = sumt % power(2, u_pk.p_kap+1);
+        sumt = floor_mod(sumt,power(2, u_pk.p_kap+1));
         
         while(sumt != xpj){
             //pick rand 1 in s
@@ -76,7 +76,7 @@ void Pri_U::makeU(){
             }
             
             sumt = sum_array(su);
-            sumt = sumt % power(2, u_pk.p_kap+1);
+            sumt = floor_mod(sumt,power(2, u_pk.p_kap+1));
             
         }
     }

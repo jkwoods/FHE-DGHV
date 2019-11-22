@@ -93,7 +93,7 @@ void Deltas::makeDeltas(){
     }
     
     for (int i = 0; i < r_lenv; i++){
-        mpz_class chi_temp = r_Chi[i] % r_pk.p_pi;
+        mpz_class chi_temp = floor_mod(r_Chi[i],r_pk.p_pi);
         
         r_deltas[i] = chi_temp+(E[i] * r_pk.p_pi)-crts[i];
     }
