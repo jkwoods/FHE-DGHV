@@ -9,16 +9,12 @@
 #include "utils.hpp"
 
 mpq_class mod_2_f(mpq_class a){
-    //std::cout << "start" << "\n";
-    //std::cout << a << "\n";
-    
     mpz_class num = a.get_num();
-    mpz_class den = a.get_den();
-    mpz_class div = floor_div(num, den);
-    mpz_class nearest_int = 2*div;
-    
-    mpq_class mod = a - nearest_int;
-    //std::cout << mod << "\n";
+    mpz_class den = a.get_den()*2;
+    mpz_class nearest_int = floor_div(num, den);
+
+    mpq_class mod = a - nearest_int*2;
+
     
     if (mod < 0){
         while (mod <= 0){
@@ -33,6 +29,13 @@ mpq_class mod_2_f(mpq_class a){
 }
 
 void print_vec(std::vector<int> p){
+    for(int i = 0; i < p.size(); i++){
+        std::cout << "i= " << i << " : " << p[i] << "\n";
+    }
+    std::cout << "\n";
+}
+
+void print_vec(std::vector<mpz_class> p){
     for(int i = 0; i < p.size(); i++){
         std::cout << "i= " << i << " : " << p[i] << "\n";
     }
@@ -214,20 +217,6 @@ mpz_class random_prime_f0(int ub, gmp_randstate_t rand_state){ //2^entry (only u
 }
 
 
-/*
-std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b){
-    std::vector<int> c;
-    c.push_back(a[0]+b[0]);
-    int carry = a[0]*b[0];
-    for (int i = 1; i < a.size()-1; i++){
-        int carry2 = (a[i]+b[i])*carry+a[i]*b[i];
-        c.push_back(a[i]+b[i]+carry);
-        carry = carry2;
-    }
-    c.push_back(a[-1]+b[-1]+carry);
-    return c;
-}
- */
 
 
 int random_choice(std::vector<int> sample){ //TODO test
@@ -257,6 +246,31 @@ mpz_class sum_array(std::vector<mpz_class> a){
         suma = suma+a[i];
     }
     return suma;
+}
+
+
+std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b, mpz_class x0){ //TODO optimize //a is 'bigger'
+    std::vector<mpz_class> c;
+    c.push_back(a[0]+b[0]);
+    std::cout << "c[0]= " << c[0] << "\n";
+    
+    mpz_class carry = a[0]*b[0];
+    std::cout << "c[1] carry= " << carry << "\n";
+    
+    for (int i = 1; i < a.size()-1; i++){
+        mpz_class carry2 = (a[i]+b[i])*carry+a[i]*b[i];
+        mpz_class ci = floor_mod((a[i]+b[i]+carry),x0);
+        
+        c.push_back(ci);
+        std::cout << "c[" << i << "]= " << c[i] << "\n";
+        
+        carry = carry2;
+        std::cout << "carry c[" << i+1 << "]= " << carry << "\n";
+    }
+    
+    mpz_class ci = floor_mod((a.back()+b.back()+carry),x0);
+    c.push_back(ci);
     
     
+    return c;
 }

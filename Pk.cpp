@@ -94,41 +94,8 @@ mpz_class Pk::encode(std::vector<int> m){
 }
 
 std::vector<int> Pk::decode(mpz_class c){
-    //TODO - recover u
-    std::vector<std::vector<int>> z(p_Theta,std::vector<int>(p_n));
-    for (int i = 0; i < p_Theta; i++){
-        //std::cout << p_y[i] << "\n";
-        
-        mpq_class zi = c * p_y[i];
-        mpf_class zi_m = mod_2_f(zi);
-        //std::cout << zi << "\n";
-        //std::cout << zi_m << "\n";
-        
-        //convert each zi to vector of binary
-        //mult by 2^n (bits of precision)
-        mpf_class zi_prec = zi_m * power(2, p_n);
-        //std::cout << zi_prec << "\n";
-        
-        //truncate
-        if (zi_prec.fits_slong_p() == 0){ //doesn't fit
-            std::cout << "Error in generation of z\n";
-        }
-        long zi_round = zi_prec.get_si(); //round
-        //std::cout << zi_round << "\n";
-        
-        //put in binary
-        std::vector<int> ex_z(p_n);
-        ex_z = to_binary(zi_round, p_n); //[lsb, ...., msb]
-        print_vec(ex_z);
-        
-        z[i] = ex_z;
-    }
-    return z[0];
     
-    
-    
-    
-    /*
+
     std::vector<int> m(p_l);
     for (int i = 0; i < p_l; i++){
         //std::cout << "slot " << i << "\n";
@@ -144,7 +111,7 @@ std::vector<int> Pk::decode(mpz_class c){
         m[i] = (i_conv);
     }
     return m;
-    */
+
 }
 
 std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
@@ -157,15 +124,15 @@ std::vector<std::vector<int>> Pk::expand(mpz_class c){
     std::vector<std::vector<int>> z(p_Theta,std::vector<int>(p_n));
     for (int i = 0; i < p_Theta; i++){
         mpq_class zi = c * p_y[i];
-        std::cout << zi << "\n";
+        std::cout << "recode start" << "\n";
         
-        mpq_class zi_mod = mod_2_f(zi);
-        std::cout << zi_mod << "\n";
+        mpq_class mod = mod_2_f(zi);
+        std::cout << mpf_class(mod) << "\n";
         
         //convert each zi to vector of binary
         //mult by 2^n (bits of precision)
-        mpq_class zi_mult = zi_mod * (pow(2,p_n));
-        std::cout << zi_mult << "\n";
+        mpq_class zi_mult = mod * (pow(2,p_n));
+        std::cout << mpf_class(zi_mult) << "\n";
         
         //convert to int (cut off ends)
         mpz_class zi_conv = mpz_class(zi_mult);
@@ -179,7 +146,7 @@ std::vector<std::vector<int>> Pk::expand(mpz_class c){
         
         //put in binary
         std::vector<int> ex_z(p_n);
-        ex_z = to_binary(zi_round, p_n); //[lsb, ...., msb]
+        ex_z = to_binary(zi_round, p_n+1); //[lsb, ...., msb] max 31 (can we ever possibly get a 32? what then) TODO
         print_vec(ex_z);
         
         z[i] = ex_z;
@@ -188,8 +155,27 @@ std::vector<std::vector<int>> Pk::expand(mpz_class c){
 }
 
 mpz_class Pk::recode(mpz_class c){ //TODO gen
-    mpz_class temp = 0;
-    return temp;
+    std::vector<std::vector<int>> z = expand(c);
+    
+    std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n));
+    
+    //z * sk
+    for(int i = 0; i < p_Theta; i++){
+        for(int j = 0; j < p_n; j++){
+            z_mult[i][j] = z[i][j] * p_o[i];
+        }
+    }
+    
+    //add to make as
+    std::vector<mpz_class> a(p_n);
+    for(int i = 0; i < p_Theta; i++){
+        a = sum_binary(a,z_mult[i],p_x0);
+    }
+    
+    mpz_class two = a[a.size()-1] + a[a.size()-2]; //correct??
+    mpz_class c_prime = two + (c & 1);
+    
+    return c_prime;
 }
 
 mpz_class Pk::H_add(mpz_class c1, mpz_class c2){
