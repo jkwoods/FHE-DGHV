@@ -7,10 +7,49 @@
 //
 
 #include "utils.hpp"
-#include <math.h>
-#include <gmp.h>
-#include <iostream>
-#include <random>
+
+mpq_class mod_2_f(mpq_class a){
+    //std::cout << "start" << "\n";
+    //std::cout << a << "\n";
+    
+    mpz_class num = a.get_num();
+    mpz_class den = a.get_den();
+    mpz_class div = floor_div(num, den);
+    mpz_class nearest_int = 2*div;
+    
+    mpq_class mod = a - nearest_int;
+    //std::cout << mod << "\n";
+    
+    if (mod < 0){
+        while (mod <= 0){
+            mod = mod + 2;
+        }
+    } else {
+        while (mod >= 2){
+            mod = mod - 2;
+        }
+    }
+    return mod;
+}
+
+void print_vec(std::vector<int> p){
+    for(int i = 0; i < p.size(); i++){
+        std::cout << "i= " << i << " : " << p[i] << "\n";
+    }
+    std::cout << "\n";
+}
+
+std::vector<int> to_binary(long a, int bits){ // [0,1,...,n] = [LSB, ... MSB]
+    std::vector<int> result(bits);
+    for(int i = 0; i < bits; i++){
+        if (a == 0){
+            break;
+        }
+        result[i] = a % 2;
+        a = floor(a / 2);
+    }
+    return result;
+}
 
 mpz_class floor_mod(mpz_class a, int b){
     mpz_t r;

@@ -12,7 +12,14 @@
 #include <stdio.h>
 #include <vector>
 #include <gmpxx.h>
+#include <math.h>
+#include <gmp.h>
+#include <iostream>
+#include <random>
 
+mpq_class mod_2_f(mpq_class a);
+void print_vec(std::vector<int> p);
+std::vector<int> to_binary(long a, int bits);
 mpz_class floor_mod(mpz_class a, int b);
 mpz_class floor_mod(mpz_class a, mpz_class b);
 mpz_class floor_div(mpz_class a, mpz_class b);
