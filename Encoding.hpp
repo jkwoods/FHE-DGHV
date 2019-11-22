@@ -21,8 +21,10 @@ public:
     std::vector<int> decode();
     std::vector<int> decode_squashed();
     void recode();
-    Encoding H_add(Encoding x);
-    Encoding H_mult(Encoding x);
+    Encoding operator+(Encoding x);
+    Encoding operator*(Encoding x);
+    static Encoding selector(std::vector<int> s, Encoding a, Encoding b);
+    Encoding neg();
     mpz_class e_val;
     
     

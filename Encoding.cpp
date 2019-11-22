@@ -34,12 +34,23 @@ void Encoding::recode(){
     e_val = e_pk.recode(e_val);
 }
 
-Encoding Encoding::H_add(Encoding x){
+Encoding Encoding::operator+(Encoding x){
     mpz_class c = e_pk.H_add(e_val, x.e_val);
     return Encoding(e_pk, c);
 }
 
-Encoding Encoding::H_mult(Encoding x){
+Encoding Encoding::operator*(Encoding x){
     mpz_class c = e_pk.H_mult(e_val, x.e_val);
     return Encoding(e_pk, c);
+}
+
+Encoding Encoding::neg(){
+    Encoding one = Encoding(e_pk, {1,1,1,1,1,1,1,1,1,1});
+    return *this+one;
+}
+
+Encoding Encoding::selector(std::vector<int> s, Encoding a, Encoding b){ // if c=1: a, else b
+
+    Encoding sel = Encoding(a.e_pk, s);
+    return (sel*a) + (sel.neg()*b);
 }

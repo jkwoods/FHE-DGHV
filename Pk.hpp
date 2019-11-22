@@ -33,6 +33,8 @@ private:
     void make_y();
     void make_o();
     
+    //Encoding Helper
+    
 public:
     int p_lam;
     int p_rho;

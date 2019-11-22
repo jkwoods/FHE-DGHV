@@ -62,17 +62,17 @@ int main(int argc, const char * argv[]) {
     
     */
     
-    std::vector<int> z_vec = {0,1,0,1,0,1,0,1,0,1};
+    std::vector<int> z_vec = {1,0,1,1,0,0,0,0,0,0};
     Encoding zero = Encoding(pk_a, z_vec);
     
-    std::vector<int> o_vec = {1,1,1,1,1,0,0,0,0,0};
+    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1};
     Encoding one = Encoding(pk_a, o_vec);
     
-    //std::vector<int> a_vec = {1,1,1,1,1,0,0,0,0,0};
-    Encoding aa = zero.H_add(one); //Encoding(pk_a, a_vec);
+    std::vector<int> a_vec = {1,1,1,1,1,0,0,0,0,0};
+    Encoding aa = Encoding::selector(a_vec,zero,one); //Encoding(pk_a, a_vec);
     
     //std::vector<int> b_vec = {0,1,0,1,0,1,0,1,0,1};
-    Encoding bb = zero.H_mult(one); //Encoding(pk_a, b_vec);
+    Encoding bb = zero.neg(); //Encoding(pk_a, b_vec);
     
     std::vector<int> z_dec = zero.decode();
     std::vector<int> o_dec = one.decode();
