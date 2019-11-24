@@ -17,6 +17,7 @@
 #include "Deltas.hpp"
 #include "Pri_U.hpp"
 #include <iostream>
+#include "utils.hpp"
 
 Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
 : p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(l,std::vector<int>(Theta)), p_vert_s(Theta,std::vector<int>(l)), p_u(Theta), p_y(Theta), p_o(Theta)
@@ -93,6 +94,8 @@ mpz_class Pk::encode(std::vector<int> m){
 }
 
 std::vector<int> Pk::decode(mpz_class c){
+    
+
     std::vector<int> m(p_l);
     for (int i = 0; i < p_l; i++){
         //std::cout << "slot " << i << "\n";
@@ -108,6 +111,7 @@ std::vector<int> Pk::decode(mpz_class c){
         m[i] = (i_conv);
     }
     return m;
+
 }
 
 std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
@@ -115,9 +119,74 @@ std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
     return temp;
 }
 
+std::vector<std::vector<int>> Pk::expand(mpz_class c){
+    //TODO - recover u
+    std::vector<std::vector<int>> z(p_Theta,std::vector<int>(p_n+1));
+    for (int i = 0; i < p_Theta; i++){
+        mpq_class zi = c * p_y[i];
+        mpq_class mod = mod_2_f(zi);
+        //std::cout << mpf_class(mod) << "\n";
+        
+        //convert each zi to vector of binary
+        //mult by 2^n (bits of precision)
+        mpq_class zi_mult = mod * (pow(2,p_n));
+        //std::cout << mpf_class(zi_mult) << "\n";
+        
+        //convert to int (cut off ends)
+        mpz_class zi_conv = mpz_class(zi_mult);
+        if ((zi_mult - zi_conv) > 0.5){
+            zi_conv += 1;
+        }
+        //std::cout << zi_conv << "\n";
+        
+        if (zi_conv.fits_sint_p() == 0){ //doesn't fit
+            std::cout << "Error in generation of z\n";
+        }
+        int zi_round = zi_conv.get_si(); //round
+        //std::cout << zi_round << "\n";
+        
+        //put in binary
+        std::vector<int> ex_z(p_n+1);
+        ex_z = to_binary(zi_round, p_n+1); //[lsb, ...., msb] max 31 (can we ever possibly get a 32? what then) TODO
+        //print_vec(ex_z);
+        
+        z[i] = ex_z;
+    }
+    return z;
+}
+
 mpz_class Pk::recode(mpz_class c){ //TODO gen
-    mpz_class temp = 0;
-    return temp;
+    std::vector<std::vector<int>> z = expand(c);
+    
+    std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n+1));
+    
+    //z * sk - correct
+    for(int i = 0; i < p_Theta; i++){
+        for(int j = 0; j < p_n+1; j++){
+            z_mult[i][j] = (z[i][j] * p_o[i]);
+        }
+    }
+    
+    //add to make as
+    std::vector<mpz_class> a(p_n+1);
+    for(int i = 0; i < p_Theta; i++){
+        a = sum_binary(a,z_mult[i]);
+
+        for (int j = 0; j < p_n+1; j++){
+            //a[j] = floor_mod(a[j], p_x0);
+            //std::cout << "a; i= " << i << "\n";
+            //print_vec(decode(a[j]));
+        }
+        
+    }
+    
+    //print_vec(decode(a[a.size()-2]));
+    //std::cout << "c & 1= " << (c & 1) << "\n";
+    
+    mpz_class two = a[a.size()-1] + a[a.size()-2]; //correct??
+    mpz_class c_prime = two + (c & 1);
+    
+    return c_prime;
 }
 
 mpz_class Pk::H_add(mpz_class c1, mpz_class c2){
@@ -192,14 +261,15 @@ void Pk::make_s(){
     
     //print
     /*
-    for (int i = 0; i < p_l; i++)
+    for (int j = 0; j < 15; j++)
     {
-        for (int j = 0; j < p_Theta; j++)
+        for (int i = 0; i < p_l; i++)
         {
-            std::cout << i << ", " << j << ": " << p_s[i][j] << "\n";
+            std::cout << p_s[i][(j*10)+0] << p_s[i][(j*10)+1] << p_s[i][(j*10)+2] << p_s[i][(j*10)+3] << p_s[i][(j*10)+4] << p_s[i][(j*10)+5] << p_s[i][(j*10)+6] << p_s[i][(j*10)+7] << p_s[i][(j*10)+8] << p_s[i][(j*10)+9] << "\n";
         }
+        std::cout << "\n\n";
     }
-     */
+    */
 }
 
 void Pk::make_vert_s(){
@@ -218,7 +288,8 @@ void Pk::make_u(){
 void Pk::make_y(){
     mpz_class div = power(2,p_kap);
     for (int i = 0; i < p_u.size(); i++){
-        p_y[i] = (p_u[i] / div); //TODO either floor div it or more likely - need to convert to rational
+        p_y[i] = mpq_class(p_u[i],div); //rational u[i]/(2^kap)
+        p_y[i].canonicalize();
     }
 }
 

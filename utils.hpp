@@ -12,7 +12,16 @@
 #include <stdio.h>
 #include <vector>
 #include <gmpxx.h>
+#include <math.h>
+#include <gmp.h>
+#include <iostream>
+#include <random>
 
+
+mpq_class mod_2_f(mpq_class a);
+void print_vec(std::vector<int> p);
+void print_vec(std::vector<mpz_class> p);
+std::vector<int> to_binary(long a, int bits);
 mpz_class floor_mod(mpz_class a, int b);
 mpz_class floor_mod(mpz_class a, mpz_class b);
 mpz_class floor_div(mpz_class a, mpz_class b);
@@ -29,12 +38,9 @@ mpz_class random_prime_f0(int ub, gmp_randstate_t rand_state); //lb == 0 //2^ent
 int random_choice(std::vector<int> sample);
 std::vector<int> random_sample(int range, int l);
 mpz_class sum_array(std::vector<mpz_class> a);
+std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b);
 
-//int set_random_seed(int seed);
-//std::vector<int> sumBinary(std::vector<int> a, std::vector<int> b);
 //std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
-//std::vector<int> toBinary(int x, int l);
-//std::vector<int> vec_mult(int c, std::vector<int> v);
 
 
 

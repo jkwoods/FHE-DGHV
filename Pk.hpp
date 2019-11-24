@@ -16,6 +16,7 @@
 #include <cmath>
 #include <gmpxx.h>
 
+
 class Pk{
 private:
     //helper
@@ -32,6 +33,8 @@ private:
     void make_u();
     void make_y();
     void make_o();
+    
+    std::vector<std::vector<int>> expand(mpz_class c);
     
     //Encoding Helper
     
@@ -61,7 +64,7 @@ public:
     std::vector<std::vector<int>> p_s;
     std::vector<std::vector<int>> p_vert_s;
     std::vector<mpz_class> p_u;
-    std::vector<mpz_class> p_y;
+    std::vector<mpq_class> p_y; //rational
     std::vector<mpz_class> p_o;
     
     
