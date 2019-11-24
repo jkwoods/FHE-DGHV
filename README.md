@@ -8,13 +8,13 @@ This was made for the purpose of fun/learning/proof of concept, and should NOT b
 Please feel free to use/modify code. Everything is open-source.
 
 **Using Library** <br />
-Keys can be made by creating a "Pk" object:
+Keys can be made by creating a "Pk" object:<br />
 
 
-Data can be encoded with the "Encoding" class:
+Data can be encoded with the "Encoding" class:<br />
 ```Encoding example = Encoding(Pk publicKey, std::vector<int> {1,0,0,1,0,...});```
 
-Addition and multiplication have been overloaded.
+Addition and multiplication have been overloaded.<br />
 
 
 **References/Acknowledgements** <br />
