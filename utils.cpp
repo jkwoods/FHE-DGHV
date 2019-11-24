@@ -249,26 +249,30 @@ mpz_class sum_array(std::vector<mpz_class> a){
 }
 
 
-std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b, mpz_class x0){ //TODO optimize //a is 'bigger'
+std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b){ //TODO optimize
+    if (a.size() != b.size()){
+        std::cout << "size issue in binary sum\n";
+    }
+    
     std::vector<mpz_class> c;
     c.push_back(a[0]+b[0]);
-    std::cout << "c[0]= " << c[0] << "\n";
+    //std::cout << "c[0]= " << c[0] << "\n";
     
     mpz_class carry = a[0]*b[0];
-    std::cout << "c[1] carry= " << carry << "\n";
+    //std::cout << "c[1] carry= " << carry << "\n";
     
     for (int i = 1; i < a.size()-1; i++){
         mpz_class carry2 = (a[i]+b[i])*carry+a[i]*b[i];
-        mpz_class ci = floor_mod((a[i]+b[i]+carry),x0);
+        mpz_class ci = a[i]+b[i]+carry;
         
         c.push_back(ci);
-        std::cout << "c[" << i << "]= " << c[i] << "\n";
+        //std::cout << "c[" << i << "]= " << c[i] << "\n";
         
         carry = carry2;
-        std::cout << "carry c[" << i+1 << "]= " << carry << "\n";
+        //std::cout << "carry c[" << i+1 << "]= " << carry << "\n";
     }
     
-    mpz_class ci = floor_mod((a.back()+b.back()+carry),x0);
+    mpz_class ci = a.back()+b.back()+carry;
     c.push_back(ci);
     
     
