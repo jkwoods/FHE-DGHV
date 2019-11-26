@@ -249,13 +249,13 @@ mpz_class sum_array(std::vector<mpz_class> a){
 }
 
 
-std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b){ //TODO optimize
+std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b){
     if (a.size() != b.size()){
         std::cout << "size issue in binary sum\n";
     }
     
-    std::vector<mpz_class> c;
-    c.push_back(a[0]+b[0]);
+    std::vector<mpz_class> c(a.size());
+    c[0] = a[0]+b[0];
     //std::cout << "c[0]= " << c[0] << "\n";
     
     mpz_class carry = a[0]*b[0];
@@ -265,7 +265,7 @@ std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_clas
         mpz_class carry2 = (a[i]+b[i])*carry+a[i]*b[i];
         mpz_class ci = a[i]+b[i]+carry;
         
-        c.push_back(ci);
+        c[i] = (ci);
         //std::cout << "c[" << i << "]= " << c[i] << "\n";
         
         carry = carry2;
@@ -273,8 +273,9 @@ std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_clas
     }
     
     mpz_class ci = a.back()+b.back()+carry;
-    c.push_back(ci);
+    c[a.size()-1] = ci;
     
     
     return c;
 }
+

@@ -49,7 +49,7 @@ Encoding Encoding::neg(){
     return *this+one;
 }
 
-Encoding Encoding::selector(std::vector<int> s, Encoding a, Encoding b){ // if c=1: a, else b
+Encoding Encoding::selector(std::vector<int> s, Encoding a, Encoding b){ // if s=1: a, else b
 
     Encoding sel = Encoding(a.e_pk, s);
     return (sel*a) + (sel.neg()*b);

@@ -14,33 +14,26 @@
 #include "utils.hpp"
 #include <ctime>
 
+/* TODO
+- Optimize recode
+ 
 
+ */
 
 int main(int argc, const char * argv[]) {
 
     // make pk
     std::cout << "Making Keys\n";
-    int lam=12;
-    int rho=26;
-    int rhoi=26;
-    int eta=1988;
-    int gam=147456;
-    int Theta=150;
-    int theta=15;
-    int kap=149446;
-    int alpha=936;
-    int alphai=936;
-    int tau=188;
-    int l=10;
+    Pk pk_a = Pk::make_key(0); //toy
+    
+    bool test = pk_a.assert_parameter_correctness();
+    std::cout << test << "\n";
     
     
-    Pk pk_a = Pk(lam, rho, rhoi, eta, gam, Theta, theta, kap, alpha, alphai, tau, l);
-    
-    
-    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0};
+    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     Encoding zero = Encoding(pk_a, z_vec);
     
-    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1};
+    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
     Encoding one = Encoding(pk_a, o_vec);
     
     //std::vector<int> a_vec = {1,1,1,1,1,0,0,0,0,0};

@@ -19,8 +19,8 @@
 #include <iostream>
 #include "utils.hpp"
 
-Pk::Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rhoi), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(theta), p_kap(kap), p_alpha(alpha), p_alphai(alphai), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(Theta/theta), p_s(l,std::vector<int>(Theta)), p_vert_s(Theta,std::vector<int>(l)), p_u(Theta), p_y(Theta), p_o(Theta)
+Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n)
+: p_lam(lam), p_rho(rho), p_rhoi(rho+lam), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(Theta/l), p_kap(64*(gam/64+1)-1), p_alpha(alpha), p_alphai(alpha+lam), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(l), p_s(l,std::vector<int>(Theta)), p_vert_s(Theta,std::vector<int>(l)), p_u(Theta), p_y(Theta), p_o(Theta) //for kap, c++ trucates (rounds down) so its all gud
 {
     
     //make t state
@@ -155,7 +155,7 @@ std::vector<std::vector<int>> Pk::expand(mpz_class c){
     return z;
 }
 
-mpz_class Pk::recode(mpz_class c){ //TODO gen
+mpz_class Pk::recode(mpz_class c){
     std::vector<std::vector<int>> z = expand(c);
     
     std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n+1));
@@ -298,4 +298,82 @@ void Pk::make_o(){
     p_o = o_D.r_x; //getDeltaList();
 }
 
+bool Pk::assert_parameter_correctness(){
+    bool a = p_rho >= 2*p_lam; //brute force noise attack
+    std::cout << a << "\n";
+    bool b = p_eta >= p_alphai + p_rhoi + 1 + log2(p_l); // correct decoding
+    std::cout << b << "\n";
+    bool c = p_eta >= p_rho * (p_lam*(pow(log(p_lam),2))); //squashed decode circut
+    std::cout << c << "\n";
+    bool d = p_gam > pow(p_eta, 2) * log(p_lam); //lattice attack
+    std::cout << d << "\n";
+    bool e = (p_alpha * p_tau) >= p_gam + p_lam; //leftover hash lemma
+    std::cout << e << "\n";
+    bool f = p_tau >= p_l * (p_rhoi + 2) + p_lam; //leftover hash lemma
+    std::cout << f << "\n";
+    bool g = (p_Theta % p_l == 0);
+    
+    return a && b && c && d && e && f && g;
+}
+
+Pk Pk::make_key(int size){
+    if (size == 0){
+        int lam=42;
+        int rho=84;
+        int eta=988;
+        int gam=147456;
+        int Theta=150;
+        int alpha=125;
+        int tau=1322;
+        int l=10;
+        
+        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+    } else if (size == 1){
+        int lam=52;
+        int rho=104;
+        int eta=146767;
+        int gam=21550;
+        int Theta=555;
+        int alpha=1476;
+        int tau=5900;
+        int l=37;
+        
+        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+    } else if (size == 2){
+        int lam=52;
+        int rho=104;
+        int eta=146767;
+        int gam=21550;
+        int Theta=555;
+        int alpha=1476;
+        int tau=5900;
+        int l=37;
+        
+        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+    } else if (size == 3){
+        int lam=52;
+        int rho=104;
+        int eta=146767;
+        int gam=21550;
+        int Theta=555;
+        int alpha=1476;
+        int tau=5900;
+        int l=37;
+        
+        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+    } else {
+        std::cout << "Size not correctly specified. Small key being made.\n";
+        int lam=52;
+        int rho=104;
+        int eta=146767;
+        int gam=21550;
+        int Theta=555;
+        int alpha=1476;
+        int tau=5900;
+        int l=37;
+        
+        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+        
+    }
+}
 

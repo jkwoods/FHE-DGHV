@@ -40,10 +40,4 @@ std::vector<int> random_sample(int range, int l);
 mpz_class sum_array(std::vector<mpz_class> a);
 std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b);
 
-//std::vector<int> xorBinary(std::vector<int> a, std::vector<int> b);
-
-
-
-
-
 #endif /* utils_hpp */
