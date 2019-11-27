@@ -21,12 +21,13 @@ You can also set your own parameters with the Pk constructor: <br />
 ```example_pk.assert_parameter_correctness();```
 
 Data can be encoded with the "Encoding" class:<br />
-```Encoding example_encoding = Encoding(Pk publicKey, std::vector<int> {1,0,0,1,0,...});```
+```Encoding example_encoding = Encoding(Pk publicKey, std::vector<int> {1,0,0,1,0,...});``` <br />
+All encoded data should be treated as a vector of l (seperate) bits.
 
-Addition and multiplication have been overloaded.<br />
+Addition and multiplication have been overloaded. They are done bitwise. <br />
 
 Negation (of each individual "slot") is available:<br />
-```example_encoding.neg();```
+```example_encoding.neg();``` <br />
 As is selection (as a static method):<br />
 ```Encoding example_selected = Encoding::selector(std::vector<int> s, Encoding a, Encoding b); //if s=1: a, else b```
 
@@ -44,7 +45,7 @@ https://eprint.iacr.org/2009/616.pdf <br />
 And loosely on this (sequential, non-batched) code:
 https://github.com/coron/fhe <br />
 
-GMP Library (https://gmplib.org/) used to handle big integers. <br />
+GMP Library used to handle big integers. <br />
 
 This work was done at Oak Ridge National Lab. This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internship program.	
 
