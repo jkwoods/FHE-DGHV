@@ -14,7 +14,7 @@ OpenMP parallelization is available, but not required.
 
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
-```Pk example_pk = Pk::make_key(1);``` <br />
+```Pk example_pk = Pk::make_key(int security_level);``` <br />
 Security levels toy, small, medium and large, are inputs 0-3, respectively. <br />
 You can also set your own parameters with the Pk constructor: <br />
 ```Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);```
