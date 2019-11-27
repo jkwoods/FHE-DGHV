@@ -7,14 +7,31 @@ This was made for the purpose of fun/learning/proof of concept, and should NOT b
 
 Please feel free to use/modify code. Everything is open-source.
 
-**Using Library** <br />
-Keys can be made by creating a "Pk" object:<br />
+**Pre-Req**: <br />
+GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/
+CUDA GPU offloading is available, but not required.
+OpenMP parallelization is available, but not required.
 
+**Using Library** <br />
+Keys can be created with preset parameters: <br />
+```Pk example_pk = Pk::make_key(1);```
+Security levels toy, small, medium and large, are inputs 0-3, respectively. <br />
+You can also set your own parameters with the Pk constructor: <br />
+```Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);```
+```example_pk.assert_parameter_correctness();```
 
 Data can be encoded with the "Encoding" class:<br />
-```Encoding example = Encoding(Pk publicKey, std::vector<int> {1,0,0,1,0,...});```
+```Encoding example_encoding = Encoding(Pk publicKey, std::vector<int> {1,0,0,1,0,...});```
 
 Addition and multiplication have been overloaded.<br />
+
+Negation (of each individual "slot") is available:<br />
+```example_encoding.neg();```
+As is selection (as a static method):<br />
+```Encoding example_selected = Encoding::selector(std::vector<int> s, Encoding a, Encoding b); //if s=1: a, else b```
+
+Recoding happens automatically after enough operations, but can also be done explicitly:<br />
+```example_encoding.recode();```
 
 
 **References/Acknowledgements** <br />
