@@ -21,7 +21,8 @@ You can also set your own parameters with the Pk constructor: <br />
 ```example_pk.assert_parameter_correctness();```
 
 Data can be encoded with the "Encoding" class:<br />
-```Encoding example_encoding = Encoding(Pk publicKey, std::vector<int> {1,0,0,1,0,...});``` <br />
+```std::vector<int> data = {0,1,0,0,0,1,1,0,1 ...};```
+```Encoding example_encoding = Encoding(Pk publicKey, std::vector<int> data);``` <br />
 All encoded data should be treated as a vector of l (seperate) bits.
 
 Addition and multiplication have been overloaded. They are done bitwise. <br />
