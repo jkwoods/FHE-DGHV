@@ -37,7 +37,7 @@ Recoding happens automatically after enough operations, but can also be done exp
 
 
 **References/Acknowledgements** <br />
-Sequential version based on these papers: <br />
+Sequential version based on these papers (cited below): <br />
 https://eprint.iacr.org/2013/036.pdf <br />
 https://eprint.iacr.org/2011/441.pdf <br />
 https://eprint.iacr.org/2011/440.pdf <br />
@@ -51,5 +51,46 @@ GMP Library used to handle big integers. <br />
 This work was done at Oak Ridge National Lab. This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internship program.	
 
 Contact: jesskwoods (at) gmail.com
+
+**Bibliography** <br />
+Craig Gentry et al. Fully homomorphic encryption using ideal lattices. InStoc, volume 9,pages 169–178, 2009.
+
+Craig  Gentry  and  Shai  Halevi.   Implementing  gentrys  fully-homomorphic  encryptionscheme.  InAnnual international conference on the theory and applications of crypto-graphic techniques, pages 129–148. Springer, 2011.
+
+Marten  Van  Dijk,  Craig  Gentry,  Shai  Halevi,  and  Vinod  Vaikuntanathan.   Fully  ho-momorphic  encryption  over  the  integers.   InAnnual International Conference on theTheory and Applications of Cryptographic Techniques, pages 24–43. Springer, 2010.
+
+Jean-S ́ebastien Coron, David Naccache, and Mehdi Tibouchi.  Public key compressionand modulus switching for fully homomorphic encryption over the integers.  InAnnualInternational Conference on the Theory and Applications of Cryptographic Techniques,pages 446–464. Springer, 2012.
+
+Nigel P Smart and Frederik Vercauteren. Fully homomorphic simd operations.Designs,codes and cryptography, 71(1):57–81, 2014.
+
+Jung  Hee  Cheon,  Jean-S ́ebastien  Coron,  Jinsu  Kim,  Moon  Sung  Lee,  Tancrede  Le-point,  Mehdi  Tibouchi,  and  Aaram  Yun.   Batch  fully  homomorphic  encryption  overthe  integers.   InAnnual International Conference on the Theory and Applications ofCryptographic Techniques, pages 315–335. Springer, 2013.
+
+Jean-S ́ebastien Coron, Avradip Mandal, David Naccache, and Mehdi Tibouchi.  Fullyhomomorphic encryption over the integers with shorter public keys.  InAnnual Cryp-tology Conference, pages 487–504. Springer, 2011.
+
+Python Core Team.Python: A dynamic, open source programming language.PythonSoftware Foundation, 2015.
+
+Implementationofthedghvfullyhomomorphicencryptionscheme.https://github.com/coron/fhe, 2012.
+
+Dask Development Team.Dask: Library for dynamic task scheduling, 2016.
+
+Bjarne Stroustrup.The C++ programming language.  Pearson Education, 2013.
+
+Torbjrn  Granlund  and  the  GMP  development  team.GNU MP: The GNU MultiplePrecision Arithmetic Library, 5.0.5 edition, 2012.11
+
+OpenMP Architecture Review Board.  OpenMP application program interface version3.0, May 2008.
+
+Simon Fau, Renaud Sirdey, Caroline Fontaine, Carlos Aguilar-Melchor, and Guy Gog-niat. Towards practical program execution over fully homomorphic encryption schemes.In2013 Eighth International Conference on P2P, Parallel, Grid, Cloud and InternetComputing, pages 284–290. IEEE, 2013.
+
+Craig  Gentry,  Shai  Halevi,  and  Nigel  P  Smart.   Homomorphic  evaluation  of  the  aescircuit.  InAnnual Cryptology Conference, pages 850–867. Springer, 2012.
+
+Jungwon Kim and Jeffrey S Vetter.  Implementing efficient data compression and en-cryption  in  a  persistent  key-value  store  for  hpc.The International Journal of HighPerformance Computing Applications, 33(6):1098–1112, 2019.
+
+Wei Wang, Yin Hu, Lianmu Chen, Xinming Huang, and Berk Sunar. Accelerating fullyhomomorphic  encryption  using  gpu.   In2012 IEEE conference on high performanceextreme computing, pages 1–5. IEEE, 2012.
+
+Wei Wang, Yin Hu, Lianmu Chen, Xinming Huang, and Berk Sunar. Exploring the fea-sibility of fully homomorphic encryption.IEEE Transactions on Computers, 64(3):698–706, 2013.
+
+J. Nickolls.  Scalable parallel programming with cuda introduction.  In 2008 IEEE HotChips 20 Symposium (HCS), pages 1–9, Aug 2008.
+
+Jeff  Bezanson,  Alan  Edelman,  Stefan  Karpinski,  and  Viral  B  Shah.   Julia:   A  freshapproach to numerical computing.SIAM review, 59(1):65–98, 2017.
 
 
