@@ -22,7 +22,8 @@ OpenMP parallelization is available, but not required. <br />
 
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
-```Pk example_pk = Pk::make_key(int security_level);``` <br />
+```Pk example_pk = Pk::make_key(int security_level);
+```
 Security levels toy, small, medium and large, are inputs 0-3, respectively. <br />
 You can also set your own parameters with the Pk constructor: <br />
 ```Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);
@@ -38,12 +39,15 @@ All encoded data should be treated as a vector of l (seperate) bits.
 Addition and multiplication have been overloaded. They are done bitwise. <br />
 
 Negation (of each individual "slot") is available:<br />
-```example_encoding.neg();``` <br />
+```example_encoding.neg();
+```
 As is selection (as a static method):<br />
-```Encoding example_selected = Encoding::selector(std::vector<int> s, Encoding a, Encoding b); //if s=1: a, else b```
+```Encoding example_selected = Encoding::selector(std::vector<int> s, Encoding a, Encoding b); //if s=1: a, else b
+```
 
 Recoding happens automatically after enough operations, but can also be done explicitly:<br />
-```example_encoding.recode();```
+```example_encoding.recode();
+```
 
 
 **References/Acknowledgements** <br />
