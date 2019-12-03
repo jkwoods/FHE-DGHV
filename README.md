@@ -10,9 +10,10 @@ Please feel free to use/modify code. Everything is open-source.
 **Pre-Req**: <br />
 GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/ <br />
 
-```./configure
+```
+./configure --enable-cxx     #more complex options for specific processors/ISAs are available through the GMP manual
 make
-make check --enable-cxx     #more complex options for specific processors/ISAs are available through the GMP manual
+make check 
 make install
 ```
 
@@ -22,16 +23,19 @@ OpenMP parallelization is available, but not required. <br />
 
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
-```Pk example_pk = Pk::make_key(int security_level);
+```
+Pk example_pk = Pk::make_key(int security_level);
 ```
 Security levels toy, small, medium and large, are inputs 0-3, respectively. <br />
 You can also set your own parameters with the Pk constructor: <br />
-```Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);
+```
+Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);
 example_pk.assert_parameter_correctness();
 ```
 
 Data can be encoded with the "Encoding" class:<br />
-```std::vector<int> data = {0,1,0,0,0,1,1,0,1 ...};
+```
+std::vector<int> data = {0,1,0,0,0,1,1,0,1 ...};
 Encoding example_encoding = Encoding(Pk publicKey, std::vector<int> data);
 ```
 All encoded data should be treated as a vector of l (seperate) bits.
@@ -39,14 +43,17 @@ All encoded data should be treated as a vector of l (seperate) bits.
 Addition and multiplication have been overloaded. They are done bitwise. <br />
 
 Negation (of each individual "slot") is available:<br />
-```example_encoding.neg();
+```
+example_encoding.neg();
 ```
 As is selection (as a static method):<br />
-```Encoding example_selected = Encoding::selector(std::vector<int> s, Encoding a, Encoding b); //if s=1: a, else b
+```
+Encoding example_selected = Encoding::selector(std::vector<int> s, Encoding a, Encoding b); //if s=1: a, else b
 ```
 
 Recoding happens automatically after enough operations, but can also be done explicitly:<br />
-```example_encoding.recode();
+```
+example_encoding.recode();
 ```
 
 
