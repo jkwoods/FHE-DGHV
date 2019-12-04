@@ -11,7 +11,9 @@ Please feel free to use/modify code. Everything is open-source.
 GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/ <br />
 
 ```
-./configure --enable-cxx   //more complex options for specific processors/ISAs are available through the GMP manual
+./configure --enable-cxx   //more complex options for specific processors/ISAs are
+                           //available through the GMP manual; reccomended you choose
+                           //something specific to your system
 make
 make check 
 make install
