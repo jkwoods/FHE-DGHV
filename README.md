@@ -12,8 +12,8 @@ GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/ <br />
 
 ```
 ./configure --enable-cxx   //more complex options for specific processors/ISAs are
-                           //available through the GMP manual; reccomended you choose
-                           //something specific to your system
+                           //available through the GMP manual;
+                           //but GMP is good at guessing
 make
 make check 
 make install
