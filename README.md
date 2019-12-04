@@ -23,6 +23,8 @@ OpenMP parallelization is available, but not required. <br />
 
 FHE-DGHV Install:
 ```
+git clone https://github.com/jkwoods/FHE-DGHV
+cd FHE-DGHV
 make    //TODO: set gmp library path
 make clean
 ```
