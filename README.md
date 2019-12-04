@@ -21,6 +21,12 @@ make install
 CUDA GPU offloading is available, but not required. <br />
 OpenMP parallelization is available, but not required. <br />
 
+FHE-DGHV Install:
+```
+make    //TODO: set gmp library path
+make clean
+```
+
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
 ```
