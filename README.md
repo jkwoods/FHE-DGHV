@@ -67,7 +67,7 @@ example_encoding.recode();
 ```
 
 
-**References/Acknowledgements** <br />
+**Acknowledgements** <br />
 Sequential version based on these papers (cited below): <br />
 https://eprint.iacr.org/2013/036.pdf <br />
 https://eprint.iacr.org/2011/441.pdf <br />
@@ -77,13 +77,11 @@ https://eprint.iacr.org/2009/616.pdf <br />
 And loosely on this (sequential, non-batched) code:
 https://github.com/coron/fhe <br />
 
-GMP Library used to handle big integers. <br />
-
 This work was done at Oak Ridge National Lab. This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internship program.	
 
 Contact: jesskwoods (at) gmail.com
 
-**Bibliography** <br />
+**References** <br />
 Craig Gentry et al. Fully homomorphic encryption using ideal lattices. InStoc, volume 9,pages 169–178, 2009.
 
 Craig  Gentry  and  Shai  Halevi.   Implementing  gentrys  fully-homomorphic  encryptionscheme.  InAnnual international conference on the theory and applications of crypto-graphic techniques, pages 129–148. Springer, 2011.
