@@ -320,11 +320,11 @@ Pk Pk::make_key(int size){
     if (size == 0){
         int lam=42;
         int rho=84;
-        int eta=988;
-        int gam=147456;
+        int eta=1940;
+        int gam=140400;
         int Theta=150;
-        int alpha=125;
-        int tau=1322;
+        int alpha=1764;
+        int tau=74088;
         int l=10;
         
         return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
