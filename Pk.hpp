@@ -68,11 +68,12 @@ public:
     std::vector<mpz_class> p_o;
     
     
-    Pk(int lam, int rho, int rhoi, int eta, int gam, int Theta, int theta, int kap, int alpha, int alphai, int tau, int l, int n=4);
+    Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n=4);
     //~Pk();
     
     //TODO - DEINITIALIZE ALL THIS CRAP
     
+    bool assert_parameter_correctness();
     mpz_class encode(std::vector<int> m);
     std::vector<int> decode(mpz_class c);
     std::vector<int> decode_squashed(mpz_class c);
@@ -80,6 +81,7 @@ public:
     mpz_class H_add(mpz_class c1, mpz_class c2);
     mpz_class H_mult(mpz_class c1, mpz_class c2);
     
+    static Pk make_key(int size);
 
 };
 
