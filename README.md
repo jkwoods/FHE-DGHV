@@ -40,8 +40,8 @@ Security levels toy, small, medium and large, are inputs 0-3, respectively. <br 
 You can also set your own parameters with the Pk constructor: <br />
 ```
 Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);
-example_pk.assert_parameter_correctness();
 ```
+It will check parameters for security and correctness.
 
 Data can be encoded with the "Encoding" class:<br />
 ```
