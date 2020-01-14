@@ -18,6 +18,7 @@
 #include "Pri_U.hpp"
 #include <iostream>
 #include "utils.hpp"
+#include "omp.h"
 
 Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n)
 : p_lam(lam), p_rho(rho), p_rhoi(rho+lam), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(Theta/l), p_kap(64*(gam/64+1)-1), p_alpha(alpha), p_alphai(alpha+lam), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(l), p_s(l,std::vector<int>(Theta)), p_vert_s(Theta,std::vector<int>(l)), p_u(Theta), p_y(Theta), p_o(Theta) //for kap, c++ trucates (rounds down) so its all gud
@@ -56,24 +57,24 @@ mpz_class Pk::encode(std::vector<int> m){
     
     //m*xi
     std::vector<mpz_class> m_xi(p_l);
-    for (int i = 0; i < p_l; i++){
-        m_xi[i] = m[i]*p_xi[i];
-    }
-    
     //bi*ii
-   
     std::vector<mpz_class> bi_ii(p_l);
+
+    #pragma omp parallel for
     for (int i = 0; i < p_l; i++){
-        
+        //m*xi
+        m_xi[i] = m[i]*p_xi[i];
+        //bi*ii
         mpz_class lb = power(-2,p_alphai);
         mpz_class ub = power(2,p_alphai);
         mpz_class bi = p_class_state.get_z_range(ub-lb);
         bi = bi + lb;
         bi_ii[i] = bi*p_ii[i];
-    }
-    
+    }  
+ 
     //b*x
     std::vector<mpz_class> b_x(p_tau);
+    #pragma omp parallel for
     for (int i = 0; i < p_tau; i++){
 
         mpz_class lb = power(-2,p_alpha);
@@ -83,10 +84,11 @@ mpz_class Pk::encode(std::vector<int> m){
         
         b_x[i] = b*p_x[i];
     }
-    
     //summation
     mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
+    //TODO : do this w/ omp reduction
+
     mpz_class c = modNear(bigsum, p_x0);
     
     return c;
@@ -97,21 +99,15 @@ std::vector<int> Pk::decode(mpz_class c){
     
 
     std::vector<int> m(p_l);
-    for (int i = 0; i < p_l; i++){
-        //std::cout << "slot " << i << "\n";
-        //std::cout << "pi= " << p_p[i] << "\n";
-        
-        mpz_class mn = modNear(c,p_p[i]);
-        //std::cout << "modNear " << mn << "\n";
-        
-        mpz_class conv = floor_mod(mn,2);
-        //std::cout << "mod2 " << conv << "\n";
-        
-        int i_conv = (int) conv.get_si(); //hopefully right
-        m[i] = (i_conv);
+   
+    #pragma omp parallel for
+        for (int i = 0; i < p_l; i++){
+            mpz_class mn = modNear(c,p_p[i]);
+            mpz_class conv = floor_mod(mn,2);
+            int i_conv = (int) conv.get_si(); //hopefully right
+            m[i] = (i_conv);
     }
     return m;
-
 }
 
 std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
@@ -202,12 +198,15 @@ mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
 
 //PRIVATE HELPER
 void Pk::make_p(gmp_randstate_t p_t_state){
+    std::cout << "making p\n";
+    #pragma omp parallel for
     for (int i = 0; i < p_l; i++){
-       p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
+        p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
     }
 }
 
 void Pk::make_pi(){ //prod of all p[i]
+    std::cout << "making pi\n";
     p_pi = 1;
     for (int i = 0; i < p_l; i++){
         p_pi = p_pi*p_p[i];
@@ -215,6 +214,7 @@ void Pk::make_pi(){ //prod of all p[i]
 }
 
 void Pk::make_q0(gmp_randstate_t p_t_state){
+    std::cout << "making q0\n";
     p_q0 = power(2,p_gam);
     mpz_class comp = floor_div(p_q0,p_pi);
     
@@ -227,25 +227,31 @@ void Pk::make_q0(gmp_randstate_t p_t_state){
 }
 
 void Pk::make_x0(){
+    std::cout << "making x0\n";
     p_x0 = p_pi * p_q0;
 }
 
+
 void Pk::make_x(){ //TODO DELTAS - TODO initialize list
+    std::cout << "making x array\n";
     Deltas x_D = Deltas(*this, p_tau, p_rhoi-1, 0);
     p_x = x_D.r_x; //getDeltaList();
 }
 
 void Pk::make_xi(){
+    std::cout << "making xi array\n";
     Deltas xi_D = Deltas(*this, p_l, p_rho, 1);
     p_xi = xi_D.r_x; //getDeltaList();
 }
 
 void Pk::make_ii(){
+    std::cout << "making ii array\n";
     Deltas ii_D = Deltas(*this, p_l, p_rho, 2);
     p_ii = ii_D.r_x; //getDeltaList();
 }
 
 void Pk::make_s(){
+    std::cout << "making s\n";
     for(int j = 0; j < p_l; j++){
         //all initialized to 0 originally
             p_s[j][j] = 1;
@@ -273,6 +279,7 @@ void Pk::make_s(){
 }
 
 void Pk::make_vert_s(){
+    std::cout << "making s vert\n";
     for(int i = 0; i < p_Theta; i++){
         for(int j = 0; j < p_l; j++){
             p_vert_s[i][j] = p_s[j][i];
@@ -281,12 +288,16 @@ void Pk::make_vert_s(){
 }
 
 void Pk::make_u(){
+    std::cout << "making u array\n";
     Pri_U priu = Pri_U(*this, p_Theta);
     p_u = priu.u_u; //.getUList();
 }
 
 void Pk::make_y(){
+    std::cout << "making y\n";
     mpz_class div = power(2,p_kap);
+    
+    #pragma omp parallel for
     for (int i = 0; i < p_u.size(); i++){
         p_y[i] = mpq_class(p_u[i],div); //rational u[i]/(2^kap)
         p_y[i].canonicalize();
@@ -294,9 +305,11 @@ void Pk::make_y(){
 }
 
 void Pk::make_o(){
+    std::cout << "making o\n";
     Deltas o_D = Deltas(*this, p_Theta, p_rho, 3);
     p_o = o_D.r_x; //getDeltaList();
 }
+
 
 bool Pk::assert_parameter_correctness(){
     bool a = p_rho >= 2*p_lam; //brute force noise attack

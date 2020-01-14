@@ -30,10 +30,10 @@ int main(int argc, const char * argv[]) {
     std::cout << test << "\n";
     
     
-    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0};
     Encoding zero = Encoding(pk_a, z_vec);
     
-    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1};
     Encoding one = Encoding(pk_a, o_vec);
     
     //std::vector<int> a_vec = {1,1,1,1,1,0,0,0,0,0};

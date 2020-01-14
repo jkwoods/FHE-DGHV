@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#BSUB -P GEN010
+#BSUB -W 2:00
+#BSUB -nnodes 32
+#BSUB -J fhetest
+#BSUB -o fhetest_out.%J
+#BSUB -e fhetest_err.%J
+
+module load gcc
+
+cd /ccs/proj/gen119/woods/FHE-DGHV
+
+make
+
+cd $MEMBERWORK/gen119
+cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
+
+date
+
+./fhe
+
+date
+
+rm fhe
