@@ -11,9 +11,7 @@ Please feel free to use/modify code. Everything is open-source.
 GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/ <br />
 
 ```
-./configure --enable-cxx   //more complex options for specific processors/ISAs are
-                           //available through the GMP manual;
-                           //but GMP is good at guessing
+./configure --enable-cxx   //more complex options for specific processors/ISAs are available through the GMP manual
 make
 make check 
 make install
@@ -22,14 +20,6 @@ make install
 
 CUDA GPU offloading is available, but not required. <br />
 OpenMP parallelization is available, but not required. <br />
-
-FHE-DGHV Install:
-```
-git clone https://github.com/jkwoods/FHE-DGHV
-cd FHE-DGHV
-make    //TODO: set gmp library path
-make clean
-```
 
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
@@ -40,8 +30,8 @@ Security levels toy, small, medium and large, are inputs 0-3, respectively. <br 
 You can also set your own parameters with the Pk constructor: <br />
 ```
 Pk example_pk = Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l);
+example_pk.assert_parameter_correctness();
 ```
-It will check parameters for security and correctness.
 
 Data can be encoded with the "Encoding" class:<br />
 ```
@@ -67,7 +57,7 @@ example_encoding.recode();
 ```
 
 
-**Acknowledgements** <br />
+**References/Acknowledgements** <br />
 Sequential version based on these papers (cited below): <br />
 https://eprint.iacr.org/2013/036.pdf <br />
 https://eprint.iacr.org/2011/441.pdf <br />
@@ -77,11 +67,13 @@ https://eprint.iacr.org/2009/616.pdf <br />
 And loosely on this (sequential, non-batched) code:
 https://github.com/coron/fhe <br />
 
+GMP Library used to handle big integers. <br />
+
 This work was done at Oak Ridge National Lab. This work was supported in part by the U.S. Department of Energy, Office of Science, Office of Workforce Development for Teachers and Scientists (WDTS) under the Science Undergraduate Laboratory Internship program.	
 
 Contact: jesskwoods (at) gmail.com
 
-**References** <br />
+**Bibliography** <br />
 Craig Gentry et al. Fully homomorphic encryption using ideal lattices. InStoc, volume 9,pages 169–178, 2009.
 
 Craig  Gentry  and  Shai  Halevi.   Implementing  gentrys  fully-homomorphic  encryptionscheme.  InAnnual international conference on the theory and applications of crypto-graphic techniques, pages 129–148. Springer, 2011.

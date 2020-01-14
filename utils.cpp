@@ -225,13 +225,13 @@ int random_choice(std::vector<int> sample){ //TODO test
     return sample[r];
 }
 
-std::vector<int> random_sample(int range, int l){
+std::vector<int> random_sample(int range, int l){ //TODO rand() sux, can use for testing but need to fix
     std::vector<int> sample(range);
     for(int i = 0; i < range; i++){
         sample[i] = i;
     }
-    std::random_device rd;
-    std::mt19937 g(rd());
+    int r = rand();
+    std::mt19937 g(r);
     std::shuffle(sample.begin(), sample.end(), g);
     std::vector<int> cut_sample(l);
     for(int i = 0; i < l; i++){
