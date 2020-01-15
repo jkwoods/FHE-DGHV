@@ -1,2 +1,0 @@
-g++ -o fhe main.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o -lgmpxx -lgmp -fopenmp -I/ccs/proj/gen119/woods/gmp-6.1.2 -L/ccs/proj/gen119/woods/gmp-6.1.2
-Wed Jan 15 11:01:21 EST 2020

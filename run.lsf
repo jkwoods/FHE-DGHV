@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#BSUB -P GEN010
+#BSUB -P GEN119
 #BSUB -W 02:00
-#BSUB -nnodes 32
+#BSUB -nnodes 1
 #BSUB -J fhetest
 #BSUB -o fhetest_out.%J
 #BSUB -e fhetest_err.%J
@@ -12,13 +12,14 @@ module load gcc
 cd /ccs/proj/gen119/woods/FHE-DGHV
 
 make
+make clean
 
 cd $MEMBERWORK/gen119
 cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
 
 date
 
-./fhe
+jsrun -n1 -g1 -a1 -c32 ./fhe
 
 date
 

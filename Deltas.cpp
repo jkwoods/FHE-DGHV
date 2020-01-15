@@ -29,10 +29,11 @@ void Deltas::makeChi(){
 void Deltas::makeDeltaList(){
     std::cout << "	making delta list 'x'\n";
     #pragma omp parallel for
-    for(int i = 0; i < r_pri.r_len; i++){
-        r_x[i] = r_Chi[i]-r_deltas[i];
+        for(int i = 0; i < r_pri.r_len; i++)
+        {
+            r_x[i] = r_Chi[i]-r_deltas[i];
         
-    }
+        }
 }
 
 void Deltas::makeDeltas(){
@@ -48,29 +49,33 @@ void Deltas::makeDeltas(){
     mpz_class e_help = power(2,(r_pk.p_lam+r_pk.p_logl+(r_pk.p_l*r_pk.p_eta))); //is this contained by int? TODO
     
     #pragma omp parallel for
-    for(int i = 0; i < r_lenv; i++){
-        for(int j = 0; j < r_pk.p_l; j++){
-            mpz_class lb = power(-2,r_rho+1);
-            mpz_class ub = power(2,r_rho);
-            r[i][j] = p_class_state.get_z_range(ub-lb);
-            r[i][j] = r[i][j] + lb;
+        for(int i = 0; i < r_lenv; i++)
+        {
+            for(int j = 0; j < r_pk.p_l; j++)
+            {
+                mpz_class lb = power(-2,r_rho+1);
+                mpz_class ub = power(2,r_rho);
+                r[i][j] = p_class_state.get_z_range(ub-lb);
+                r[i][j] = r[i][j] + lb;
+            }
+            mpz_class rand = p_class_state.get_z_range(e_help);
+            E[i] = floor_div(rand,r_pk.p_pi); //floor
         }
-        mpz_class rand = p_class_state.get_z_range(e_help);
-        E[i] = floor_div(rand,r_pk.p_pi); //floor
-    }
 
     std::cout << "      delta CRT process\n";
     
     std::vector<mpz_class> crts(r_lenv);
     if (r_cr==0){ //x
         #pragma omp parallel for
-        for(int i = 0; i < r_lenv; i++){
-            std::vector<mpz_class> crt_term(r_pk.p_l);
-            for (int j = 0; j < r_pk.p_l; j++){
-                crt_term[j] = 2*r[i][j];
+            for(int i = 0; i < r_lenv; i++)
+            {
+                std::vector<mpz_class> crt_term(r_pk.p_l);
+                for (int j = 0; j < r_pk.p_l; j++)
+                {
+                    crt_term[j] = 2*r[i][j];
+                }
+                crts[i] = CRT(r_pk.p_p, crt_term);
             }
-            crts[i] = CRT(r_pk.p_p, crt_term);
-        }
     } else if (r_cr==1){ //xi
         #pragma omp parallel for
         for(int i = 0; i < r_lenv; i++){

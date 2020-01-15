@@ -23,11 +23,14 @@
 Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n)
 : p_lam(lam), p_rho(rho), p_rhoi(rho+lam), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(Theta/l), p_kap(64*(gam/64+1)-1), p_alpha(alpha), p_alphai(alpha+lam), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_x(tau), p_xi(l), p_ii(l), p_n(n), p_B(l), p_s(l,std::vector<int>(Theta)), p_vert_s(Theta,std::vector<int>(l)), p_u(Theta), p_y(Theta), p_o(Theta) //for kap, c++ trucates (rounds down) so its all gud
 {
+
+    std::cout << "Parameters secure and correct? " << this->assert_parameter_correctness() << "\n";
     
     //make t state
     gmp_randstate_t p_t_state;
     gmp_randinit_mt(p_t_state);
     gmp_randseed_ui(p_t_state, time(0)); //time is not great - better TODO
+
     
     make_p(p_t_state);
     make_pi();
@@ -61,29 +64,31 @@ mpz_class Pk::encode(std::vector<int> m){
     std::vector<mpz_class> bi_ii(p_l);
 
     #pragma omp parallel for
-    for (int i = 0; i < p_l; i++){
-        //m*xi
-        m_xi[i] = m[i]*p_xi[i];
-        //bi*ii
-        mpz_class lb = power(-2,p_alphai);
-        mpz_class ub = power(2,p_alphai);
-        mpz_class bi = p_class_state.get_z_range(ub-lb);
-        bi = bi + lb;
-        bi_ii[i] = bi*p_ii[i];
-    }  
+        for (int i = 0; i < p_l; i++)
+        {
+            //m*xi
+            m_xi[i] = m[i]*p_xi[i];
+            //bi*ii
+            mpz_class lb = power(-2,p_alphai);
+            mpz_class ub = power(2,p_alphai);
+            mpz_class bi = p_class_state.get_z_range(ub-lb);
+            bi = bi + lb;
+            bi_ii[i] = bi*p_ii[i];
+        }  
  
     //b*x
     std::vector<mpz_class> b_x(p_tau);
     #pragma omp parallel for
-    for (int i = 0; i < p_tau; i++){
+        for (int i = 0; i < p_tau; i++)
+        {
 
-        mpz_class lb = power(-2,p_alpha);
-        mpz_class ub = power(2,p_alpha);
-        mpz_class b = p_class_state.get_z_range(ub-lb);
-        b = b + lb;
+            mpz_class lb = power(-2,p_alpha);
+            mpz_class ub = power(2,p_alpha);
+            mpz_class b = p_class_state.get_z_range(ub-lb);
+            b = b + lb;
         
-        b_x[i] = b*p_x[i];
-    }
+            b_x[i] = b*p_x[i];
+        }
     //summation
     mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
@@ -101,12 +106,13 @@ std::vector<int> Pk::decode(mpz_class c){
     std::vector<int> m(p_l);
    
     #pragma omp parallel for
-        for (int i = 0; i < p_l; i++){
+        for (int i = 0; i < p_l; i++)
+        {
             mpz_class mn = modNear(c,p_p[i]);
             mpz_class conv = floor_mod(mn,2);
             int i_conv = (int) conv.get_si(); //hopefully right
             m[i] = (i_conv);
-    }
+        }
     return m;
 }
 
@@ -198,11 +204,14 @@ mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
 
 //PRIVATE HELPER
 void Pk::make_p(gmp_randstate_t p_t_state){
-    std::cout << "making p\n";
+    std::cout << "making p, max threads = " << omp_get_max_threads() < "\n";
+
     #pragma omp parallel for
-    for (int i = 0; i < p_l; i++){
-        p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
-    }
+        for (int i = 0; i < p_l; i++)
+        {
+            std::cout << "Thread number: " << omp_get_thread_num() << "\n";
+            p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
+        }
 }
 
 void Pk::make_pi(){ //prod of all p[i]
@@ -298,10 +307,11 @@ void Pk::make_y(){
     mpz_class div = power(2,p_kap);
     
     #pragma omp parallel for
-    for (int i = 0; i < p_u.size(); i++){
-        p_y[i] = mpq_class(p_u[i],div); //rational u[i]/(2^kap)
-        p_y[i].canonicalize();
-    }
+        for (int i = 0; i < p_u.size(); i++)
+        {
+            p_y[i] = mpq_class(p_u[i],div); //rational u[i]/(2^kap)
+            p_y[i].canonicalize();
+        }
 }
 
 void Pk::make_o(){
@@ -313,17 +323,17 @@ void Pk::make_o(){
 
 bool Pk::assert_parameter_correctness(){
     bool a = p_rho >= 2*p_lam; //brute force noise attack
-    std::cout << a << "\n";
+    //std::cout << a << "\n";
     bool b = p_eta >= p_alphai + p_rhoi + 1 + log2(p_l); // correct decoding
-    std::cout << b << "\n";
+    //std::cout << b << "\n";
     bool c = p_eta >= p_rho * (p_lam*(pow(log(p_lam),2))); //squashed decode circut
-    std::cout << c << "\n";
+    //std::cout << c << "\n";
     //bool d = p_gam > pow(p_eta, 2) * log(p_lam); //lattice attack
     //std::cout << d << "\n";
     bool e = (p_alpha * p_tau) >= p_gam + p_lam; //leftover hash lemma
-    std::cout << e << "\n";
+    //std::cout << e << "\n";
     bool f = p_tau >= p_l * (p_rhoi + 2) + p_lam; //leftover hash lemma
-    std::cout << f << "\n";
+    //std::cout << f << "\n";
     bool g = (p_Theta % p_l == 0);
     
     return a && b && c && e && f && g;
@@ -335,7 +345,7 @@ Pk Pk::make_key(int size){
     int Theta=555;
     
     if (size == 0){
-        lam=42;
+        lam=22;
         Theta=150;
     } else if (size == 1){
         lam=52;
