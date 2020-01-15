@@ -62,8 +62,12 @@ mpz_class Pk::encode(std::vector<int> m){
     std::vector<mpz_class> m_xi(p_l);
     //bi*ii
     std::vector<mpz_class> bi_ii(p_l);
+    //b*x
+    std::vector<mpz_class> b_x(p_tau);
 
-    #pragma omp parallel for
+    #pragma omp parallel
+    {
+    #pragma omp for
         for (int i = 0; i < p_l; i++)
         {
             //m*xi
@@ -77,8 +81,7 @@ mpz_class Pk::encode(std::vector<int> m){
         }  
  
     //b*x
-    std::vector<mpz_class> b_x(p_tau);
-    #pragma omp parallel for
+    #pragma omp for
         for (int i = 0; i < p_tau; i++)
         {
 
@@ -89,6 +92,8 @@ mpz_class Pk::encode(std::vector<int> m){
         
             b_x[i] = b*p_x[i];
         }
+    } // end omp region
+    
     //summation
     mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
@@ -204,7 +209,7 @@ mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
 
 //PRIVATE HELPER
 void Pk::make_p(gmp_randstate_t p_t_state){
-    std::cout << "making p, max threads = " << omp_get_max_threads() < "\n";
+    std::cout << "making p, max threads = " << omp_get_max_threads() << "\n";
 
     #pragma omp parallel for
         for (int i = 0; i < p_l; i++)
@@ -215,7 +220,6 @@ void Pk::make_p(gmp_randstate_t p_t_state){
 }
 
 void Pk::make_pi(){ //prod of all p[i]
-    std::cout << "making pi\n";
     p_pi = 1;
     for (int i = 0; i < p_l; i++){
         p_pi = p_pi*p_p[i];
