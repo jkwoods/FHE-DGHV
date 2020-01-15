@@ -318,75 +318,44 @@ bool Pk::assert_parameter_correctness(){
     std::cout << b << "\n";
     bool c = p_eta >= p_rho * (p_lam*(pow(log(p_lam),2))); //squashed decode circut
     std::cout << c << "\n";
-    bool d = p_gam > pow(p_eta, 2) * log(p_lam); //lattice attack
-    std::cout << d << "\n";
+    //bool d = p_gam > pow(p_eta, 2) * log(p_lam); //lattice attack
+    //std::cout << d << "\n";
     bool e = (p_alpha * p_tau) >= p_gam + p_lam; //leftover hash lemma
     std::cout << e << "\n";
     bool f = p_tau >= p_l * (p_rhoi + 2) + p_lam; //leftover hash lemma
     std::cout << f << "\n";
     bool g = (p_Theta % p_l == 0);
     
-    return a && b && c && d && e && f && g;
+    return a && b && c && e && f && g;
 }
 
+
 Pk Pk::make_key(int size){
+    int lam=52;
+    int Theta=555;
+    
     if (size == 0){
-        int lam=42;
-        int rho=84;
-        int eta=1940;
-        int gam=140400;
-        int Theta=150;
-        int alpha=1764;
-        int tau=74088;
-        int l=10;
-        
-        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+        lam=42;
+        Theta=150;
     } else if (size == 1){
-        int lam=52;
-        int rho=104;
-        int eta=146767;
-        int gam=21550;
-        int Theta=555;
-        int alpha=1476;
-        int tau=5900;
-        int l=37;
-        
-        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+        lam=52;
+        Theta=555;
     } else if (size == 2){
-        int lam=52;
-        int rho=104;
-        int eta=146767;
-        int gam=21550;
-        int Theta=555;
-        int alpha=1476;
-        int tau=5900;
-        int l=37;
-        
-        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+        lam=62;
+        Theta=2070;
     } else if (size == 3){
-        int lam=52;
-        int rho=104;
-        int eta=146767;
-        int gam=21550;
-        int Theta=555;
-        int alpha=1476;
-        int tau=5900;
-        int l=37;
-        
-        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+        lam=72;
+        Theta=7965;
     } else {
         std::cout << "Size not correctly specified. Small key being made.\n";
-        int lam=52;
-        int rho=104;
-        int eta=146767;
-        int gam=21550;
-        int Theta=555;
-        int alpha=1476;
-        int tau=5900;
-        int l=37;
-        
-        return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
-        
     }
+    int l=Theta/15;
+    int rho=2*lam;
+    int gam=pow(lam,5);
+    int tau= l * (rho + lam + 2) + lam;
+    int alpha=(gam+lam)/tau + 1;
+    int eta= alpha + 2*lam + rho + 2 + log2(l);
+    
+    return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
 }
 

@@ -1,0 +1,92 @@
+g++ -o fhe main.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o -lgmpxx -lgmp -fopenmp -I/ccs/proj/gen119/woods/gmp-6.1.2 -L/ccs/proj/gen119/woods/gmp-6.1.2
+Tue Jan 14 18:45:26 EST 2020
+Making Keys
+making p
+making pi
+making q0
+making x0
+making x array
+      making deltas
+      delta CRT process
+	making delta list 'x'
+making xi array
+      making deltas
+      delta CRT process
+	making delta list 'x'
+making ii array
+      making deltas
+      delta CRT process
+	making delta list 'x'
+making s
+making s vert
+making u array
+making y
+making o
+      making deltas
+      delta CRT process
+	making delta list 'x'
+1
+1
+0
+0
+1
+1
+0
+1111111111
+1111110100
+1100011100
+0110011000
+Tue Jan 14 18:46:13 EST 2020
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch4>
+Subject: Job 832167: <fhetest> in cluster <summit> Done
+
+Job <fhetest> was submitted from host <login5> by user <woodsjk> in cluster <summit> at Tue Jan 14 13:47:47 2020
+Job was executed on host(s) <1*batch4>, in queue <batch>, as user <woodsjk> in cluster <summit> at Tue Jan 14 18:45:10 2020
+                            <42*e33n02>
+                            <42*e33n03>
+                            <42*e33n04>
+                            <42*e33n05>
+                            <42*e33n06>
+                            <42*e33n07>
+                            <42*e33n08>
+                            <42*e33n09>
+                            <42*e33n10>
+                            <42*e33n11>
+                            <42*e33n12>
+                            <42*e33n13>
+                            <42*e33n14>
+                            <42*e33n15>
+                            <42*e33n16>
+                            <42*e33n17>
+                            <42*e33n18>
+                            <42*e34n01>
+                            <42*e34n02>
+                            <42*e34n03>
+                            <42*e34n04>
+                            <42*e34n05>
+                            <42*e34n06>
+                            <42*e34n07>
+                            <42*e34n08>
+                            <42*e34n09>
+                            <42*e34n10>
+                            <42*e34n11>
+                            <42*e34n12>
+                            <42*e34n13>
+                            <42*e34n14>
+                            <42*e34n15>
+</ccs/home/woodsjk> was used as the home directory.
+</ccs/proj/gen119/woods/FHE-DGHV> was used as the working directory.
+Started at Tue Jan 14 18:45:10 2020
+Terminated at Tue Jan 14 18:46:14 2020
+Results reported at Tue Jan 14 18:46:14 2020
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <fhetest_err.832167> for stderr output of this job.
+
