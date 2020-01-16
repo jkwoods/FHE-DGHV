@@ -1,0 +1,1 @@
+Error: nrs (20) should not be greater than rs_per_host (4) * number of servers available (1).

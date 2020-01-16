@@ -1,0 +1,73 @@
+g++ -c main.cpp -fopenmp
+g++ -c MultEncodings.cpp MultEncodings.hpp
+g++ -c Encoding.cpp -fopenmp
+g++ -c Pk.cpp -fopenmp
+g++ -c Deltas.cpp -fopenmp
+g++ -c Pri_U.cpp -fopenmp
+g++ -c utils.cpp -fopenmp
+g++ -c PseudoRandomInts.cpp -fopenmp
+g++ -o fhe main.o MultEncodings.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o -lgmpxx -lgmp -fopenmp -I/ccs/proj/gen119/woods/gmp-6.1.2 -L/ccs/proj/gen119/woods/gmp-6.1.2
+rm main.o MultEncodings.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o
+Thu Jan 16 13:24:52 EST 2020
+Making Keys
+Parameters secure and correct? 0
+making p, max threads = 4
+Thread number: Thread number: Thread number: Thread number: 32
+
+1
+0
+Thread number: 0
+Thread number: 1
+Thread number: 3
+Thread number: 2
+Thread number: 1
+Thread number: 0
+making q0
+making x0
+making x array
+      making deltas
+      delta CRT process
+      delta CRT process
+      delta CRT process
+      delta CRT process
+	making delta list 'x'
+making xi array
+      making deltas
+      delta CRT process
+      delta CRT process
+      delta CRT process
+      delta CRT process
+	making delta list 'x'
+making ii array
+      making deltas
+      delta CRT process
+      delta CRT process
+      delta CRT process
+      delta CRT process
+	making delta list 'x'
+making s
+making s vert
+making u array
+Thu Jan 16 13:31:49 EST 2020
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch5>
+Subject: Job 835919: <fhetest> in cluster <summit> Done
+
+Job <fhetest> was submitted from host <login2> by user <woodsjk> in cluster <summit> at Thu Jan 16 13:24:16 2020
+Job was executed on host(s) <1*batch5>, in queue <batch>, as user <woodsjk> in cluster <summit> at Thu Jan 16 13:24:28 2020
+                            <42*h50n12>
+</ccs/home/woodsjk> was used as the home directory.
+</ccs/proj/gen119/woods/FHE-DGHV> was used as the working directory.
+Started at Thu Jan 16 13:24:28 2020
+Terminated at Thu Jan 16 13:31:50 2020
+Results reported at Thu Jan 16 13:31:50 2020
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <fhetest_err.835919> for stderr output of this job.
+

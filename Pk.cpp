@@ -168,22 +168,18 @@ mpz_class Pk::recode(mpz_class c){
     
     std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n+1));
     std::vector<mpz_class> a(p_n+1);
-    #pragma omp parallel
-    {
 
     //z * sk - correct
-    #pragma omp for
+    #pragma omp for collapse(2)
     for(int i = 0; i < p_Theta; i++){
-        std::cout << "Recoding ... thread number: " << omp_get_thread_num() << "\n";
         for(int j = 0; j < p_n+1; j++){
             z_mult[i][j] = (z[i][j] * p_o[i]);
         }
     }
     
-    //add to make as
-    #pragma omp for
+    //add to make a
     for(int i = 0; i < p_Theta; i++){
-        a = sum_binary(a,z_mult[i]);   // TODO : combine w/above?
+        a = sum_binary(a,z_mult[i]);   //do not parallelize!
 
         //for (int j = 0; j < p_n+1; j++){
             //a[j] = floor_mod(a[j], p_x0);
@@ -191,7 +187,6 @@ mpz_class Pk::recode(mpz_class c){
             //print_vec(decode(a[j]));
         //}
         
-    }
     }
     //print_vec(decode(a[a.size()-2]));
     //std::cout << "c & 1= " << (c & 1) << "\n";
@@ -355,7 +350,7 @@ Pk Pk::make_key(int size){
     int Theta=555;
     
     if (size == 0){
-        lam=22;
+        lam=42;
         Theta=150;
     } else if (size == 1){
         lam=52;

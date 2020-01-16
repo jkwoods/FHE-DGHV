@@ -1,0 +1,1 @@
+ERROR: Requested to bind to 16 smt threads but only 4 exist in some resource sets

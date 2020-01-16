@@ -1,0 +1,27 @@
+g++ -c Pk.cpp -fopenmp
+g++ -o fhe main.o MultEncodings.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o -lgmpxx -lgmp -fopenmp -I/ccs/proj/gen119/woods/gmp-6.1.2 -L/ccs/proj/gen119/woods/gmp-6.1.2
+rm main.o MultEncodings.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o *.gch
+Thu Jan 16 16:07:15 EST 2020
+Thu Jan 16 16:07:15 EST 2020
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch4>
+Subject: Job 836163: <fhetest> in cluster <summit> Done
+
+Job <fhetest> was submitted from host <login2> by user <woodsjk> in cluster <summit> at Thu Jan 16 16:06:46 2020
+Job was executed on host(s) <1*batch4>, in queue <batch>, as user <woodsjk> in cluster <summit> at Thu Jan 16 16:06:59 2020
+                            <42*d09n09>
+</ccs/home/woodsjk> was used as the home directory.
+</ccs/proj/gen119/woods/FHE-DGHV> was used as the working directory.
+Started at Thu Jan 16 16:06:59 2020
+Terminated at Thu Jan 16 16:07:17 2020
+Results reported at Thu Jan 16 16:07:17 2020
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <fhetest_err.836163> for stderr output of this job.
+

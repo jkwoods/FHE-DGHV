@@ -26,4 +26,4 @@ PseudoRandomInts.o: PseudoRandomInts.cpp PseudoRandomInts.hpp
 	g++ -c PseudoRandomInts.cpp -fopenmp
 
 clean:
-	rm main.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o
+	rm main.o MultEncodings.o Encoding.o Pk.o Deltas.o Pri_U.o utils.o PseudoRandomInts.o *.gch

@@ -19,7 +19,7 @@ cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
 
 date
 
-jsrun -n1 -g1 -a1 -c32 ./fhe
+jsrun -n 20 -a 1 -c 1 -r 20 -l CPU-CPU -d packed -b packed:1 ./fhe
 
 date
 
