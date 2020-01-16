@@ -1,6 +1,6 @@
 # FHE-DGHV
 Parallel C++ Implementation of the Fully Homomorphic Batch DGHV scheme with compressed public key <br />
-<br />
+This branch contains sequential code, see omp branch for parallelized code. <br />
 
 **Notes** <br />
 This was made for the purpose of fun/learning/proof of concept, and should NOT be used for any secure application.<br />
