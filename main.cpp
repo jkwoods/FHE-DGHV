@@ -12,6 +12,7 @@
 #include "Pk.hpp"
 #include "Encoding.hpp"
 #include "utils.hpp"
+#include "mpi_utils.hpp"
 #include <ctime>
 
 /* TODO
