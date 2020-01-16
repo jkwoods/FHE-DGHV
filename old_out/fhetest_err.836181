@@ -1,4 +1,0 @@
-Error, invalid argument: -d
-
-Usage: jsrun [OPTION...] [<command>]
-Try `jsrun --help' or `jsrun --usage' for more information.
