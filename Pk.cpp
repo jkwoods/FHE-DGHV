@@ -129,6 +129,7 @@ std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
 std::vector<std::vector<int>> Pk::expand(mpz_class c){
     //TODO - recover u
     std::vector<std::vector<int>> z(p_Theta,std::vector<int>(p_n+1));
+    #pragma omp parallel for
     for (int i = 0; i < p_Theta; i++){
         mpq_class zi = c * p_y[i];
         mpq_class mod = mod_2_f(zi);
@@ -166,33 +167,38 @@ mpz_class Pk::recode(mpz_class c){
     std::vector<std::vector<int>> z = expand(c);
     
     std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n+1));
-    
+    std::vector<mpz_class> a(p_n+1);
+    #pragma omp parallel
+    {
+
     //z * sk - correct
+    #pragma omp for
     for(int i = 0; i < p_Theta; i++){
+        std::cout << "Recoding ... thread number: " << omp_get_thread_num() << "\n";
         for(int j = 0; j < p_n+1; j++){
             z_mult[i][j] = (z[i][j] * p_o[i]);
         }
     }
     
     //add to make as
-    std::vector<mpz_class> a(p_n+1);
+    #pragma omp for
     for(int i = 0; i < p_Theta; i++){
-        a = sum_binary(a,z_mult[i]);
+        a = sum_binary(a,z_mult[i]);   // TODO : combine w/above?
 
-        for (int j = 0; j < p_n+1; j++){
+        //for (int j = 0; j < p_n+1; j++){
             //a[j] = floor_mod(a[j], p_x0);
             //std::cout << "a; i= " << i << "\n";
             //print_vec(decode(a[j]));
-        }
+        //}
         
     }
-    
+    }
     //print_vec(decode(a[a.size()-2]));
     //std::cout << "c & 1= " << (c & 1) << "\n";
     
     mpz_class two = a[a.size()-1] + a[a.size()-2]; //correct??
     mpz_class c_prime = two + (c & 1);
-    
+   
     return c_prime;
 }
 
