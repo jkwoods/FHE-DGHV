@@ -7,6 +7,7 @@
 //
 
 #include "utils.hpp"
+#include "omp.h"
 
 mpq_class mod_2_f(mpq_class a){
     mpz_class num = a.get_num();
@@ -128,11 +129,15 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
         prod = prod*n[i];
     }
     
-    mpz_class sum = 0;
+    std::vector<mpz_class> to_sum(n.size());
+
+    #pragma omp parallel for
     for (int i = 0; i < n.size(); i++){
         mpz_class p = floor_div(prod,n[i]); //floor
-        sum += a[i] * mul_inv(p, n[i]) * p;
+        to_sum[i] = a[i] * mul_inv(p, n[i]) * p;
     }
+    
+    mpz_class sum = sum_array(to_sum); //TODO: correctness test (changed for omp)
 
     mpz_class result = floor_mod(sum,prod);
     
@@ -242,6 +247,7 @@ std::vector<int> random_sample(int range, int l){ //TODO rand() sux, can use for
 
 mpz_class sum_array(std::vector<mpz_class> a){
     mpz_class suma = 0;
+
     for(int i = 0; i < a.size(); i++){
         suma = suma+a[i];
     }

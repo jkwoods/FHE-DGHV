@@ -9,17 +9,17 @@
 
 module load gcc
 
-cd /ccs/proj/gen119/woods/FHE-DGHV
+#cd /ccs/proj/gen119/woods/FHE-DGHV
 
-make
-make clean
+#make
+#make clean
 
 cd $MEMBERWORK/gen119
 cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
 
 date
 
-jsrun -n 20 -a 1 -c 1 -r 20 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n1 -a1 -c21 -g0 -bpacked:21
 
 date
 

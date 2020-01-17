@@ -29,16 +29,19 @@ PseudoRandomInts Pri_U::makePri(){
 }
 
 void Pri_U::makeU(){
+
+    #pragma omp parallel for
     for (int i = 0; i < u_pri.r_len; i++){
         u_u[i] = u_pri.r_list[i];
     } //u draft
 
-    for(int j = 0; j < u_pk.p_l; j++){
+    for(int j = 0; j < u_pk.p_l; j++){ //this loop can't be parallelized bc dependencies
         std::vector<int> s1indices;
         mpz_class xpj = floor_div(power(2, u_pk.p_kap),u_pk.p_p[j]); // i think its an int
         
         std::vector<mpz_class> su(u_pk.p_Theta);
 
+        #pragma omp parallel for
         for(int i = 0; i < u_pk.p_Theta; i++){
             su[i] = (u_pk.p_s[j][i] * u_u[i]);
             
@@ -72,6 +75,7 @@ void Pri_U::makeU(){
             u_u[v] = nu;
 
             //su redo
+            #pragma omp parallel for
             for(int i = 0; i < u_pk.p_Theta; i++){
                 mpz_class temp = u_pk.p_s[j][i] * u_u[i];;
                 su[i] = temp;

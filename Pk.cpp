@@ -67,7 +67,7 @@ mpz_class Pk::encode(std::vector<int> m){
 
     #pragma omp parallel
     {
-    #pragma omp for
+    #pragma omp for nowait
         for (int i = 0; i < p_l; i++)
         {
             //m*xi
@@ -97,8 +97,6 @@ mpz_class Pk::encode(std::vector<int> m){
     //summation
     mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
-    //TODO : do this w/ omp reduction
-
     mpz_class c = modNear(bigsum, p_x0);
     
     return c;
@@ -350,7 +348,7 @@ Pk Pk::make_key(int size){
     int Theta=555;
     
     if (size == 0){
-        lam=42;
+        lam=22;
         Theta=150;
     } else if (size == 1){
         lam=52;
