@@ -19,7 +19,13 @@ cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
 
 date
 
-jsrun -n1 -a1 -c21 -g0 -bpacked:21
+#export OMP_NUM_THREADS=84
+#jsrun -n 1 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:21 ./fhe
+
+export OMP_NUM_THREADS=168
+jsrun -n 1 -a 1 -c 42 -r 1 -l CPU-CPU -d packed -b packed:42 ./fhe
+
+#jsrun -n1 -a1 -c21 -g0 -bpacked:21
 
 date
 
