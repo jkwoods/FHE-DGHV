@@ -68,7 +68,7 @@ Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l,
 mpz_class Pk::encode(std::vector<int> m){
     //make class state
     gmp_randclass p_class_state (gmp_randinit_mt);
-    p_class_state.seed(time(0)); //TODO
+    p_class_state.seed(time(0)+94589); //TODO
     
     //m*xi
     std::vector<mpz_class> m_xi(p_l);
@@ -338,17 +338,17 @@ void Pk::make_o(){
 
 bool Pk::assert_parameter_correctness(){
     bool a = p_rho >= 2*p_lam; //brute force noise attack
-    //std::cout << a << "\n";
+    std::cout << a << "\n";
     bool b = p_eta >= p_alphai + p_rhoi + 1 + log2(p_l); // correct decoding
-    //std::cout << b << "\n";
+    std::cout << b << "\n";
     bool c = p_eta >= p_rho * (p_lam*(pow(log(p_lam),2))); //squashed decode circut
-    //std::cout << c << "\n";
+    std::cout << c << "\n";
     //bool d = p_gam > pow(p_eta, 2) * log(p_lam); //lattice attack
     //std::cout << d << "\n";
     bool e = (p_alpha * p_tau) >= p_gam + p_lam; //leftover hash lemma
-    //std::cout << e << "\n";
+    std::cout << e << "\n";
     bool f = p_tau >= p_l * (p_rhoi + 2) + p_lam; //leftover hash lemma
-    //std::cout << f << "\n";
+    std::cout << f << "\n";
     bool g = (p_Theta % p_l == 0);
     
     return a && b && c && e && f && g;

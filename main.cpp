@@ -23,18 +23,14 @@
 
 int main(int argc, const char * argv[]) {
 
-    int lam=12;
-    int rho=26;
-    int rhoi=26;
-    int eta=1988;
-    int gam=147456;
-    int Theta=150;
-    int theta=15;
-    int kap=149446;
-    int alpha=936;
-    int alphai=936;
-    int tau=188;
-    int l=10;
+    int lam=52;
+    int rho=41;
+    int eta=1558;
+    int gam=843033;
+    int Theta=555;
+    int alpha=1476;
+    int tau=572;
+    int l=37;
 
 
     std::cout << "Making Keys\n";
@@ -49,10 +45,10 @@ int main(int argc, const char * argv[]) {
     //std::cout << test << "\n";
     
     
-    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0};
+    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     Encoding zero = Encoding(pk_a, z_vec);
     
-    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1};
+    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
     Encoding one = Encoding(pk_a, o_vec);
     
     //std::vector<int> a_vec = {1,1,1,1,1,0,0,0,0,0};
