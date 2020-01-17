@@ -360,7 +360,7 @@ Pk Pk::make_key(int size){
     int Theta=555;
     
     if (size == 0){
-        lam=12;
+        lam=42;
         Theta=150;
     } else if (size == 1){
         lam=52;

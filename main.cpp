@@ -23,9 +23,27 @@
 
 int main(int argc, const char * argv[]) {
 
-    // make pk
+    int lam=12;
+    int rho=26;
+    int rhoi=26;
+    int eta=1988;
+    int gam=147456;
+    int Theta=150;
+    int theta=15;
+    int kap=149446;
+    int alpha=936;
+    int alphai=936;
+    int tau=188;
+    int l=10;
+
+
     std::cout << "Making Keys\n";
-    Pk pk_a = Pk::make_key(0); //toy
+    Pk pk_a = Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
+
+
+
+    // make pk
+    //Pk pk_a = Pk::make_key(0); //toy
     
     //bool test = pk_a.assert_parameter_correctness();
     //std::cout << test << "\n";
