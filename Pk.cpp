@@ -26,23 +26,35 @@ Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l,
 
     std::cout << "Parameters secure and correct? " << this->assert_parameter_correctness() << "\n";
     
+    std::cout << time(0) << "\n"; 
     //make t state
     gmp_randstate_t p_t_state;
     gmp_randinit_mt(p_t_state);
     gmp_randseed_ui(p_t_state, time(0)); //time is not great - better TODO
 
-    
+    std::cout << time(0) << "\n";    
     make_p(p_t_state);
+    std::cout << time(0) << "\n";
     make_pi();
+    std::cout << time(0) << "\n"; 
     make_q0(p_t_state);
+    std::cout << time(0) << "\n";
     make_x0();
+    std::cout << time(0) << "\n"; 
     make_x();
+    std::cout << time(0) << "\n"; 
     make_xi();
+    std::cout << time(0) << "\n"; 
     make_ii();
+    std::cout << time(0) << "\n"; 
     make_s();
+    std::cout << time(0) << "\n"; 
     make_vert_s();
+    std::cout << time(0) << "\n"; 
     make_u();
+    std::cout << time(0) << "\n"; 
     make_y();
+    std::cout << time(0) << "\n"; 
     make_o();
 }
 
@@ -348,7 +360,7 @@ Pk Pk::make_key(int size){
     int Theta=555;
     
     if (size == 0){
-        lam=22;
+        lam=12;
         Theta=150;
     } else if (size == 1){
         lam=52;

@@ -178,27 +178,52 @@ mpz_class power(int base, int exp){
 }
 
 mpz_class random_prime_w(int ub, gmp_randstate_t rand_state){ //wierd range
-    //generate mpz_t rand
-    mpz_t p;
-    mpz_init(p);
-    mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
-    
+   
+    mpz_t final_p;
+    mpz_init_set_ui(final_p, 0);   
+
+    //upper bound
     mpz_t ub_pow;
     mpz_init(ub_pow);
     mpz_ui_pow_ui(ub_pow, 2, ub-1);
-    
-    mpz_add(p, p, ub_pow);// + 2^(n-1)
-    
-    //check if prime
-    while(mpz_probab_prime_p(p, 30) == 0){ //not prime
-        mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
-        mpz_add(p, p, ub_pow);// + 2^(n-1)
-    }
-    
+
+
+    while(mpz_cmp_ui(final_p,0)==0){ //while final_p == 0 (hasn't been written)
+
+        #pragma omp parallel for
+        for(int i = 0; i < 20; i++){//TODO fina a good range //split random serach
+            //generate mpz_t rand
+            mpz_t p;
+            mpz_init(p);
+            mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
+
+            mpz_add(p, p, ub_pow);// + 2^(n-1)
+ 
+            //check if prime
+            if (mpz_probab_prime_p(p, 20) > 0){ //isprime
+		//ONLY ONE THREAD SHOULD WRITE AT A TIME
+		//CRITICAL WRITE to final_p
+                #pragma omp critical (set_final_prime)
+                {
+                    mpz_set(final_p, p);
+                }
+            }
+            mpz_clear(p);
+
+        } //end parallel for loop
+
+    } //end while loop
+
+    //OLD METHOD (pre parallelization) check if prime
+    //while(mpz_probab_prime_p(p, 30) == 0){ //not prime
+    //    mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
+    //    mpz_add(p, p, ub_pow);// + 2^(n-1)
+    //}
+   
     //cast as mpz_class
-    mpz_class p_class(p);
+    mpz_class p_class(final_p);
     
-    mpz_clear(p);
+    mpz_clear(final_p);
     mpz_clear(ub_pow);
     
     return p_class;
