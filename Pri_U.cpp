@@ -41,7 +41,6 @@ void Pri_U::makeU(){
         
         std::vector<mpz_class> su(u_pk.p_Theta);
 
-        #pragma omp parallel for
         for(int i = 0; i < u_pk.p_Theta; i++){
             su[i] = (u_pk.p_s[j][i] * u_u[i]);
             

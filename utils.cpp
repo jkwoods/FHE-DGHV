@@ -187,20 +187,21 @@ mpz_class random_prime_w(int ub, gmp_randstate_t rand_state){ //wierd range
     mpz_init(ub_pow);
     mpz_ui_pow_ui(ub_pow, 2, ub-1);
 
-
+    int count = 0;
     while(mpz_cmp_ui(final_p,0)==0){ //while final_p == 0 (hasn't been written)
-
+        std::cout << "prime loop running, iterations=" << count << "\n";
+        count = count+1;
         #pragma omp parallel for
-        for(int i = 0; i < 20; i++){//TODO fina a good range //split random serach
+        for(int i = 0; i < 200; i++){//TODO fina a good range //split random serach
             //generate mpz_t rand
             mpz_t p;
             mpz_init(p);
             mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
 
             mpz_add(p, p, ub_pow);// + 2^(n-1)
- 
+
             //check if prime
-            if (mpz_probab_prime_p(p, 20) > 0){ //isprime
+            if (mpz_probab_prime_p(p, 15) > 0){ //isprime
 		//ONLY ONE THREAD SHOULD WRITE AT A TIME
 		//CRITICAL WRITE to final_p
                 #pragma omp critical (set_final_prime)
