@@ -14,6 +14,7 @@
 #include "utils.hpp"
 #include "MultEncodings.hpp"
 #include <ctime>
+#include <omp.h>
 
 /* TODO
 - Optimize recode
@@ -23,14 +24,14 @@
 
 int main(int argc, const char * argv[]) {
 
-    int lam=52;
-    int rho=41;
-    int eta=1558;
-    int gam=843033;
-    int Theta=555;
-    int alpha=1476;
-    int tau=572;
-    int l=37;
+    int lam=12;
+    int rho=26;
+    int eta=1988;
+    int gam=147456;
+    int Theta=150;
+    int alpha=936;
+    int tau=188;
+    int l=10;
 
 
     std::cout << "Making Keys\n";
@@ -45,10 +46,15 @@ int main(int argc, const char * argv[]) {
     //std::cout << test << "\n";
     
     
-    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0}; //,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
+
+    double start = omp_get_wtime();
     Encoding zero = Encoding(pk_a, z_vec);
-    
-    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+    double end = omp_get_wtime();    
+    std::cout << "encoding time: " << (end-start) << "\n";
+
+    std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1}; //1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
     Encoding one = Encoding(pk_a, o_vec);
     
     //std::vector<int> a_vec = {1,1,1,1,1,0,0,0,0,0};
@@ -61,13 +67,20 @@ int main(int argc, const char * argv[]) {
     Encoding a = one+zero;
     Encoding b = one*zero;
     
+    start = omp_get_wtime();
     std::vector<int> z_dec = a.decode();
+    end = omp_get_wtime():
+    std::cout << "decoding time: " << (end-start) << "\n";
     std::vector<int> o_dec = b.decode();
     
     Encoding bad = b*zero;
     std::vector<int> a_dec = bad.decode();
     
+    start = omp_get_wtime();
     b.recode();
+    end = omp_get_wtime():
+    std::cout << "recoding time: " << (end-start) << "\n";
+
     Encoding good = b*zero;
     std::vector<int> b_dec = good.decode();
     

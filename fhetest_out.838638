@@ -1,1 +1,23 @@
 Fri Jan 17 16:21:46 EST 2020
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch3>
+Subject: Job 838638: <fhetest> in cluster <summit> Exited
+
+Job <fhetest> was submitted from host <login2> by user <woodsjk> in cluster <summit> at Fri Jan 17 16:07:50 2020
+Job was executed on host(s) <1*batch3>, in queue <batch>, as user <woodsjk> in cluster <summit> at Fri Jan 17 16:21:34 2020
+                            <42*e33n07>
+</ccs/home/woodsjk> was used as the home directory.
+</ccs/proj/gen119/woods/FHE-DGHV> was used as the working directory.
+Started at Fri Jan 17 16:21:34 2020
+Terminated at Fri Jan 17 18:21:56 2020
+Results reported at Fri Jan 17 18:21:56 2020
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <fhetest_err.838638> for stderr output of this job.
+

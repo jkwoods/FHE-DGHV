@@ -343,6 +343,7 @@ bool Pk::assert_parameter_correctness(){
     std::cout << b << "\n";
     bool c = p_eta >= p_rho * (p_lam*(pow(log(p_lam),2))); //squashed decode circut
     std::cout << c << "\n";
+     std::cout << p_rho * (p_lam*(pow(log(p_lam),2))) << "\n";
     //bool d = p_gam > pow(p_eta, 2) * log(p_lam); //lattice attack
     //std::cout << d << "\n";
     bool e = (p_alpha * p_tau) >= p_gam + p_lam; //leftover hash lemma
@@ -356,30 +357,53 @@ bool Pk::assert_parameter_correctness(){
 
 
 Pk Pk::make_key(int size){
-    int lam=52;
-    int Theta=555;
-    
     if (size == 0){
-        lam=42;
-        Theta=150;
+  	int lam = 42;
+  	int rho = 26;
+  	int eta = 15256;
+  	int gam = 147456;
+  	int Theta = 150;
+  	int alpha = 936;
+        int tau = 742;
+        int l = 10;
     } else if (size == 1){
-        lam=52;
-        Theta=555;
+        int lam = 52;
+  	int rho = 41;
+  	int eta = 33286;
+  	int gam = 843033;
+  	int Theta = 555;
+  	int alpha = 1476;
+  	int tau = 3567;
+  	int l = 37;
     } else if (size == 2){
-        lam=62;
-        Theta=2070;
+      	int lam = 62;
+  	int rho = 56;
+  	int eta = 59140;
+  	int gam = 4251866;
+  	int Theta = 2070;
+  	int alpha = 2016;
+  	int tau = 16622;
+ 	int l = 138;
     } else if (size == 3){
-        lam=72;
-        Theta=7965;
+  	int lam = 72;
+  	int rho = 71;
+  	int eta = 93498;
+  	int gam = 19575950;
+  	int Theta = 7965;
+  	int alpha = 2556;
+  	int tau = 77067;
+	int l = 531;
     } else {
         std::cout << "Size not correctly specified. Small key being made.\n";
+        int lam = 52;
+        int rho = 41;
+        int eta = 33286;
+        int gam = 843033;
+        int Theta = 555;
+        int alpha = 1476;
+        int tau = 3567;
+        int l = 37;
     }
-    int l=Theta/15;
-    int rho=2*lam;
-    int gam=pow(lam,5);
-    int tau= l * (rho + lam + 2) + lam;
-    int alpha=(gam+lam)/tau + 1;
-    int eta= alpha + 2*lam + rho + 2 + log2(l);
     
     return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
 }
