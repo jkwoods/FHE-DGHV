@@ -37,6 +37,16 @@ int main(int argc, const char * argv[]) {
      std::cout << "Making Keys\n";
      Pk pk_a = Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
 
+     // make pk
+     //Pk pk_a = Pk::make_key(0); //toy
+     
+     //bool test = pk_a.assert_parameter_correctness();
+     //std::cout << test << "\n";
+     
+    std::vector<std::vector<int>> mata = { {1,0}, {0,1}};
+    std::vector<std::vector<int>> matb = { {1,0}, {1,0}};
+    Encoding aa = Encoding::matmul(mata, matb, pk_a);
+
     //bool test = pk_a.assert_parameter_correctness();
     //std::cout << test << "\n";
     

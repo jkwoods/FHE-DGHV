@@ -18,8 +18,8 @@
 #include "utils.hpp"
 #include "omp.h"
 
-Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n)
-: p_lam(lam), p_rho(rho), p_rhoi(rho+lam), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(Theta/l), p_kap(64*(gam/64+1)-1), p_alpha(alpha), p_alphai(alpha+lam), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_seed_x(time(0)), p_seed_xi(time(0)+3), p_seed_ii(time(0)+8), p_seed_o(time(0)+19), p_seed_op(time(0)+27), p_seed_u(time(0)+33), p_x_D(tau), p_xi_D(l), p_ii_D(l), p_n(n), p_B(l), p_s(l,std::vector<int>(Theta)), p_u_front(p_l), p_o_D(Theta), p_op_D(Theta) //for kap, c++ trucates (rounds down) so its all gud
+Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n): p_lam(lam), p_rho(rho), p_rhoi(rho+lam), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(Theta/l), p_kap(64*(gam/64+1)-1), p_alpha(alpha), p_alphai(alpha+lam), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_seed_x(time(0)), p_seed_xi(time(0)+3), p_seed_ii(time(0)+8), p_seed_o(time(0)+19), p_seed_op(time(0)+27), p_seed_u(time(0)+33), p_x_D(tau), p_xi_D(l), p_ii_D(l), p_n(n), p_B(l), p_s(l,std::vector<int>(Theta)), p_u_front(p_l), p_o_D(Theta), p_op_D(Theta) //for kap, c++ trucates (rounds down) so its all gud
+
 {
 
     std::cout << "Parameters secure and correct? " << this->assert_parameter_correctness() << "\n";
@@ -45,7 +45,6 @@ Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l,
     std::cout << time(0) << "\n"; 
     make_u();
     std::cout << time(0) << "\n"; 
-    make_y();
 
     make_o_Delta();
     make_op_Delta();
@@ -76,12 +75,10 @@ mpz_class Pk::encode(std::vector<int> m){
     
     //m*xi
     std::vector<mpz_class> m_xi(p_l);
-
-    //bi*ii
-    std::vector<mpz_class> bi_ii(p_l);
-        
     //b*x
     std::vector<mpz_class> b_x(p_tau);
+  
+    std::vector<mpz_class> bi_ii(p_tau);
 
     #pragma omp parallel
     {
@@ -107,7 +104,6 @@ mpz_class Pk::encode(std::vector<int> m){
             mpz_class ub = power(2,p_alpha);
             mpz_class b = p_class_state.get_z_range(ub-lb);
             b = b + lb;
-        
             b_x[i] = b*x[i];
         }
 
@@ -228,7 +224,7 @@ mpz_class Pk::recode_and_permute(mpz_class c){
     //recover permuted o
     PseudoRandomInts chi_op = PseudoRandomInts(p_x0, p_Theta, p_seed_op);
     std::vector<mpz_class> op = make_x_list(chi_op, p_op_D);
-    std::cout << "recode_and_permute\n";
+
     return recode_work(c, op);
 }
 
@@ -348,6 +344,7 @@ std::vector<mpq_class> Pk::make_y(){ //in recode
     std::vector<mpz_class> u = make_full_u(priu);
     
     mpz_class div = power(2,p_kap);
+
   
     #pragma omp parallel for  
        for (int i = 0; i < p_Theta; i++){
@@ -359,7 +356,7 @@ std::vector<mpq_class> Pk::make_y(){ //in recode
 
 std::vector<mpz_class> Pk::make_full_u(PseudoRandomInts priu){
     std::vector<mpz_class> full_u(p_Theta);
-    
+
     #pragma omp parallel for
     for (int i = 0; i < p_Theta; i++){
         if (i < p_l){
@@ -379,7 +376,6 @@ void Pk::make_o_Delta(){
 void Pk::make_op_Delta(){
     PseudoRandomInts pri = PseudoRandomInts(p_x0, p_Theta, p_seed_op);
     p_op_D = make_Deltas(pri, p_Theta, p_rho, 4);
-    std::cout << "op make\n";
 }
 
 
