@@ -16,21 +16,23 @@
 class Encoding{
 public:
     Encoding(Pk pk, std::vector<int> m); //for public creation
+    Encoding(Pk pk, mpz_class c); // class handling
+
     ~Encoding();
     
     std::vector<int> decode();
     std::vector<int> decode_squashed();
-    void recode();
+    void recode(int shift);
     Encoding operator+(Encoding x);
     Encoding operator*(Encoding x);
+    static Encoding matmul(std::vector<std::vector<int>> a, std::vector<std::vector<int>> b, Pk pk);
     static Encoding selector(std::vector<int> s, Encoding a, Encoding b);
     Encoding neg();
     mpz_class e_val;
     
     
 private:
-    Encoding(Pk pk, mpz_class c); // class handling
-    
+
     Pk e_pk;
     
 };
