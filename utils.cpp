@@ -8,6 +8,7 @@
 
 #include "utils.hpp"
 
+
 mpq_class mod_2_f(mpq_class a){
     mpz_class num = a.get_num();
     mpz_class den = a.get_den()*2;
