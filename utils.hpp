@@ -17,7 +17,7 @@
 #include <iostream>
 #include <random>
 
-
+//helper
 mpq_class mod_2_f(mpq_class a);
 void print_vec(std::vector<int> p);
 void print_vec(std::vector<mpz_class> p);
