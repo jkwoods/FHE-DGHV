@@ -28,7 +28,7 @@ PseudoRandomInts::~PseudoRandomInts(){
 void PseudoRandomInts::make_list(){
     //make class state
     gmp_randclass p_class_state (gmp_randinit_mt);
-    p_class_state.seed(r_seed); // - now always the same (hopefully ... :)
+    p_class_state.seed(r_seed); // - now always the same
 
 //    #pragma omp parallel for
     for(int i = 0; i < r_len; i++){

@@ -11,9 +11,9 @@
 //TODO - deconstructor - make sure you clear the e_val
 
 //constructors
-Encoding::Encoding(Pk pk, std::vector<int> m): e_pk(pk), e_val(pk.encode(m)) {}
+Encoding::Encoding(Pk pk, std::vector<int> m): e_pk(pk), e_val(pk.encode(m)) {} //public
 
-Encoding::Encoding(Pk pk, mpz_class c): e_pk(pk), e_val(c) {}
+Encoding::Encoding(Pk pk, mpz_class c): e_pk(pk), e_val(c) {} //private class handling
 
 //destructor
 Encoding::~Encoding(){
@@ -32,6 +32,11 @@ std::vector<int> Encoding::decode_squashed(){
 
 void Encoding::recode(){
     e_val = e_pk.recode(e_val);
+}
+
+void Encoding::recode(int permutation_type){
+    std::cout << "permuting" << "\n";
+    e_val = e_pk.recode_and_permute(e_val);
 }
 
 Encoding Encoding::operator+(Encoding x){
