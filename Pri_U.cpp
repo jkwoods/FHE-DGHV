@@ -1,15 +1,16 @@
 //
-//  Pri_U.cpp
-//  FHE
-//
-//  Created by Woods, Jess on 10/17/19.
-//  work done at Oak Ridge National Lab
-//
+////  Pri_U.cpp
+////  FHE
+////
+////  Created by Woods, Jess on 10/17/19.
+////  work done at Oak Ridge National Lab
+////
 
 #include "Pri_U.hpp"
 #include "Pk.hpp"
 #include <cmath>
 #include "utils.hpp"
+#include "omp.h"
 
 Pri_U::Pri_U(Pk& pk, int Theta)
 : u_pk(pk), u_pri(makePri()), u_u(Theta)
@@ -28,15 +29,18 @@ PseudoRandomInts Pri_U::makePri(){
 }
 
 void Pri_U::makeU(){
+
+    #pragma omp parallel for
     for (int i = 0; i < u_pri.r_len; i++){
         u_u[i] = u_pri.r_list[i];
     } //u draft
-    
-    for(int j = 0; j < u_pk.p_l; j++){
+
+    for(int j = 0; j < u_pk.p_l; j++){ //this loop can't be parallelized bc dependencies
         std::vector<int> s1indices;
         mpz_class xpj = floor_div(power(2, u_pk.p_kap),u_pk.p_p[j]); // i think its an int
         
         std::vector<mpz_class> su(u_pk.p_Theta);
+
         for(int i = 0; i < u_pk.p_Theta; i++){
             su[i] = (u_pk.p_s[j][i] * u_u[i]);
             
@@ -51,7 +55,7 @@ void Pri_U::makeU(){
         while(sumt != xpj){
             //pick rand 1 in s
             int v = random_choice(s1indices);
-            
+     
             //change corresponding u
             su[v] = 0;
             mpz_class sumv = sum_array(su);
@@ -68,8 +72,9 @@ void Pri_U::makeU(){
             }
             
             u_u[v] = nu;
-            
+
             //su redo
+            #pragma omp parallel for
             for(int i = 0; i < u_pk.p_Theta; i++){
                 mpz_class temp = u_pk.p_s[j][i] * u_u[i];;
                 su[i] = temp;
@@ -81,4 +86,7 @@ void Pri_U::makeU(){
         }
     }
 }
+
+
+
 

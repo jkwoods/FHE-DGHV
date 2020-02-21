@@ -1,0 +1,63 @@
+Fri Jan 17 14:10:22 EST 2020
+Making Keys
+Parameters secure and correct? 0
+making p, max threads = 84
+Thread number: Thread number: Thread number: 8Thread number: Thread number: Thread number: 
+951Thread number: 
+2
+Thread number: 3
+4
+Thread number: 7
+
+6
+
+Thread number: 0
+making q0
+making x0
+making x array
+      making deltas
+      delta CRT process
+	making delta list 'x'
+making xi array
+      making deltas
+      delta CRT process
+	making delta list 'x'
+making ii array
+      making deltas
+      delta CRT process
+	making delta list 'x'
+making s
+making s vert
+making u array
+making y
+making o
+      making deltas
+      delta CRT process
+	making delta list 'x'
+1111111111
+1000100011
+1101001000
+0101000100
+Fri Jan 17 14:12:52 EST 2020
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch3>
+Subject: Job 838372: <fhetest> in cluster <summit> Done
+
+Job <fhetest> was submitted from host <login2> by user <woodsjk> in cluster <summit> at Fri Jan 17 14:09:54 2020
+Job was executed on host(s) <1*batch3>, in queue <batch>, as user <woodsjk> in cluster <summit> at Fri Jan 17 14:10:08 2020
+                            <42*a36n15>
+</ccs/home/woodsjk> was used as the home directory.
+</ccs/proj/gen119/woods/FHE-DGHV> was used as the working directory.
+Started at Fri Jan 17 14:10:08 2020
+Terminated at Fri Jan 17 14:12:53 2020
+Results reported at Fri Jan 17 14:12:53 2020
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <fhetest_err.838372> for stderr output of this job.
+

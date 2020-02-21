@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#BSUB -P GEN010
+#BSUB -W 01:00
+#BSUB -nnodes 1
+#BSUB -J fhetest
+#BSUB -o fhetest_out.%J
+#BSUB -e fhetest_err.%J
+
+module load gcc
+
+#cd /ccs/proj/gen119/woods/FHE-DGHV
+
+#make
+#make clean
+
+cd $MEMBERWORK/gen119
+cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
+
+date
+
+#export OMP_NUM_THREADS=84
+#jsrun -n 1 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:21 ./fhe
+
+#export OMP_NUM_THREADS=168
+echo BENCHMARK: 4 threads
+jsrun -n 1 -a 1 -c 1 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 1 -a 1 -c 1 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 1 -a 1 -c 1 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 8 threads
+jsrun -n 2 -a 1 -c 2 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 2 -a 1 -c 2 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 2 -a 1 -c 2 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 16 threads
+jsrun -n 4 -a 1 -c 4 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 4 -a 1 -c 4 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 4 -a 1 -c 4 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 32 threads
+jsrun -n 8 -a 1 -c 8 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 8 -a 1 -c 8 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 8 -a 1 -c 8 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 64 threads
+jsrun -n 16 -a 1 -c 16 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 16 -a 1 -c 16 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 16 -a 1 -c 16 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 84 threads
+jsrun -n 21 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 21 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 21 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 128 threads
+jsrun -n 32 -a 1 -c 32 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 32 -a 1 -c 32 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 32 -a 1 -c 32 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo BENCHMARK: 168 threads
+jsrun -n 42 -a 1 -c 42 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 42 -a 1 -c 42 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+jsrun -n 42 -a 1 -c 42 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+
+echo DONE
+date
+
+rm fhe
