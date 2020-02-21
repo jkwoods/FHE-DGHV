@@ -34,7 +34,6 @@ private:
     void make_op_Delta();
     
     void make_s();
-    void make_vert_s();
     void make_u();
     
     std::vector<mpz_class> make_Deltas(PseudoRandomInts r_chi, int r_lenv, int r_rho, int r_cr);
@@ -81,7 +80,6 @@ public:
     std::vector<mpz_class> p_op_D;
     int p_B;
     std::vector<std::vector<int>> p_s;
-    std::vector<std::vector<int>> p_vert_s;
     std::vector<mpz_class> p_u_front;
     
     

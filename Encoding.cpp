@@ -30,13 +30,14 @@ std::vector<int> Encoding::decode_squashed(){
     return m;
 }
 
-void Encoding::recode(){
-    e_val = e_pk.recode(e_val);
-}
-
-void Encoding::recode(int permutation_type){
-    std::cout << "permuting" << "\n";
-    e_val = e_pk.recode_and_permute(e_val);
+void Encoding::recode(int shift=0){
+    if (shift > 0){
+        e_val = e_pk.recode_and_permute(e_val);
+        std::cout << "encoding recode hit\n";
+    } else {
+        e_val = e_pk.recode(e_val);
+    }
+    
 }
 
 Encoding Encoding::operator+(Encoding x){

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#BSUB -P GEN010
+#BSUB -W 01:00
+#BSUB -nnodes 1
+#BSUB -J fhetest
+#BSUB -o fhetest_out.%J
+#BSUB -e fhetest_err.%J
+
+module load gcc
+
+#cd /ccs/proj/gen119/woods/FHE-DGHV
+
+#make
+#make clean
+
+cd $MEMBERWORK/gen119
+cp /ccs/proj/gen119/woods/FHE-DGHV/fhe .
+
+date
+
+#export OMP_NUM_THREADS=84
+#jsrun -n 1 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:21 ./fhe
+
+#export OMP_NUM_THREADS=168
+jsrun -n 1 -a 1 -c 21 -r 1 -l CPU-CPU -d packed -b packed:1 ./fhe
+echo DONE
+date
+
+rm fhe

@@ -23,8 +23,7 @@ public:
     
     std::vector<int> decode();
     std::vector<int> decode_squashed();
-    void recode();
-    void recode(int permutation_type);
+    void recode(int shift);
     Encoding operator+(Encoding x);
     Encoding operator*(Encoding x);
     static Encoding selector(std::vector<int> s, Encoding a, Encoding b);

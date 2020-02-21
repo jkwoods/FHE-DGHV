@@ -12,7 +12,6 @@
 #include "Pk.hpp"
 #include "Encoding.hpp"
 #include "utils.hpp"
-#include "MultEncodings.hpp"
 #include <ctime>
 #include <omp.h>
 
@@ -42,7 +41,7 @@ int main(int argc, const char * argv[]) {
     //std::cout << test << "\n";
     
     
-    std::vector<int> z_vec = {0,0,0,0,0,0,0,0,0,0}; //,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    std::vector<int> z_vec = {0,0,0,0,0,0,1,0,0,0}; //,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 
     double start = omp_get_wtime();
@@ -65,7 +64,7 @@ int main(int argc, const char * argv[]) {
     
     start = omp_get_wtime();
     std::vector<int> z_dec = a.decode();
-    end = omp_get_wtime():
+    end = omp_get_wtime();
     std::cout << "decoding time: " << (end-start) << "\n";
     std::vector<int> o_dec = b.decode();
     
@@ -73,12 +72,12 @@ int main(int argc, const char * argv[]) {
     std::vector<int> a_dec = bad.decode();
     
     start = omp_get_wtime();
-    b.recode();
-    end = omp_get_wtime():
+    b.recode(1);
+    end = omp_get_wtime();
     std::cout << "recoding time: " << (end-start) << "\n";
 
-    Encoding good = b*zero;
-    std::vector<int> b_dec = good.decode();
+    //Encoding good = b*zero;
+    std::vector<int> b_dec = b.decode();
     
     //print
     
