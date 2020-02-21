@@ -16,7 +16,8 @@
 class Encoding{
 public:
     Encoding(Pk pk, std::vector<int> m); //for public creation
-    Encoding(Pk pk, mpz_class c); // class handling - don't use
+    Encoding(Pk pk, mpz_class c); // class handling
+
     ~Encoding();
     
     std::vector<int> decode();
@@ -31,8 +32,7 @@ public:
     
     
 private:
-    
-    
+
     Pk e_pk;
     
 };

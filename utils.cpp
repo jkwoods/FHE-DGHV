@@ -7,6 +7,8 @@
 //
 
 #include "utils.hpp"
+#include "omp.h"
+
 
 
 mpq_class mod_2_f(mpq_class a){
@@ -129,11 +131,15 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
         prod = prod*n[i];
     }
     
-    mpz_class sum = 0;
+    std::vector<mpz_class> to_sum(n.size());
+
+    #pragma omp parallel for
     for (int i = 0; i < n.size(); i++){
         mpz_class p = floor_div(prod,n[i]); //floor
-        sum += a[i] * mul_inv(p, n[i]) * p;
+        to_sum[i] = a[i] * mul_inv(p, n[i]) * p;
     }
+    
+    mpz_class sum = sum_array(to_sum); //TODO: correctness test (changed for omp)
 
     mpz_class result = floor_mod(sum,prod);
     
@@ -174,27 +180,53 @@ mpz_class power(int base, int exp){
 }
 
 mpz_class random_prime_w(int ub, gmp_randstate_t rand_state){ //wierd range
-    //generate mpz_t rand
-    mpz_t p;
-    mpz_init(p);
-    mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
-    
+   
+    mpz_t final_p;
+    mpz_init_set_ui(final_p, 0);   
+
+    //upper bound
     mpz_t ub_pow;
     mpz_init(ub_pow);
     mpz_ui_pow_ui(ub_pow, 2, ub-1);
-    
-    mpz_add(p, p, ub_pow);// + 2^(n-1)
-    
-    //check if prime
-    while(mpz_probab_prime_p(p, 30) == 0){ //not prime
-        mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
-        mpz_add(p, p, ub_pow);// + 2^(n-1)
-    }
-    
+
+    int count = 0;
+    while(mpz_cmp_ui(final_p,0)==0){ //while final_p == 0 (hasn't been written)
+        std::cout << "prime loop running, iterations=" << count << "\n";
+        count = count+1;
+        #pragma omp parallel for
+        for(int i = 0; i < 200; i++){//TODO fina a good range //split random serach
+            //generate mpz_t rand
+            mpz_t p;
+            mpz_init(p);
+            mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
+
+            mpz_add(p, p, ub_pow);// + 2^(n-1)
+
+            //check if prime
+            if (mpz_probab_prime_p(p, 15) > 0){ //isprime
+		//ONLY ONE THREAD SHOULD WRITE AT A TIME
+		//CRITICAL WRITE to final_p
+                #pragma omp critical (set_final_prime)
+                {
+                    mpz_set(final_p, p);
+                }
+            }
+            mpz_clear(p);
+
+        } //end parallel for loop
+
+    } //end while loop
+
+    //OLD METHOD (pre parallelization) check if prime
+    //while(mpz_probab_prime_p(p, 30) == 0){ //not prime
+    //    mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
+    //    mpz_add(p, p, ub_pow);// + 2^(n-1)
+    //}
+   
     //cast as mpz_class
-    mpz_class p_class(p);
+    mpz_class p_class(final_p);
     
-    mpz_clear(p);
+    mpz_clear(final_p);
     mpz_clear(ub_pow);
     
     return p_class;
@@ -226,13 +258,13 @@ int random_choice(std::vector<int> sample){ //TODO test
     return sample[r];
 }
 
-std::vector<int> random_sample(int range, int l){
+std::vector<int> random_sample(int range, int l){ //TODO rand() sux, can use for testing but need to fix
     std::vector<int> sample(range);
     for(int i = 0; i < range; i++){
         sample[i] = i;
     }
-    std::random_device rd;
-    std::mt19937 g(rd());
+    int r = rand();
+    std::mt19937 g(r);
     std::shuffle(sample.begin(), sample.end(), g);
     std::vector<int> cut_sample(l);
     for(int i = 0; i < l; i++){
@@ -243,6 +275,7 @@ std::vector<int> random_sample(int range, int l){
 
 mpz_class sum_array(std::vector<mpz_class> a){
     mpz_class suma = 0;
+
     for(int i = 0; i < a.size(); i++){
         suma = suma+a[i];
     }
