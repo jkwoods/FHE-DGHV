@@ -20,6 +20,7 @@ make install
 
 CUDA GPU offloading is available, but not required. <br />
 OpenMP parallelization is available, but not required. <br />
+Note: if you use OpenMP, you may need to change OMP_STACKSIZE
 
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
