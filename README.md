@@ -17,7 +17,7 @@ make
 make check 
 make install
 ```
-OpenMP parallelization is available, but not required. <br />
+OpenMP (included with gcc/g++) parallelization is available (and reccommended), but not required. <br />
 Note:   If you DON'T use OpenMP, edit the makefile to remove -fopenmp flags. <br />
         If you DO use OpenMP, you may need to change OMP_STACKSIZE. <br />
 
