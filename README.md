@@ -7,6 +7,7 @@ This was made for the purpose of fun/learning/proof of concept, and should NOT b
 Please feel free to use/modify code. Everything is open-source.
 
 **Pre-Reqs:** <br />
+gcc/g++ <br />
 GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/ <br />
 GMP instructions:
 
@@ -21,6 +22,14 @@ Note:   If you DON'T use OpenMP, edit the makefile to remove -fopenmp flags. <br
         If you DO use OpenMP, you may need to change OMP_STACKSIZE. <br />
 
 CUDA GPU offloading is available, but not required. <br />
+
+**Build:** <br />
+```
+git clone https://github.com/jkwoods/FHE-DGHV
+cd FHE-DGHV
+make
+make clean
+```
 
 **Using Library** <br />
 Keys can be created with preset parameters: <br />
