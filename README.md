@@ -6,11 +6,9 @@ This was made for the purpose of fun/learning/proof of concept, and should NOT b
 
 Please feel free to use/modify code. Everything is open-source.
 
-**Pre-Req**: <br />
+**Pre-Reqs:** <br />
 GMP, The GNU Multiple Precision Arithmetic Library https://gmplib.org/ <br />
-OpenMP parallelization is available, but not required. <br />
-Note: If you DON'T use OpenMP, edit the makefile to remove -fopenmp flags. <br />
-If you DO use OpenMP, you may need to change OMP_STACKSIZE. <br />
+GMP instructions:
 
 ```
 ./configure --enable-cxx   //more complex options for specific processors/ISAs are available through the GMP manual
@@ -18,6 +16,9 @@ make
 make check 
 make install
 ```
+OpenMP parallelization is available, but not required. <br />
+Note:   If you DON'T use OpenMP, edit the makefile to remove -fopenmp flags. <br />
+        If you DO use OpenMP, you may need to change OMP_STACKSIZE. <br />
 
 CUDA GPU offloading is available, but not required. <br />
 
