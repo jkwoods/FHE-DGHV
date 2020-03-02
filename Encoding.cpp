@@ -106,10 +106,7 @@ Encoding Encoding::matmul(std::vector<std::vector<int>> a, std::vector<std::vect
         e = r*col_b*row_b;
         int bi = 0;
         int bj = 0;
-        std::cout << "e=" << e << "\n";
         for (int t = 0; t < (row_b*col_b); t++){
-            std::cout << bi << "\n";
-            std::cout << bj << "\n";
             expanded_b[e] = b[bi][bj];
             e++;
             if (bj < col_b-1){

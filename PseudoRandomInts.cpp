@@ -7,7 +7,6 @@
 //
 
 #include "PseudoRandomInts.hpp"
-#include "omp.h"
 
 PseudoRandomInts::PseudoRandomInts(mpz_class x0, int len, long seed): r_x0(x0),  r_seed(seed), r_len(len), r_list(len)
 {
