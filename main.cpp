@@ -38,14 +38,14 @@ int main(int argc, const char * argv[]) {
 
      // make pk
 
-    Pk pk_a = Pk::make_key(2); //toy
+    //Pk pk_a = Pk::make_key(2); //toy
     double start = omp_get_wtime();
-    //auto s = Clock::now();
-    pk_a = Pk::make_key(2); //toy
+    auto s = Clock::now();
+    Pk pk_a = Pk::make_key(3); //toy
     double end = omp_get_wtime();
-    //auto e = Clock::now();       
-    //std::cout << "key time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count()  << "\n";
-    std::cout << "key time: " << (end - start) << "\n";
+    auto e = Clock::now();       
+    std::cout << "key time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count()  << "\n";
+    //std::cout << "key time: " << (end - start) << "\n";
  
      //bool test = pk_a.assert_parameter_correctness();
      //std::cout << test << "\n";
@@ -62,12 +62,12 @@ int main(int argc, const char * argv[]) {
 
     Encoding zero = Encoding(pk_a, z_vec);
     start = omp_get_wtime();
-    //s = Clock::now();
+    s = Clock::now();
     zero = Encoding(pk_a, z_vec);
-    //e = Clock::now();
+    e = Clock::now();
     end = omp_get_wtime();    
-    //std::cout << "encoding time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count() << "\n";
-    std::cout << "encoding time: " << (end - start) << "\n";
+    std::cout << "encoding time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count() << "\n";
+    //std::cout << "encoding time: " << (end - start) << "\n";
 
     std::vector<int> o_vec = {1,1,1,1,1,1,1,1,1,1}; //1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
     Encoding one = Encoding(pk_a, o_vec);
@@ -90,17 +90,17 @@ int main(int argc, const char * argv[]) {
 
     std::vector<int> z_dec = zero.decode();
     start = omp_get_wtime();
-    //s = Clock::now();
+    s = Clock::now();
     z_dec = zero.decode();
-    //e = Clock::now();
+    e = Clock::now();
     end = omp_get_wtime();
-    //std::cout << "decoding time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count() << "\n";    
-    std::cout << "decoding time: " << (end - start) << "\n";
+    std::cout << "decoding time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count() << "\n";    
+    //std::cout << "decoding time: " << (end - start) << "\n";
 
 
     //start = omp_get_wtime();
     //std::vector<int> o_dec = one.decode();
-    end = omp_get_wtime();
+    //end = omp_get_wtime();
     //std::cout << "decoding time ones: " << (end-start) << "\n";
     
     //start = omp_get_wtime();
@@ -115,12 +115,12 @@ int main(int argc, const char * argv[]) {
     //std::cout << "recoding time: " << (end-start) << "\n";
 
     start = omp_get_wtime();
-    //s = Clock::now();
+    s = Clock::now();
     b.recode(0);
-    //e = Clock::now();
+    e = Clock::now();
     end = omp_get_wtime();
-    //std::cout << "recoding time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count() << "\n";
-    std::cout << "recoding time: " << (end - start) << "\n";
+    std::cout << "recoding time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(e - s).count() << "\n";
+    //std::cout << "recoding time: " << (end - start) << "\n";
 
     //start = omp_get_wtime();
     //std::vector<int> b_dec = b.decode();

@@ -112,16 +112,18 @@ mpz_class mul_inv(mpz_class a, mpz_class b){ //TODO - finish
     if (b == 1){
         return 1;
     }
+    #pragma omp critical(while_loop)
+    {
     while (a>1){
         mpz_class q = floor_div(a,b); //floor
         mpz_class temp = b;
         b = floor_mod(a,b);
         a = temp;
-        
         mpz_class temp2 = x0;
         x0 = x1 - (q * x0);
         x1 = temp2;
     }
+    } // end crit
     if (x1 < 0){
         x1 += b0;
     }
@@ -134,6 +136,7 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
         prod = prod*n[i];
     }
     
+
     std::vector<mpz_class> to_sum(n.size());
 
     //#pragma omp parallel for
@@ -142,6 +145,7 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
         to_sum[i] = a[i] * mul_inv(p, n[i]) * p;
     }
     
+
     mpz_class sum = sum_array(to_sum); //TODO: correctness test (changed for omp)
 
     mpz_class result = floor_mod(sum,prod);
