@@ -8,7 +8,6 @@
 
 
 // TODO
-// put the y/u/z etc stuff in the correct places
 // pre-generate a bunch of random ## for encoding process
 // make longs??
 
@@ -16,39 +15,37 @@
 #include "Pk.hpp"
 #include <iostream>
 #include "utils.hpp"
-#include "omp.h"
+
+#ifdef _OPENMP
+    #include "omp.h"
+#else
+    #define omp_get_max_threads() 0
+    #define omp_get_thread_num() 0
+    #define omp_get_num_threads() 0
+    #define GOMP_parallel 0
+    #define GOMP_barrier 0
+#endif
 
 Pk::Pk(int lam, int rho, int eta, int gam, int Theta, int alpha, int tau, int l, int n): p_lam(lam), p_rho(rho), p_rhoi(rho+lam), p_eta(eta), p_gam(gam), p_Theta(Theta), p_theta(Theta/l), p_kap(64*(gam/64+1)-1), p_alpha(alpha), p_alphai(alpha+lam), p_tau(tau), p_l(l), p_logl(int (round(log2(l)))), p_p(l), p_pi(1), p_q0(1), p_x0(1), p_seed_x(time(0)), p_seed_xi(time(0)+3), p_seed_ii(time(0)+8), p_seed_o(time(0)+19), p_seed_op(time(0)+27), p_seed_u(time(0)+33), p_x_D(tau), p_xi_D(l), p_ii_D(l), p_n(n), p_B(l), p_s(l,std::vector<int>(Theta)), p_u_front(p_l), p_o_D(Theta), p_op_D(Theta) //for kap, c++ trucates (rounds down) so its all gud
 
 {
-
-    std::cout << "Parameters secure and correct? " << this->assert_parameter_correctness() << "\n";
-    
-    std::cout << time(0) << "\n"; 
     //make t state
     gmp_randstate_t p_t_state;
     gmp_randinit_mt(p_t_state);
     gmp_randseed_ui(p_t_state, time(0)); //time is not great - better TODO
 
-    std::cout << time(0) << "\n";    
+
     make_p(p_t_state);
-    std::cout << time(0) << "\n";
     make_pi();
-    std::cout << time(0) << "\n"; 
     make_q0(p_t_state);
-    std::cout << time(0) << "\n";
     make_x0();
     make_x_Delta();
     make_xi_Delta();
     make_ii_Delta();
     make_s();
-    std::cout << time(0) << "\n"; 
     make_u();
-    std::cout << time(0) << "\n"; 
-
     make_o_Delta();
     make_op_Delta();
-    
 }
 
 //Pk::~Pk(){
@@ -80,42 +77,57 @@ mpz_class Pk::encode(std::vector<int> m){
   
     std::vector<mpz_class> bi_ii(p_tau);
 
-    #pragma omp parallel
+    mpz_class m_xi_sum;
+    mpz_class b_x_sum;
+    mpz_class bi_ii_sum;
+    mpz_class big_sum;
+
+   int a, b, c, aa, bb, cc;
+
+   #pragma omp parallel
     {
-    #pragma omp for nowait
+   #pragma omp single
+    {
         for (int i = 0; i < p_l; i++)
         {
-            //m*xi
-            m_xi[i] = m[i]*xi[i];
-            //bi*ii
-            mpz_class lb = power(-2,p_alphai);
+            #pragma omp task depend(out: a)
+            {m_xi[i] = m[i]*xi[i];}
+            #pragma omp task depend(out: b)
+            {mpz_class lb = power(-2,p_alphai);
             mpz_class ub = power(2,p_alphai);
             mpz_class bi = p_class_state.get_z_range(ub-lb);
             bi = bi + lb;
-            bi_ii[i] = bi*ii[i];
+            bi_ii[i] = bi*ii[i];}
         }  
  
     //b*x
-    #pragma omp for
         for (int i = 0; i < p_tau; i++)
         {
-
-            mpz_class lb = power(-2,p_alpha);
+            #pragma omp task depend(out: c)
+            {mpz_class lb = power(-2,p_alpha);
             mpz_class ub = power(2,p_alpha);
             mpz_class b = p_class_state.get_z_range(ub-lb);
             b = b + lb;
-            b_x[i] = b*x[i];
+            b_x[i] = b*x[i];}
         }
+    
+       #pragma omp task depend(in: a) depend(out: aa)
+       {m_xi_sum = sum_array(m_xi);}
+       #pragma omp task depend(in: c) depend(out: bb)
+       {b_x_sum = sum_array(b_x);}
+       #pragma omp task depend(in: b) depend(out: cc)
+       {bi_ii_sum = sum_array(bi_ii);}
 
+       #pragma omp task depend(in: aa, bb, cc)
+       {big_sum = m_xi_sum + b_x_sum + bi_ii_sum;}
     } // end omp region
-    
+    }
     //summation
-    mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
+    //big_sum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
-    mpz_class c = modNear(bigsum, p_x0);
+    mpz_class ct = modNear(big_sum, p_x0);
     
-    return c;
-
+    return ct;
 }
 
 std::vector<int> Pk::decode(mpz_class c){
@@ -123,14 +135,23 @@ std::vector<int> Pk::decode(mpz_class c){
 
     std::vector<int> m(p_l);
    
-    #pragma omp parallel for
+    #pragma omp parallel
+    {
+    #pragma omp single
+    {
         for (int i = 0; i < p_l; i++)
+        {
+        #pragma omp task
         {
             mpz_class mn = modNear(c,p_p[i]);
             mpz_class conv = floor_mod(mn,2);
             int i_conv = (int) conv.get_si(); //hopefully right
             m[i] = (i_conv);
         }
+        }
+    #pragma omp taskwait
+    }
+    }
     return m;
 }
 
@@ -139,59 +160,69 @@ std::vector<int> Pk::decode_squashed(mpz_class c){ //TODO gen
     return temp;
 }
 
-std::vector<std::vector<int>> Pk::expand(mpz_class c){
-    //recover u
-    std::vector<mpq_class> y = make_y();
-    
+mpz_class Pk::recode_work(mpz_class c, std::vector<mpz_class> o){
+
     std::vector<std::vector<int>> z(p_Theta,std::vector<int>(p_n+1));
-    #pragma omp parallel for
+    std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n+1));
+    std::vector<mpq_class> y(p_Theta);
+    mpz_class pwr = power(2,p_kap+1);
+    PseudoRandomInts priu = PseudoRandomInts(pwr, p_Theta, p_seed_u);
+
+    std::vector<mpz_class> u = make_full_u(priu);
+
+    mpz_class div = power(2,p_kap);
+    std::vector<mpz_class> a(p_n+1);
+
+
+    int e,f;
+
+    #pragma omp parallel
+    {
+    #pragma omp single
+    {
     for (int i = 0; i < p_Theta; i++){
+       #pragma omp task depend(out: e)
+       {
+          y[i] = mpq_class(u[i],div); 
+          y[i].canonicalize();
+       }
+     }
+    
+    for (int i = 0; i < p_Theta; i++){
+        #pragma omp task depend(in: e) depend(out: f)
+        {
         mpq_class zi = c * y[i];
         mpq_class mod = mod_2_f(zi);
-        //std::cout << mpf_class(mod) << "\n";
-        
-        //convert each zi to vector of binary
-        //mult by 2^n (bits of precision)
         mpq_class zi_mult = mod * (pow(2,p_n));
-        //std::cout << mpf_class(zi_mult) << "\n";
-        
-        //convert to int (cut off ends)
+      
         mpz_class zi_conv = mpz_class(zi_mult);
         if ((zi_mult - zi_conv) > 0.5){
             zi_conv += 1;
         }
-        //std::cout << zi_conv << "\n";
-        
-        if (zi_conv.fits_sint_p() == 0){ //doesn't fit
+      
+        if (zi_conv.fits_sint_p() == 0){
             std::cout << "Error in generation of z\n";
         }
-        int zi_round = zi_conv.get_si(); //round
-        //std::cout << zi_round << "\n";
-        
-        //put in binary
+        int zi_round = zi_conv.get_si();       
         std::vector<int> ex_z(p_n+1);
         ex_z = to_binary(zi_round, p_n+1); //[lsb, ...., msb] max 31 (can we ever possibly get a 32? what then) TODO
-        //print_vec(ex_z);
-        
-        z[i] = ex_z;
+               z[i] = ex_z;
+       } //end task
     }
-    return z;
-}
-
-mpz_class Pk::recode_work(mpz_class c, std::vector<mpz_class> o){
-    std::vector<std::vector<int>> z = expand(c);
-    
-    std::vector<std::vector<mpz_class>> z_mult(p_Theta,std::vector<mpz_class>(p_n+1));
-    std::vector<mpz_class> a(p_n+1);
-
+    #pragma omp taskwait
+    //actual recoding
     //z * sk - correct
-    #pragma omp for collapse(2)
     for(int i = 0; i < p_Theta; i++){
+        #pragma omp task depend(in: f)
+        {
         for(int j = 0; j < p_n+1; j++){
             z_mult[i][j] = (z[i][j] * o[i]);
+            //std::cout << z[i][j] << "\n";
         }
+        } //end task
     }
-    
+    } //end parallel
+    }
     //add to make a
     for(int i = 0; i < p_Theta; i++){
         a = sum_binary(a,z_mult[i]);   //do not parallelize!
@@ -208,7 +239,6 @@ mpz_class Pk::recode_work(mpz_class c, std::vector<mpz_class> o){
     
     mpz_class two = a[a.size()-1] + a[a.size()-2]; //correct??
     mpz_class c_prime = two + (c & 1);
-    std::cout << "recode work\n";
     return c_prime;
 }
 
@@ -224,7 +254,7 @@ mpz_class Pk::recode_and_permute(mpz_class c){
     //recover permuted o
     PseudoRandomInts chi_op = PseudoRandomInts(p_x0, p_Theta, p_seed_op);
     std::vector<mpz_class> op = make_x_list(chi_op, p_op_D);
-
+    
     return recode_work(c, op);
 }
 
@@ -241,14 +271,58 @@ mpz_class Pk::H_mult(mpz_class c1, mpz_class c2){
 
 //PRIVATE HELPER
 void Pk::make_p(gmp_randstate_t p_t_state){
-    std::cout << "making p, max threads = " << omp_get_max_threads() << "\n";
-
-    #pragma omp parallel for
-    for (int i = 0; i < p_l; i++)
+    std::cout << "MAX THREADS= " << omp_get_max_threads() << "\n"; 
+    #pragma omp parallel
+    {
+    #pragma omp single
+    {
+    for (int i = 0; i < p_l; i++){
+        #pragma omp task
         {
-            std::cout << "Thread number: " << omp_get_thread_num() << "\n";
-            p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
+        p_p[i] = random_prime_w(p_eta, p_t_state); //weird range 2^(n-1), 2^n
+        }/*
+	    mpz_t final_p;
+            mpz_init_set_ui(final_p, 0); 
+
+	    mpz_t ub_pow;
+            mpz_init(ub_pow);
+            mpz_ui_pow_ui(ub_pow, 2, p_eta-1);
+
+            #pragma omp parallel
+            {
+            while(mpz_cmp_ui(final_p,0)==0){ //while final_p == 0 (hasn't been written)
+                 #pragma omp for
+       		 for(int f = 0; f < omp_get_max_threads(); f++){//TODO fina a good range //split random serach
+        	     std::cout << "prime loop, thread #:" << omp_get_thread_num() << "\n";
+                     //generate mpz_t rand
+            	     mpz_t p;
+            	     mpz_init(p);
+                     mpz_urandomb(p, p_t_state, p_eta-1); //0 - 2^(n-1)
+            
+                     mpz_add(p, p, ub_pow);// + 2^(n-1)
+
+                      if (mpz_probab_prime_p(p, 15) > 0){
+		          #pragma omp critical (set_final_prime)
+                          {
+                              std::cout << "PRIME FOUND WRITING i=" << i << "\n";
+                              mpz_set(final_p, p);
+                          }
+                      }
+                      mpz_clear(p);
+
+                  } //end for
+
+             } //end while
+             } //end parallel
+             mpz_class p_class(final_p);
+    
+             mpz_clear(final_p);
+             mpz_clear(ub_pow);
+	     p_p[i] = p_class; */
         }
+    #pragma omp taskwait
+    } //end parallel
+    }
 }
 
 void Pk::make_pi(){ //prod of all p[i]
@@ -259,7 +333,6 @@ void Pk::make_pi(){ //prod of all p[i]
 }
 
 void Pk::make_q0(gmp_randstate_t p_t_state){
-    std::cout << "making q0\n";
     p_q0 = power(2,p_gam);
     mpz_class comp = floor_div(p_q0,p_pi);
     
@@ -272,35 +345,48 @@ void Pk::make_q0(gmp_randstate_t p_t_state){
 }
 
 void Pk::make_x0(){
-    std::cout << "making x0\n";
     p_x0 = p_pi * p_q0;
 }
 
 void Pk::make_x_Delta(){ //TODO DELTAS - TODO initialize list
+//    std::cout << "starting x delta\n";
     PseudoRandomInts pri = PseudoRandomInts(p_x0, p_tau, p_seed_x);
     p_x_D = make_Deltas(pri, p_tau, p_rhoi-1, 0);
+//    std::cout << "x deltas made\n";
 }
 
 void Pk::make_xi_Delta(){
+//    std::cout << "starting x delta\n";
     PseudoRandomInts pri = PseudoRandomInts(p_x0, p_l, p_seed_xi);
     p_xi_D = make_Deltas(pri, p_l, p_rho, 1);
+//    std::cout << "xi deltas made\n";
 }
 
 void Pk::make_ii_Delta(){
+//    std::cout << "starting ii delta\n";
     PseudoRandomInts pri = PseudoRandomInts(p_x0, p_l, p_seed_ii);
     p_ii_D = make_Deltas(pri, p_l, p_rho, 2);
 }
 
 std::vector<mpz_class> Pk::make_x_list(PseudoRandomInts chi, std::vector<mpz_class> deltas){
     std::vector<mpz_class> x(chi.r_len);
+    #pragma omp parallel
+    {
+    #pragma omp single
+    {
     for(int i = 0; i < chi.r_len; i++){
+        #pragma omp task // TODO - put parallel in elsewhere
+        {
         x[i] = chi.r_list[i]-deltas[i];
+        }
+    }
+    #pragma omp taskwait
+    } //end parallel
     }
     return x;
 }
 
 void Pk::make_s(){
-    std::cout << "making s\n";
     for(int j = 0; j < p_l; j++){
         //all initialized to 0 originally
             p_s[j][j] = 1;
@@ -335,29 +421,9 @@ void Pk::make_u(){ //in making Pk
     p_u_front = make_front_U(priu);
 }
 
-std::vector<mpq_class> Pk::make_y(){ //in recode
-    std::vector<mpq_class> y(p_Theta); //rational
-    
-    mpz_class pwr = power(2,p_kap+1);
-    PseudoRandomInts priu = PseudoRandomInts(pwr, p_Theta, p_seed_u);
-    
-    std::vector<mpz_class> u = make_full_u(priu);
-    
-    mpz_class div = power(2,p_kap);
-
-  
-    #pragma omp parallel for  
-       for (int i = 0; i < p_Theta; i++){
-           y[i] = mpq_class(u[i],div); //rational u[i]/(2^kap)
-           y[i].canonicalize();
-       }
-    return y;
-}
-
 std::vector<mpz_class> Pk::make_full_u(PseudoRandomInts priu){
     std::vector<mpz_class> full_u(p_Theta);
 
-    #pragma omp parallel for
     for (int i = 0; i < p_Theta; i++){
         if (i < p_l){
             full_u[i] = p_u_front[i];
@@ -377,6 +443,7 @@ void Pk::make_op_Delta(){
     PseudoRandomInts pri = PseudoRandomInts(p_x0, p_Theta, p_seed_op);
     p_op_D = make_Deltas(pri, p_Theta, p_rho, 4);
 }
+
 
 
 bool Pk::assert_parameter_correctness(){
@@ -408,64 +475,66 @@ Pk Pk::make_key(int size){
     int alpha = 936;
     int tau = 742;
     int l = 10;
+
     
-    return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
-  /*
     if (size == 0){
-        int lam = 42;
-        int rho = 26;
-        int eta = 15256;
-        int gam = 147456;
-        int Theta = 150;
-        int alpha = 936;
-        int tau = 742;
-        int l = 10;
+        lam = 42;
+        rho = 26;
+        eta = 988;
+        gam = 290000;
+        Theta = 150;
+        alpha = 936;
+        tau = 188;
+        l = 10;
     } else if (size == 1){
-        int lam = 52;
-        int rho = 41;
-        int eta = 33286;
-        int gam = 843033;
-        int Theta = 555;
-        int alpha = 1476;
-        int tau = 3567;
-        int l = 37;
+        lam = 52;
+        rho = 41;
+        eta = 1558;
+        gam = 1600000;
+        Theta = 555;
+        alpha = 1476;
+        tau = 661;
+        l = 37;
     } else if (size == 2){
-      	int lam = 62;
-        int rho = 56;
-        int eta = 59140;
-        int gam = 4251866;
-        int Theta = 2070;
-        int alpha = 2016;
-        int tau = 16622;
- 	      int l = 138;
+        lam = 62;
+        rho = 56;
+        eta = 2128;
+        gam = 8500000;
+        Theta = 2070;
+        alpha = 2016;
+        tau = 2410;
+ 	l = 138;
     } else if (size == 3){
-        int lam = 72;
-        int rho = 71;
-        int eta = 93498;
-        int gam = 19575950;
-        int Theta = 7965;
-        int alpha = 2556;
-        int tau = 77067;
-        int l = 531;
+        lam = 72;
+        rho = 71;
+        eta = 2698;
+        gam = 39000000;
+        Theta = 7965;
+        alpha = 2556;
+        tau = 8713;
+        l = 531;
+    } else if (size == -1){
+    	lam = 12;
+    	rho = 26;
+    	eta = 1988;
+    	gam = 147456;
+    	Theta = 150;
+    	alpha = 936;
+    	tau = 742;
+    	l = 10;
     } else {
         std::cout << "Size not correctly specified. Small key being made.\n";
-        int lam = 52;
-        int rho = 41;
-        int eta = 33286;
-        int gam = 843033;
-        int Theta = 555;
-        int alpha = 1476;
-        int tau = 3567;
-        int l = 37;  */
+    }
+
+    return Pk(lam, rho, eta, gam, Theta, alpha, tau, l);
 }
 
 //old deltas
 std::vector<mpz_class> Pk::make_Deltas(PseudoRandomInts r_chi, int r_lenv, int r_rho, int r_cr){
-    std::cout << "r_lenv=" << r_lenv << "\n";
     
     std::vector<mpz_class> deltas(r_lenv);
     
-    //make class state
+    //make class state - MOVED make sure OK
     gmp_randclass p_class_state (gmp_randinit_mt);
     p_class_state.seed(time(0)); //TODO
     
@@ -475,10 +544,16 @@ std::vector<mpz_class> Pk::make_Deltas(PseudoRandomInts r_chi, int r_lenv, int r
     std::vector<mpz_class> E(r_lenv);
     
     mpz_class e_help = power(2,(p_lam+p_logl+(p_l*p_eta))); //is this contained by int? TODO
-    
-    //#pragma omp parallel for
+    int g,h;
+
+    #pragma omp parallel
+    {
+    #pragma omp single
+    {
     for(int i = 0; i < r_lenv; i++){
-        for(int j = 0; j < p_l; j++){
+       #pragma omp task
+       { 
+       for(int j = 0; j < p_l; j++){
             mpz_class lb = power(-2,r_rho+1);
             mpz_class ub = power(2,r_rho);
             r[i][j] = p_class_state.get_z_range(ub-lb);
@@ -486,60 +561,79 @@ std::vector<mpz_class> Pk::make_Deltas(PseudoRandomInts r_chi, int r_lenv, int r
         }
         mpz_class rand = p_class_state.get_z_range(e_help);
         E[i] = floor_div(rand,p_pi); //floor
+       } //end task
     }
-    
+    #pragma omp taskwait
     std::vector<mpz_class> crts(r_lenv);
     if (r_cr==0){ //x
         for(int i = 0; i < r_lenv; i++){
+            //#pragma omp task depend(in: g) depend(out: h)
+            {
             std::vector<mpz_class> crt_term(p_l);
             for (int j = 0; j < p_l; j++){
                 crt_term[j] = 2*r[i][j];
             }
             crts[i] = CRT(p_p, crt_term);
-
+	    } //end task
         }
+        
     } else if (r_cr==1){ //xi
         for(int i = 0; i < r_lenv; i++){
+            //#pragma omp task depend(in: g) depend(out: h)
+            {
             std::vector<mpz_class> crt_term(p_l);
             for (int j = 0; j < p_l; j++){
                 crt_term[j] = (2*r[i][j]+kd(j,i));
             }
             crts[i] = CRT(p_p, crt_term);
+            }//end task
         }
     } else if (r_cr==2){ //ii
         for(int i = 0; i < r_lenv; i++){
+            //#pragma omp task depend(in: g) depend(out: h)
+            {
             std::vector<mpz_class> crt_term(p_l);
             for (int j = 0; j < p_l; j++){
                 crt_term[j] = (2*r[i][j]+(kd(j,i)*(power(2,p_rhoi+1))));
             }
             crts[i] = CRT(p_p, crt_term);
-        }
+            }//end task 
+       }
+
     } else if (r_cr==3){ //o
         for(int i = 0; i < r_lenv; i++){
+            //#pragma omp task depend(in: g) depend(out: h)
+            {
             std::vector<mpz_class> crt_term(p_l);
             for (int j = 0; j < p_l; j++){
                 crt_term[j] = (2*r[i][j]+p_s[j][i]);
             }
             crts[i] = CRT(p_p, crt_term);
+            }//end task 
         }
     } else { //op
         for(int i = 0; i < r_lenv; i++){
+            //#pragma omp task depend(in: g) depend(out: h)
+            {
             std::vector<mpz_class> crt_term(p_l);
             for (int j = 0; j < p_l; j++){
                 crt_term[j] = (2*r[i][j]+p_s[permute(j)][i]);
             }
             crts[i] = CRT(p_p, crt_term);
+            }//end task 
         }
-        std::cout << "op wheel 4\n";
     }
 
-    
     for (int i = 0; i < r_lenv; i++){
+        #pragma omp task
+        {
         mpz_class chi_temp = floor_mod(r_chi.r_list[i],p_pi);
-
         deltas[i] = chi_temp+(E[i] * p_pi)-crts[i];
+        } //end task
     }
     
+    } //end pragma
+    }
     return deltas;
 }
 
@@ -549,7 +643,6 @@ int Pk::permute(int j){
     } else {
         return j-(p_l-2);
     }
-    std::cout << "permute\n";
     
 }
 

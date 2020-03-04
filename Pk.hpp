@@ -45,8 +45,7 @@ private:
     mpz_class recode_work(mpz_class c, std::vector<mpz_class> o);
     int permute(int j);
     std::vector<std::vector<int>> expand(mpz_class c);
-    
-    //Encoding Helper
+
     
 public:
     int p_lam;

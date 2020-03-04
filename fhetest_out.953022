@@ -1,0 +1,163 @@
+Tue Mar  3 16:22:28 EST 2020
+TASK TOY
+BENCHMARK: 4 threads
+Making Keys
+MAX THREADS= 4
+MAX THREADS= 4
+BENCHMARK: 8 threads
+Making Keys
+MAX THREADS= 8
+MAX THREADS= 8
+key time: 6.26386
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.0210839
+decoding time: 0.00011008
+recoding time: 0.294092
+1100001100
+1001000100
+1111111111
+0101111011
+BENCHMARK: 16 threads
+Making Keys
+MAX THREADS= 16
+MAX THREADS= 16
+key time: 6.08439
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.00919142
+decoding time: 9.67472e-05
+recoding time: 0.301038
+0101110101
+0101001111
+1111111111
+1010110010
+BENCHMARK: 32 threads
+Making Keys
+MAX THREADS= 32
+MAX THREADS= 32
+key time: 6.083
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.0101365
+decoding time: 0.000117051
+recoding time: 0.288766
+1110010101
+1111111001
+1111111111
+1001101001
+BENCHMARK: 64 threads
+Making Keys
+MAX THREADS= 64
+MAX THREADS= 64
+key time: 6.07103
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.0133314
+decoding time: 0.000155333
+recoding time: 0.297776
+1001000101
+1010011101
+1111111111
+0011101010
+BENCHMARK: 84 threads
+Making Keys
+MAX THREADS= 84
+MAX THREADS= 84
+key time: 6.02104
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.0168423
+decoding time: 0.000349867
+recoding time: 0.309208
+0001011110
+1001101010
+1111111111
+1101111100
+BENCHMARK: 128 threads
+Making Keys
+MAX THREADS= 128
+MAX THREADS= 128
+key time: 6.23316
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.0267719
+decoding time: 0.000529729
+recoding time: 0.319231
+0101010010
+1100000001
+1111111111
+0011111111
+BENCHMARK: 168 threads
+Making Keys
+MAX THREADS= 168
+MAX THREADS= 168
+key time: 6.42808
+0
+0
+0
+15255.4
+0
+0
+0
+encoding time: 0.0435691
+decoding time: 0.00169466
+recoding time: 0.317851
+0100101011
+1111100110
+1111111111
+1010100011
+DONE
+Tue Mar  3 16:24:13 EST 2020
+
+------------------------------------------------------------
+Sender: LSF System <lsfadmin@batch4>
+Subject: Job 953022: <fhetest> in cluster <summit> Done
+
+Job <fhetest> was submitted from host <login5> by user <woodsjk> in cluster <summit> at Tue Mar  3 16:22:04 2020
+Job was executed on host(s) <1*batch4>, in queue <batch>, as user <woodsjk> in cluster <summit> at Tue Mar  3 16:22:14 2020
+                            <42*h36n18>
+</ccs/home/woodsjk> was used as the home directory.
+</ccs/proj/gen119/woods/TaskFHE> was used as the working directory.
+Started at Tue Mar  3 16:22:14 2020
+Terminated at Tue Mar  3 16:24:16 2020
+Results reported at Tue Mar  3 16:24:16 2020
+
+The output (if any) is above this job summary.
+
+
+
+PS:
+
+Read file <fhetest_err.953022> for stderr output of this job.
+
