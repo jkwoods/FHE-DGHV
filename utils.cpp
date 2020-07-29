@@ -7,11 +7,16 @@
 //
 
 #include "utils.hpp"
-#ifdef _OPENMP
-    #include "omp.h"
-#else
-    #define omp_get_thread_num() 0
-#endif
+
+#define w        (GMP_NUMB_BITS/2)
+#define _BOTMASK    ((1ul << w)-1)
+#define _TOPMASK    (~_BOTMASK)
+#define BOT(x)        ((x) & _BOTMASK)
+#define TOP(x)        ((x) >> w)
+#define LIMB(z,i)    (((i)<((z)->_mp_size))?((z)->_mp_d[i]):(0L))
+#define BOTL(z,i)    (BOT(LIMB(z,i)))
+#define TOPL(z,i)    (TOP(LIMB(z,i)))
+#define HLIMB(z,j)    ((j&1)?(TOPL(z,j>>1)):(BOTL(z,j>>1)))
 
 
 mpq_class mod_2_f(mpq_class a){
@@ -112,18 +117,16 @@ mpz_class mul_inv(mpz_class a, mpz_class b){ //TODO - finish
     if (b == 1){
         return 1;
     }
-    #pragma omp critical(while_loop)
-    {
     while (a>1){
         mpz_class q = floor_div(a,b); //floor
         mpz_class temp = b;
         b = floor_mod(a,b);
         a = temp;
+        
         mpz_class temp2 = x0;
         x0 = x1 - (q * x0);
         x1 = temp2;
     }
-    } // end crit
     if (x1 < 0){
         x1 += b0;
     }
@@ -136,17 +139,11 @@ mpz_class CRT(std::vector<mpz_class> n, std::vector<mpz_class> a){ //chinese rem
         prod = prod*n[i];
     }
     
-
-    std::vector<mpz_class> to_sum(n.size());
-
-    //#pragma omp parallel for
+    mpz_class sum = 0;
     for (int i = 0; i < n.size(); i++){
         mpz_class p = floor_div(prod,n[i]); //floor
-        to_sum[i] = a[i] * mul_inv(p, n[i]) * p;
+        sum += a[i] * mul_inv(p, n[i]) * p;
     }
-    
-
-    mpz_class sum = sum_array(to_sum); //TODO: correctness test (changed for omp)
 
     mpz_class result = floor_mod(sum,prod);
     
@@ -187,53 +184,27 @@ mpz_class power(int base, int exp){
 }
 
 mpz_class random_prime_w(int ub, gmp_randstate_t rand_state){ //wierd range
-    mpz_t final_p;
-    mpz_init_set_ui(final_p, 0);   
-
-    //upper bound
+    //generate mpz_t rand
+    mpz_t p;
+    mpz_init(p);
+    mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
+    
     mpz_t ub_pow;
     mpz_init(ub_pow);
     mpz_ui_pow_ui(ub_pow, 2, ub-1);
-
-    /*
-    int count = 0;
-    while(mpz_cmp_ui(final_p,0)==0){ //while final_p == 0 (hasn't been written)
-        count = count+1;
-        //#pragma omp parallel for
-        for(int i = 0; i < 10; i++){//TODO fina a good range //split random serach
-            //generate mpz_t rand
-            //std::cout << "prime loop, thread #:" << omp_get_thread_num() << "\n";
-            mpz_t p;
-            mpz_init(p);
-            mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
-
-            mpz_add(p, p, ub_pow);// + 2^(n-1)
-
-            //check if prime
-            if (mpz_probab_prime_p(p, 15) > 0){ //isprime
-		//ONLY ONE THREAD SHOULD WRITE AT A TIME
-		//CRITICAL WRITE to final_p
-                //#pragma omp critical (set_final_prime)
-                //{
-                    mpz_set(final_p, p);
-                //}
-            }
-            mpz_clear(p);
-
-        } //end parallel for loop
-
-    } //end while loop
-    */
-    //OLD METHOD (pre parallelization) check if prime
-    while(mpz_probab_prime_p(final_p, 15) == 0){ //not prime
-        mpz_urandomb(final_p, rand_state, ub-1); //0 - 2^(n-1)
-        mpz_add(final_p, final_p, ub_pow);// + 2^(n-1)
-    }
-   
-    //cast as mpz_class
-    mpz_class p_class(final_p);
     
-    mpz_clear(final_p);
+    mpz_add(p, p, ub_pow);// + 2^(n-1)
+    
+    //check if prime
+    while(mpz_probab_prime_p(p, 30) == 0){ //not prime
+        mpz_urandomb(p, rand_state, ub-1); //0 - 2^(n-1)
+        mpz_add(p, p, ub_pow);// + 2^(n-1)
+    }
+    
+    //cast as mpz_class
+    mpz_class p_class(p);
+    
+    mpz_clear(p);
     mpz_clear(ub_pow);
     
     return p_class;
@@ -246,7 +217,7 @@ mpz_class random_prime_f0(int ub, gmp_randstate_t rand_state){ //2^entry (only u
     mpz_urandomb(p, rand_state, ub);
     
     //check if prime
-    while(mpz_probab_prime_p(p, 15) == 0){ //not prime
+    while(mpz_probab_prime_p(p, 30) == 0){ //not prime
         mpz_urandomb(p, rand_state, ub);
     }
     
@@ -265,13 +236,13 @@ int random_choice(std::vector<int> sample){ //TODO test
     return sample[r];
 }
 
-std::vector<int> random_sample(int range, int l){ //TODO rand() sux, can use for testing but need to fix
+std::vector<int> random_sample(int range, int l){
     std::vector<int> sample(range);
     for(int i = 0; i < range; i++){
         sample[i] = i;
     }
-    int r = rand();
-    std::mt19937 g(r);
+    std::random_device rd;
+    std::mt19937 g(rd());
     std::shuffle(sample.begin(), sample.end(), g);
     std::vector<int> cut_sample(l);
     for(int i = 0; i < l; i++){
@@ -282,7 +253,6 @@ std::vector<int> random_sample(int range, int l){ //TODO rand() sux, can use for
 
 mpz_class sum_array(std::vector<mpz_class> a){
     mpz_class suma = 0;
-
     for(int i = 0; i < a.size(); i++){
         suma = suma+a[i];
     }
@@ -318,5 +288,31 @@ std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_clas
     
     
     return c;
+}
+
+unsigned getGMP_NUMB_BITS()
+{
+  return GMP_NUMB_BITS;
+}
+
+unsigned long directScal(unsigned long kap, mpz_t cz, mpz_t yz)
+{
+    
+  unsigned long nW=(kap+1)/(2*w), val=0, i;
+
+  if(nW*w*2 != kap+1)
+      return 0;
+
+  for(i = 0; i < nW-1; i++) {
+    val += BOTL(cz,i) * LIMB(yz,nW-1-i);
+    val += (BOTL(cz,i) * TOPL(yz,nW-2-i)) >> w;
+    val += TOPL(cz,i) * ((BOTL(yz,nW-1-i) << w) + TOPL(yz,nW-2-i));
+    val += (TOPL(cz,i) * BOTL(yz,nW-2-i)) >> w;
+  }
+
+  val += BOTL(cz,nW-1) * LIMB(yz,0);
+  val += TOPL(cz,nW-1) * (BOTL(yz,0) << w);
+
+  return val;
 }
 

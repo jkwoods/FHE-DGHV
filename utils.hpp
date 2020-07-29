@@ -40,4 +40,7 @@ std::vector<int> random_sample(int range, int l);
 mpz_class sum_array(std::vector<mpz_class> a);
 std::vector<mpz_class> sum_binary(std::vector<mpz_class> a, std::vector<mpz_class> b);
 
+unsigned getGMP_NUMB_BITS();
+unsigned long directScal(unsigned long kap, mpz_t cz, mpz_t yz);
+
 #endif /* utils_hpp */
