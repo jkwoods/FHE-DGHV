@@ -68,11 +68,9 @@ mpz_class Pk::encode(std::vector<int> m){
     gmp_randclass p_class_state (gmp_randinit_mt);
     p_class_state.seed(time(0)+94589); //TODO
     
-    //m*xi
+ 
     std::vector<mpz_class> m_xi(p_l);
-    //b*x
     std::vector<mpz_class> b_x(p_tau);
-  
     std::vector<mpz_class> bi_ii(p_tau);
 
     #pragma omp parallel
