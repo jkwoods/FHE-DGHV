@@ -94,21 +94,17 @@ mpz_class Pk::encode(std::vector<int> m){
     #pragma omp for
         for (int i = 0; i < p_tau; i++)
         {
-
             mpz_class lb = power(-2,p_alpha);
             mpz_class ub = power(2,p_alpha);
             mpz_class b = p_class_state.get_z_range(ub-lb);
             b = b + lb;
             b_x[i] = b*x[i];
         }
-
     } // end omp region
     
     //summation
     mpz_class big_sum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
-    
     mpz_class c = modNear(big_sum, p_x0);
-    
     return c;
 
 }
