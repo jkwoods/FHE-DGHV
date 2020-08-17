@@ -105,9 +105,9 @@ mpz_class Pk::encode(std::vector<int> m){
     } // end omp region
     
     //summation
-    mpz_class bigsum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
+    mpz_class big_sum = sum_array(m_xi) + sum_array(bi_ii) + sum_array(b_x);
     
-    mpz_class c = modNear(bigsum, p_x0);
+    mpz_class c = modNear(big_sum, p_x0);
     
     return c;
 
